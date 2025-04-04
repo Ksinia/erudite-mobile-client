@@ -8,7 +8,8 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
     borderRadius: 5,
     marginVertical: 10,
-    marginHorizontal: 10,
+    marginHorizontal: 0, // Changed from 'auto' for more reliable centering
+    alignSelf: 'center', // Center in parent container
     width: width < 420 ? width * 0.9 : 250, // Responsive width
     height: 120,
     display: 'flex',
@@ -39,7 +40,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     paddingVertical: 10, // Increased padding
     paddingHorizontal: 15,
-    justifyContent: 'center', // Center content
+    justifyContent: 'center', // Center content horizontally
     alignItems: 'center', // Center content vertically
   },
   status: {
@@ -47,20 +48,22 @@ const styles = StyleSheet.create({
     width: '60%',
     fontWeight: 'bold',
     textAlign: 'center', // Center text
+    textAlignVertical: 'center', // Center vertically for Android
   },
   number: {
     width: '15%',
     fontSize: 18,
     fontWeight: 'bold',
     paddingLeft: '2%',
-    textAlign: 'left', // Align to left
+    textAlign: 'center', // Center text
+    textAlignVertical: 'center', // Center vertically for Android
   },
   language: {
     width: '20%', // Increased from 15%
     fontSize: 14, // Increased from 12
     fontWeight: 'bold',
-    textAlign: 'right', // Align to right
-    paddingRight: '2%',
+    textAlign: 'center', // Center text
+    textAlignVertical: 'center', // Center vertically for Android
   },
   counter: {
     position: 'absolute',
