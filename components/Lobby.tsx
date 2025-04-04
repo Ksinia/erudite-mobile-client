@@ -1,4 +1,5 @@
 import React from 'react';
+import { Text, View, StyleSheet } from 'react-native';
 
 import { User, Game } from '../reducer/types';
 import RoomTile from './RoomTile';
@@ -23,10 +24,10 @@ type OwnProps = {
 
 function Lobby(props: OwnProps) {
   return (
-    <div>
-      <p>
+    <View>
+      <Text>
         <TranslationContainer translationKey="create_room" />
-      </p>
+      </Text>
       {props.user && (
         <form onSubmit={props.onSubmit}>
           <label htmlFor="maxPlayers">
@@ -64,67 +65,78 @@ function Lobby(props: OwnProps) {
         </form>
       )}
       {props.userTurnGames.length > 0 && [
-        <p key="userTurnRoomsTitle">
+        <Text key="userTurnRoomsTitle">
           <TranslationContainer translationKey="your_turn_games" />
-        </p>,
-        <div key="userTurnRooms" className="rooms">
+        </Text>,
+        <View key="userTurnRooms" style={styles.rooms}>
           {props.userTurnGames.map((game) => (
-            <div className="room" key={game.id}>
+            <View style={styles.room} key={game.id}>
               <RoomTile room={game} user={props.user} />
-            </div>
+            </View>
           ))}
-        </div>,
+        </View>,
       ]}
       {props.otherTurnGames.length > 0 && [
-        <p key="otherTurnRoomsTitle">
+        <Text key="otherTurnRoomsTitle">
           <TranslationContainer translationKey="your_other_games" />
-        </p>,
-        <div key="otherTurnRooms" className="rooms">
+        </Text>,
+        <View key="otherTurnRooms" style={styles.rooms}>
           {props.otherTurnGames.map((game) => (
-            <div className="room" key={game.id}>
+            <View style={styles.room} key={game.id}>
               <RoomTile room={game} user={props.user} />
-            </div>
+            </View>
           ))}
-        </div>,
+        </View>,
       ]}
       {props.userWaitingGames.length > 0 && [
-        <p key="userWaitingRoomsTitle">
+        <Text key="userWaitingRoomsTitle">
           <TranslationContainer translationKey="your_rooms" />
-        </p>,
-        <div key="userWaitingRooms" className="rooms">
+        </Text>,
+        <View key="userWaitingRooms" style={styles.rooms}>
           {props.userWaitingGames.map((game) => (
-            <div className="room" key={game.id}>
+            <View style={styles.room} key={game.id}>
               <RoomTile room={game} user={props.user} />
-            </div>
+            </View>
           ))}
-        </div>,
+        </View>,
       ]}
       {props.otherWaitingGames.length > 0 && [
-        <p key="otherWaitingRoomsTitle">
+        <Text key="otherWaitingRoomsTitle">
           <TranslationContainer translationKey="available_rooms" />
-        </p>,
-        <div key="otherWaitingRooms" className="rooms">
+        </Text>,
+        <View key="otherWaitingRooms" style={styles.rooms}>
           {props.otherWaitingGames.map((game) => (
-            <div className="room" key={game.id}>
+            <View style={styles.room} key={game.id}>
               <RoomTile room={game} user={props.user} />
-            </div>
+            </View>
           ))}
-        </div>,
+        </View>,
       ]}
       {props.otherGames.length > 0 && [
-        <p key="otherRoomsTitle">
+        <Text key="otherRoomsTitle">
           <TranslationContainer translationKey="other_rooms" />
-        </p>,
-        <div key="otherRooms" className="rooms">
+        </Text>,
+        <View key="otherRooms" style={styles.rooms}>
           {props.otherGames.map((game) => (
-            <div className="room" key={game.id}>
+            <View style={styles.room} key={game.id}>
               <RoomTile room={game} user={props.user} />
-            </div>
+            </View>
           ))}
-        </div>,
+        </View>,
       ]}
-    </div>
+    </View>
   );
 }
 
 export default Lobby;
+
+const styles = StyleSheet.create({
+  rooms: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+  },
+  room: {
+    // was it not used?
+  }
+});

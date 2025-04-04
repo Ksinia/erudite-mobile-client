@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Text, View } from 'react-native'
 // import { Link } from 'react-router-dom';
 
 import { User, Game } from '../reducer/types';
-import './RoomTile.css';
 import { RootState } from '../reducer';
 import { Colors } from '../constants/Colors';
 import TranslationContainer from './Translation/TranslationContainer';
+import styles from './RoomTileStyles';
 
 type OwnProps = {
   room: Game;
@@ -58,13 +59,12 @@ class RoomTile extends Component<Props> {
     const messagesCount = {108: 0}  // temp change to constant
     return (
       // <Link to={`/game/${id}`}>
-        <div className="room-tile">
-          <div
-            className="tile-header"
-            style={{ background: getTileColor(this.props) }}
+        <View style={styles.roomTile}>
+          <View
+            style={[styles.tileHeader, { backgroundColor: getTileColor(this.props) }]}
           >
-            <p className="number">{id}</p>
-            <p className="status">
+            <Text style={styles.number}>{id}</Text>
+            <Text style={styles.status}>
               {phase === 'waiting' && (
                 <TranslationContainer
                   translationKey="waiting_for"
@@ -84,15 +84,14 @@ class RoomTile extends Component<Props> {
               {phase === 'finished' &&
                 getWinnerName(this.props.room) &&
                 '\uD83C\uDFC6 ' + getWinnerName(this.props.room)}
-            </p>
-            <p className="language">
+            </Text>
+            <Text style={styles.language}>
               {language.toUpperCase()}
-              <br />
-              {maxPlayers}
-            </p>
-          </div>
-          <div className="tile-body">
-            <p>
+              <Text>{maxPlayers}</Text>
+            </Text>
+          </View>
+          <View style={styles.tileBody}>
+            <Text>
               {turnOrder
                 ? turnOrder
                     .map((userId) =>
@@ -103,12 +102,12 @@ class RoomTile extends Component<Props> {
                     .join(' • ')
                 : // replace space with U+00A0, non-breaking space
                   users.map((user) => user.name.replace(' ', ' ')).join(' • ')}
-            </p>
-          </div>
+            </Text>
+          </View>
           {messagesCount[id] > 0 && (
-            <div className="counter">{messagesCount[id]}</div>
+            <View style={styles.counter}>{messagesCount[id]}</View>
           )}
-        </div>
+        </View>
       // </Link>
     );
   }
