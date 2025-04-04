@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, View } from 'react-native'
-// import { Link } from 'react-router-dom';
+import { Text, View, TouchableOpacity } from 'react-native'; // Added TouchableOpacity
 
 import { User, Game } from '../reducer/types';
 import { RootState } from '../reducer';
@@ -12,6 +11,7 @@ import styles from './RoomTileStyles';
 type OwnProps = {
   room: Game;
   user: User | null;
+  onPress?: (id: number) => void; // Added for navigation
 };
 interface StateProps {
   messagesCount: { [key: number]: number };
@@ -53,12 +53,19 @@ function getTileColor(props: Props): string {
 }
 
 class RoomTile extends Component<Props> {
+  handlePress = () => {
+    if (this.props.onPress) {
+      this.props.onPress(this.props.room.id);
+    }
+  };
+
   render() {
     const { id, maxPlayers, users, phase, language, turnOrder } =
       this.props.room;
     const messagesCount = {108: 0}  // temp change to constant
+
     return (
-      // <Link to={`/game/${id}`}>
+      <TouchableOpacity onPress={this.handlePress} activeOpacity={0.7}>
         <View style={styles.roomTile}>
           <View
             style={[styles.tileHeader, { backgroundColor: getTileColor(this.props) }]}
@@ -87,34 +94,39 @@ class RoomTile extends Component<Props> {
             </Text>
             <Text style={styles.language}>
               {language.toUpperCase()}
+              {"\n"}
               <Text>{maxPlayers}</Text>
             </Text>
           </View>
           <View style={styles.tileBody}>
-            <Text>
+            <Text numberOfLines={2} ellipsizeMode="tail">
               {turnOrder
                 ? turnOrder
-                    .map((userId) =>
-                      users
-                        .find((user) => user.id === userId)
-                        ?.name.replace(' ', ' ')
-                    )
-                    .join(' • ')
+                  .map((userId) =>
+                    users
+                      .find((user) => user.id === userId)
+                      ?.name.replace(' ', '\u00A0')
+                  )
+                  .join(' • ')
                 : // replace space with U+00A0, non-breaking space
-                  users.map((user) => user.name.replace(' ', ' ')).join(' • ')}
+                users.map((user) => user.name.replace(' ', '\u00A0')).join(' • ')}
             </Text>
           </View>
           {messagesCount[id] > 0 && (
-            <View style={styles.counter}>{messagesCount[id]}</View>
+            <View style={styles.counter}>
+              <Text style={styles.counterText}>{messagesCount[id]}</Text>
+            </View>
           )}
         </View>
-      // </Link>
+      </TouchableOpacity>
     );
   }
 }
+
 function MapStateToProps(state: RootState): StateProps {
   return {
     messagesCount: state.messagesCount,
   };
 }
+
 export default connect(MapStateToProps)(RoomTile);

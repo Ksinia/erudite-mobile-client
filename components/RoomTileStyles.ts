@@ -4,89 +4,86 @@ const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   roomTile: {
-  borderWidth: 1,
-  borderColor: 'lightgrey',
-  borderRadius: 5,
-  marginVertical: 16,
-  marginHorizontal: 1.6,
-  // cursor: 'pointer', // Not applicable in React Native
-  width: 250,
-  height: 120,
-  display: 'flex',
-  flexDirection: 'column',
-  // position: 'relative', // Default in React Native
-// hover effects aren't directly applicable in React Native
-},
-tileHeader: {
-  borderBottomWidth: 1,
-  borderBottomColor: 'lightgrey',
-  borderTopLeftRadius: 4,
-  borderTopRightRadius: 4,
-  height: '30%',
-  display: 'flex',
-  flexDirection: 'row',
-  justifyContent: 'space-evenly',
-},
-tileHeaderText: {
-  margin: 'auto', // Use alignSelf: 'center' in React Native
-  alignSelf: 'center',
-},
-tileBody: {
-  height: '60%',
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  paddingVertical: 1.6,
-  paddingHorizontal: 12.8,
-},
-tileBodyText: {
-  margin: 'auto', // Use alignSelf: 'center' in React Native
-  alignSelf: 'center',
-  overflow: 'hidden',
-  // text-overflow: 'ellipsis', // Use numberOfLines and ellipsizeMode in Text component
-  fontSize: 14, // 'normal' converted to approximate pixel value
-  // word-break: 'keep-all', // Not directly applicable in React Native
-},
-status: {
-  fontSize: 12, // 'small' converted to approximate pixel value
-  width: '60%',
-  fontWeight: 'bold', // Note: duplicated property in original CSS
-},
-number: {
-  width: '15%',
-  fontSize: 18, // 'large' converted to approximate pixel value
-  fontWeight: 'bold',
-  paddingLeft: '5%',
-},
-language: {
-  width: '15%',
-  fontSize: 12, // 'small' converted to approximate pixel value
-  fontWeight: 'bold',
-  paddingLeft: '5%',
-},
-counter: {
-  position: 'absolute',
-  top: -12.8, // Converted from -0.8em
-  right: -12.8, // Converted from -0.8em
-  backgroundColor: 'tomato',
-  color: 'white',
-  borderRadius: 20,
-  // width: 'fit-content', // Not applicable in React Native
-  minWidth: 20,
-  height: 20,
-  fontSize: 12, // 'small' converted to approximate pixel value
-  lineHeight: 16, // Converted from 1em
-  padding: 3,
-  // box-sizing: 'border-box', // Default in React Native
-},
-});
-
-// Media query equivalent using Dimensions
-// You would conditionally apply these styles in your component
-   const responsiveStyles = StyleSheet.create({
-  roomTileResponsive: {
-  width: width < 420 ? width * 0.9 : 250, // 90vw when width < 420px
-},
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    borderRadius: 5,
+    marginVertical: 10,
+    marginHorizontal: 10,
+    width: width < 420 ? width * 0.9 : 250, // Responsive width
+    height: 120,
+    display: 'flex',
+    flexDirection: 'column',
+    // Add shadow for better appearance
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2, // For Android shadow
+  },
+  tileHeader: {
+    borderBottomWidth: 1,
+    borderBottomColor: 'lightgrey',
+    borderTopLeftRadius: 4,
+    borderTopRightRadius: 4,
+    height: '40%', // Increased from 30%
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between', // Changed from space-evenly
+    alignItems: 'center', // Added to center items vertically
+    paddingHorizontal: 8, // Added horizontal padding
+  },
+  tileBody: {
+    height: '60%',
+    display: 'flex',
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingVertical: 10, // Increased padding
+    paddingHorizontal: 15,
+    justifyContent: 'center', // Center content
+    alignItems: 'center', // Center content vertically
+  },
+  status: {
+    fontSize: 14, // Increased from 12
+    width: '60%',
+    fontWeight: 'bold',
+    textAlign: 'center', // Center text
+  },
+  number: {
+    width: '15%',
+    fontSize: 18,
+    fontWeight: 'bold',
+    paddingLeft: '2%',
+    textAlign: 'left', // Align to left
+  },
+  language: {
+    width: '20%', // Increased from 15%
+    fontSize: 14, // Increased from 12
+    fontWeight: 'bold',
+    textAlign: 'right', // Align to right
+    paddingRight: '2%',
+  },
+  counter: {
+    position: 'absolute',
+    top: -10,
+    right: -10,
+    backgroundColor: 'tomato',
+    color: 'white',
+    borderRadius: 20,
+    minWidth: 20,
+    height: 20,
+    fontSize: 12,
+    textAlign: 'center', // Center text
+    overflow: 'hidden',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  counterText: { // Added for the Text inside counter
+    color: 'white',
+    fontSize: 12,
+    textAlign: 'center',
+  }
 });
 
 export default styles;
