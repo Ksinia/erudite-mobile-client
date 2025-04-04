@@ -28,10 +28,19 @@
     },
     "plugins": [
       "expo-router",
-      "expo-localization"
+      "expo-localization",
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "e2ce87b9-6786-4a8d-bc8f-d9b606b83acb"
+      }
     }
   }
 }
