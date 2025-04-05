@@ -3,10 +3,10 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, StatusB
 import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { logOut } from '../reducer/auth';
-import { RootState } from '../reducer';
-import { User } from '../reducer/types';
+import { logOut } from "@/reducer/auth";
+import { RootState } from "@/reducer";
 import TranslationContainer from './Translation/TranslationContainer';
+import LangSwitchContainer from "@/components/LangSwitchContainer";
 
 const Toolbar: React.FC = () => {
   const router = useRouter();
@@ -26,13 +26,7 @@ const Toolbar: React.FC = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView horizontal={false} contentContainerStyle={styles.scrollContainer}>
-        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/language/en')}>
-          <Text style={styles.navText}>EN</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/language/ru')}>
-          <Text style={[styles.navText, styles.activeNavText]}>RU</Text>
-        </TouchableOpacity>
+        <LangSwitchContainer/>
 
         <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/rules')}>
           <Text style={styles.navText}>
