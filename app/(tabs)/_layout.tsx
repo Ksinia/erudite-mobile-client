@@ -17,36 +17,6 @@ export default function TabLayout() {
           headerShown: false, // Hide the default header since we're using our custom Toolbar
           tabBarStyle: { display: 'none' }, // Hide the tab bar to match web client
         }}>
-        <Tabs.Screen
-          name="index"
-          options={{
-            title: 'Lobby',
-          }}
-        />
-        <Tabs.Screen
-          name="rules"
-          options={{
-            title: 'Rules',
-          }}
-        />
-        <Tabs.Screen
-          name="my-games"
-          options={{
-            title: 'My Games',
-          }}
-        />
-        <Tabs.Screen
-          name="login"
-          options={{
-            title: 'Login',
-          }}
-        />
-        <Tabs.Screen
-          name="signup"
-          options={{
-            title: 'Sign Up',
-          }}
-        />
       </Tabs>
     </>
   );
