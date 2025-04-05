@@ -1,4 +1,5 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
+import { Text } from 'react-native';
 
 type Props = {
   translation: string;
@@ -6,6 +7,6 @@ type Props = {
 
 export default class Translation extends Component<Props> {
   render() {
-    return this.props.translation;
+    return <Text>{this.props.translation}</Text>;
   }
 }

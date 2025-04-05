@@ -3,9 +3,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import { Link } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
-import ThemedView from './ThemedView';
-import ThemedText from './ThemedText';
-import { useThemeColor } from '../hooks/useThemeColor';
 
 type Props = {
   onChange: (name: string, value: string) => void;
@@ -16,25 +13,21 @@ type Props = {
 };
 
 const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSignUp }) => {
-  const backgroundColor = useThemeColor({ light: '#fff', dark: '#151718' }, 'background');
-  const textColor = useThemeColor({ light: '#333', dark: '#eee' }, 'text');
-  const primaryColor = useThemeColor({ light: '#3f51b5', dark: '#5c6bc0' }, 'tint');
-  
   return (
-    <ThemedView style={styles.container}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <ThemedText style={styles.title}>
+        <Text style={styles.title}>
           <TranslationContainer
             translationKey={isSignUp ? 'sign_up' : 'log_in'}
           />
-        </ThemedText>
+        </Text>
         
         <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>
+          <Text style={styles.label}>
             <TranslationContainer translationKey="name" />
-          </ThemedText>
+          </Text>
           <TextInput
-            style={[styles.input, { color: textColor, backgroundColor: backgroundColor }]}
+            style={styles.input}
             placeholder=""
             placeholderTextColor="#999"
             autoCapitalize="none"
@@ -46,11 +39,11 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         
         {isSignUp && (
           <View style={styles.formGroup}>
-            <ThemedText style={styles.label}>
+            <Text style={styles.label}>
               <TranslationContainer translationKey="email" />
-            </ThemedText>
+            </Text>
             <TextInput
-              style={[styles.input, { color: textColor, backgroundColor: backgroundColor }]}
+              style={styles.input}
               placeholder=""
               placeholderTextColor="#999"
               autoCapitalize="none"
@@ -63,11 +56,11 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         )}
         
         <View style={styles.formGroup}>
-          <ThemedText style={styles.label}>
+          <Text style={styles.label}>
             <TranslationContainer translationKey="password" />
-          </ThemedText>
+          </Text>
           <TextInput
-            style={[styles.input, { color: textColor, backgroundColor: backgroundColor }]}
+            style={styles.input}
             placeholder=""
             placeholderTextColor="#999"
             secureTextEntry
@@ -77,11 +70,11 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         </View>
         
         {error && (
-          <ThemedText style={styles.errorMessage}>{error}</ThemedText>
+          <Text style={styles.errorMessage}>{error}</Text>
         )}
         
         <TouchableOpacity 
-          style={[styles.submitButton, { backgroundColor: primaryColor }]}
+          style={styles.submitButton}
           onPress={onSubmit}
         >
           <Text style={styles.buttonText}>
@@ -95,39 +88,40 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
           {isSignUp ? (
             <Link href="/login" asChild>
               <TouchableOpacity>
-                <ThemedText style={styles.linkText}>
+                <Text style={styles.linkText}>
                   <TranslationContainer translationKey="already_signed_up" />
-                </ThemedText>
+                </Text>
               </TouchableOpacity>
             </Link>
           ) : (
             <>
               <Link href="/signup" asChild>
                 <TouchableOpacity>
-                  <ThemedText style={styles.linkText}>
+                  <Text style={styles.linkText}>
                     <TranslationContainer translationKey="no_account" />
-                  </ThemedText>
+                  </Text>
                 </TouchableOpacity>
               </Link>
               
               <Link href="/forgot-password" asChild>
                 <TouchableOpacity>
-                  <ThemedText style={styles.linkText}>
+                  <Text style={styles.linkText}>
                     <TranslationContainer translationKey="forgot" />
-                  </ThemedText>
+                  </Text>
                 </TouchableOpacity>
               </Link>
             </>
           )}
         </View>
       </ScrollView>
-    </ThemedView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
   },
   scrollContainer: {
     padding: 20,
@@ -138,6 +132,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 24,
     textAlign: 'center',
+    color: '#333',
   },
   formGroup: {
     marginBottom: 20,
@@ -145,6 +140,7 @@ const styles = StyleSheet.create({
   label: {
     marginBottom: 8,
     fontSize: 16,
+    color: '#333',
   },
   input: {
     height: 50,
@@ -153,6 +149,8 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     padding: 10,
     fontSize: 16,
+    color: '#333',
+    backgroundColor: '#fff',
   },
   errorMessage: {
     color: 'red',
@@ -166,6 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
+    backgroundColor: '#3f51b5',
   },
   buttonText: {
     color: 'white',
@@ -179,6 +178,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     textDecorationLine: 'underline',
+    color: '#3f51b5',
   },
 });
 

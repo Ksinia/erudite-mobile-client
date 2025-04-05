@@ -1,0 +1,88 @@
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { useRouter } from 'expo-router';
+
+import { RootState } from '../../reducer';
+import { logOutAndClearStorage } from '../../reducer/auth';
+import TranslationContainer from '../../components/Translation/TranslationContainer';
+
+export default function ProfileScreen() {
+  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    dispatch(logOutAndClearStorage());
+    router.replace('/');
+  };
+
+  if (!user) {
+    // Redirect to login if not logged in
+    router.replace('/login');
+    return null;
+  }
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>
+        <TranslationContainer translationKey="welcome" /> {user.name}!
+      </Text>
+      
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>User ID:</Text>
+        <Text style={styles.value}>{user.id}</Text>
+      </View>
+
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.buttonText}>
+          <TranslationContainer translationKey="log_out" />
+        </Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 30,
+    textAlign: 'center',
+    color: '#333',
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    marginBottom: 15,
+    padding: 10,
+    backgroundColor: '#f7f7f7',
+    borderRadius: 5,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginRight: 10,
+    color: '#333',
+  },
+  value: {
+    fontSize: 16,
+    color: '#333',
+  },
+  logoutButton: {
+    backgroundColor: '#f44336',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+});
