@@ -79,7 +79,15 @@ export const getProfileFetch =
           throw new Error(`${response.status}: ${response.statusText}`);
         }
 
-        const action = data;
+        // Ensure the JWT is included in the user object for socket authentication
+        const action = {
+          ...data,
+          payload: {
+            ...data.payload,
+            jwt,
+          },
+        };
+        
         dispatch(action);
       } catch (error) {
         dispatch(errorFromServer(error, 'getProfileFetch'));

@@ -20,6 +20,7 @@ type OwnProps = {
 };
 
 function Lobby(props: OwnProps) {
+  console.log('LobbyScreen', props);
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
