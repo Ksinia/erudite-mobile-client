@@ -36,9 +36,9 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="profile"
+          name="login"
           options={{
-            title: 'Profile',
+            title: 'Login',
           }}
         />
       </Tabs>
