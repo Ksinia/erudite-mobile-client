@@ -1,68 +1,77 @@
-import { Image, StyleSheet, Platform, SafeAreaView } from "react-native";
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { StyleSheet, SafeAreaView } from "react-native";
+import { useState } from 'react';
 import Lobby from "@/components/Lobby";
-import { ChangeEvent, SyntheticEvent } from 'react';
 
-export default function HomeScreen() {
+export default function LobbyScreen() {
+  // Sample data - later this would come from your API
+  const [values, setValues] = useState({
+    maxPlayers: 2,
+    language: "ru"
+  });
 
-  const onChange=(name:string, value: string | number): void => {
-    throw new Error("Function not implemented.");
-  }
+  // Sample game data - later this would come from your state/API
+  const sampleGame = {
+    "id": 108,
+    "phase": "turn",
+    "turnOrder": [1, 4],
+    "turn": 1,
+    "validated": "yes",
+    "language": "ru",
+    "maxPlayers": 2,
+    "activeUserId": 4,
+    "users": [
+      {
+        "id": 4,
+        "name": "dmitry",
+        "Game_User": {
+          "createdAt": "2024-11-01T14:50:39.202Z",
+          "updatedAt": "2024-11-06T23:55:18.516Z",
+          "visit": "2024-11-06T23:55:18.516Z",
+          "GameId": 108,
+          "UserId": 4
+        }
+      },
+      {
+        "id": 1,
+        "name": "k",
+        "Game_User": {
+          "createdAt": "2024-11-01T14:49:51.115Z",
+          "updatedAt": "2024-11-10T21:18:15.316Z",
+          "visit": "2024-11-10T21:18:15.316Z",
+          "GameId": 108,
+          "UserId": 1
+        }
+      }
+    ]
+  };
 
-  const onSubmit=(): Promise<void> => {
-    throw new Error("Function not implemented.");
-  }
+  // Form handlers
+  const onChange = (name: string, value: string | number): void => {
+    setValues(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const onSubmit = async (): Promise<void> => {
+    // This will be implemented when you connect to the backend
+    console.log("Form submitted with values:", values);
+    // Here you would call your API to create a new game
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Lobby onChange={onChange} onSubmit={onSubmit} values={{
-        maxPlayers: 8,
-        language: "en"
-      }} userTurnGames={[
-        {
-
-              "id": 108,
-              "phase": "turn",
-              "turnOrder": [
-                1,
-                4
-              ],
-              "turn": 1,
-              "validated": "yes",
-              "language": "ru",
-              "maxPlayers": 2,
-              "activeUserId": 4,
-              "users": [
-                {
-                  "id": 4,
-                  "name": "dmitry",
-                  "Game_User": {
-                    "createdAt": "2024-11-01T14:50:39.202Z",
-                    "updatedAt": "2024-11-06T23:55:18.516Z",
-                    "visit": "2024-11-06T23:55:18.516Z",
-                    "GameId": 108,
-                    "UserId": 4
-                  }
-                },
-                {
-                  "id": 1,
-                  "name": "k",
-                  "Game_User": {
-                    "createdAt": "2024-11-01T14:49:51.115Z",
-                    "updatedAt": "2024-11-10T21:18:15.316Z",
-                    "visit": "2024-11-10T21:18:15.316Z",
-                    "GameId": 108,
-                    "UserId": 1
-                  }
-                }
-              ]
-        }
-      ]} otherTurnGames={[]} userWaitingGames={[]} otherWaitingGames={[]} otherGames={[]}
-             user={null} sendingFormEnabled={false}
+      <Lobby
+        onChange={onChange}
+        onSubmit={onSubmit}
+        values={values}
+        userTurnGames={[sampleGame]}
+        otherTurnGames={[]}
+        userWaitingGames={[]}
+        otherWaitingGames={[]}
+        otherGames={[]}
+        user={null}
+        sendingFormEnabled={true}
       />
     </SafeAreaView>
   );
