@@ -40,7 +40,7 @@ const Toolbar: React.FC = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/games')}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/')}>
           <Text style={styles.navText}>
             <TranslationContainer translationKey="toolbar_list" />
           </Text>

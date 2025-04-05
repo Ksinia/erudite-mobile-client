@@ -27,6 +27,12 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
+          name="rules"
+          options={{
+            title: 'Rules',
+          }}
+        />
+        <Tabs.Screen
           name="my-games"
           options={{
             title: 'My Games',
