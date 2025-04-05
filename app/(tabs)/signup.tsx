@@ -2,14 +2,14 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Stack } from 'expo-router';
 
-import LoginContainer from '../../components/LoginContainer';
+import SignupContainer from '../../components/SignupContainer';
 import ThemedView from '../../components/ThemedView';
 
-export default function LoginScreen() {
+export default function SignupScreen() {
   return (
     <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: 'Login', headerShown: false }} />
-      <LoginContainer />
+      <Stack.Screen options={{ title: 'Sign Up', headerShown: false }} />
+      <SignupContainer />
     </ThemedView>
   );
 }

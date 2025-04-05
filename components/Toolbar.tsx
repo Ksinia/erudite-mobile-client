@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, StatusB
 import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { logOut } from "@/reducer/auth";
+import { logOutAndClearStorage } from "@/reducer/auth";
 import { RootState } from "@/reducer";
 import TranslationContainer from './Translation/TranslationContainer';
 import LangSwitchContainer from "@/components/LangSwitchContainer";
@@ -14,7 +14,7 @@ const Toolbar: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
 
   const handleLogout = () => {
-    dispatch(logOut());
+    dispatch(logOutAndClearStorage());
     router.replace('/');
   };
 

@@ -1,7 +1,8 @@
 import { createAction, createReducer } from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { InternalMessageTypes } from '../constants/internalMessageTypes';
 import { IncomingMessageTypes } from '../constants/incomingMessageTypes';
-import { User } from './types';
+import { User, MyThunkAction } from './types';
 
 export const loginSuccess = createAction<
   User,
@@ -22,12 +23,24 @@ export const logOut = createAction<void, InternalMessageTypes.LOGOUT>(
 
 export type LogOutAction = ReturnType<typeof logOut>;
 
+// Thunk action that handles logout and AsyncStorage
+export const logOutAndClearStorage = (): MyThunkAction<LogOutAction> => 
+  async (dispatch) => {
+    try {
+      // Remove JWT from AsyncStorage
+      await AsyncStorage.removeItem('jwt');
+      // Dispatch the logout action
+      dispatch(logOut());
+    } catch (error) {
+      console.error('Error clearing AsyncStorage:', error);
+      // Still dispatch logout even if AsyncStorage fails
+      dispatch(logOut());
+    }
+  };
+
 export default createReducer<User | null>(null, (builder) =>
   builder
     .addCase(loginSuccess, (_, action) => action.payload)
-    .addCase(logOut, () => {
-      localStorage.removeItem('jwt');
-      return null;
-    })
+    .addCase(logOut, () => null)
     .addCase(errorLoaded, () => null)
 );

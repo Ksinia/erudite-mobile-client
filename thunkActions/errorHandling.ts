@@ -3,7 +3,7 @@ import { MyThunkAction } from "@/reducer/types";
 import {
   errorLoaded,
   ErrorLoadedAction,
-  logOut,
+  logOutAndClearStorage,
   LogOutAction,
 } from "@/reducer/auth";
 import { loginOrSignupError, LoginOrSignupErrorAction } from "@/reducer/error";
@@ -82,7 +82,7 @@ export const errorFromServer =
       errorMessage.includes('TokenExpiredError') ||
       context === loginSignupFunctionErrorCtx
     ) {
-      dispatch(logOut());
+      dispatch(logOutAndClearStorage());
       dispatch(loginOrSignupError(errorMessage));
     }
     dispatch(errorLoaded(errorMessage));
