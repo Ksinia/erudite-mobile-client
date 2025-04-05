@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, View, TouchableOpacity } from 'react-native'; // Added TouchableOpacity
+import { Text, View, TouchableOpacity } from 'react-native';
 
-import { User, Game } from '../reducer/types';
-import { RootState } from '../reducer';
-import { Colors } from '../constants/Colors';
+import { User, Game } from "@/reducer/types";
+import { RootState } from "@/reducer";
+import { Colors } from "@/constants/Colors";
 import TranslationContainer from './Translation/TranslationContainer';
 import styles from './RoomTileStyles';
 
