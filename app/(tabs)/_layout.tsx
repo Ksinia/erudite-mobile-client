@@ -15,27 +15,27 @@ export default function TabLayout() {
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
           headerShown: false, // Hide the default header since we're using our custom Toolbar
-          tabBarLabelStyle: { fontSize: 14 }, // Make text labels more prominent
+          tabBarLabelStyle: {
+            fontSize: 14,
+            paddingBottom: 5
+          },
         }}>
         <Tabs.Screen
           name="index"
           options={{
             title: 'Lobby',
-            // No tabBarIcon prop needed
           }}
         />
         <Tabs.Screen
           name="my-games"
           options={{
             title: 'My Games',
-            // No tabBarIcon prop needed
           }}
         />
         <Tabs.Screen
           name="profile"
           options={{
             title: 'Profile',
-            // No tabBarIcon prop needed
           }}
         />
       </Tabs>
