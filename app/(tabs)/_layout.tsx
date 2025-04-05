@@ -15,10 +15,7 @@ export default function TabLayout() {
         screenOptions={{
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
           headerShown: false, // Hide the default header since we're using our custom Toolbar
-          tabBarLabelStyle: {
-            fontSize: 14,
-            paddingBottom: 5
-          },
+          tabBarStyle: { display: 'none' }, // Hide the tab bar to match web client
         }}>
         <Tabs.Screen
           name="index"
