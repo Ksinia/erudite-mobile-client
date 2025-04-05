@@ -70,7 +70,9 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         </View>
         
         {error && (
-          <Text style={styles.errorMessage}>{error}</Text>
+          <Text style={styles.errorMessage}>
+            {typeof error === 'string' ? error : 'Authentication failed. Please try again.'}
+          </Text>
         )}
         
         <TouchableOpacity 

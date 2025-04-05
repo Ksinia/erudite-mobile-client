@@ -27,11 +27,18 @@ export const loginSignupFunction =
         body,
       });
 
+      // Parse the JSON response regardless of success or failure
+      const data = await response.json();
+      
       if (!response.ok) {
-        throw response;
+        // If server returns error with message field, use that
+        if (data && data.message) {
+          throw new Error(data.message);
+        }
+        // Otherwise use status text
+        throw new Error(`${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
       const action = data;
 
       // Store JWT token in AsyncStorage
@@ -60,11 +67,18 @@ export const getProfileFetch =
           },
         });
 
+        // Parse the JSON response regardless of success or failure
+        const data = await response.json();
+        
         if (!response.ok) {
-          throw response;
+          // If server returns error with message field, use that
+          if (data && data.message) {
+            throw new Error(data.message);
+          }
+          // Otherwise use status text
+          throw new Error(`${response.status}: ${response.statusText}`);
         }
 
-        const data = await response.json();
         const action = data;
         dispatch(action);
       } catch (error) {
