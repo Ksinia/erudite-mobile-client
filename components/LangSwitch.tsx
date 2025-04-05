@@ -38,10 +38,13 @@ const LangSwitch: React.FC<Props> = ({ locale, setLanguage }) => {
 const styles = StyleSheet.create({
   langContainer: {
     flexDirection: 'row',
+    height: '100%',
+    alignItems: 'center',
   },
   langButton: {
-    paddingHorizontal: 5,
-    paddingVertical: 2,
+    paddingHorizontal: 2, // Reduced from 5 to 2
+    height: '100%',
+    justifyContent: 'center',
   },
   langText: {
     fontSize: 12,

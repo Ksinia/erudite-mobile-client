@@ -26,7 +26,9 @@ const Toolbar: React.FC = () => {
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <ScrollView horizontal={false} contentContainerStyle={styles.scrollContainer}>
-        <LangSwitchContainer/>
+        <View style={styles.navItem}>
+          <LangSwitchContainer/>
+        </View>
 
         <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/rules')}>
           <Text style={styles.navText}>
