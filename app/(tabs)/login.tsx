@@ -1,21 +1,9 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { Stack } from 'expo-router';
 
 import LoginContainer from '../../components/LoginContainer';
-import ThemedView from '../../components/ThemedView';
 
 export default function LoginScreen() {
   return (
-    <ThemedView style={styles.container}>
-      <Stack.Screen options={{ title: 'Login', headerShown: false }} />
-      <LoginContainer />
-    </ThemedView>
+    <LoginContainer />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
