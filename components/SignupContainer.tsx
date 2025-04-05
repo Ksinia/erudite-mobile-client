@@ -32,6 +32,13 @@ const SignupContainer: React.FC = () => {
         formState.email
       )
     );
+    
+    // Reset form immediately after submission
+    setFormState({
+      name: formState.name, // Keep the name for convenience
+      email: formState.email, // Keep the email for convenience
+      password: '',  // Clear password for security
+    });
   };
 
   useEffect(() => {

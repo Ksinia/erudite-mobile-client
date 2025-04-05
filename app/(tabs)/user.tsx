@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
-import { RootState } from '../../reducer';
-import { logOutAndClearStorage } from '../../reducer/auth';
+import { RootState } from "@/reducer";
+import { logOutAndClearStorage } from "@/reducer/auth";
 import TranslationContainer from '../../components/Translation/TranslationContainer';
 
-export default function ProfileScreen() {
+export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
   const router = useRouter();

@@ -30,6 +30,12 @@ const LoginContainer: React.FC = () => {
         router
       )
     );
+    
+    // Reset form immediately after submission
+    setFormState({
+      name: formState.name, // Keep the name for convenience
+      password: '',  // Clear password for security
+    });
   };
 
   useEffect(() => {
