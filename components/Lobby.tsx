@@ -7,7 +7,7 @@ import TranslationContainer from './Translation/TranslationContainer';
 import { NewGameForm } from "@/components/NewGameForm";
 
 type OwnProps = {
-  onChange: (name: string, value: string | number) => void;
+  onChange: (name: string, value: string) => void;
   onSubmit: () => Promise<void>;
   values: { maxPlayers: number; language: string };
   userTurnGames: Game[];

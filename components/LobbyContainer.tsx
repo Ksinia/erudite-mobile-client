@@ -5,7 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { backendUrl } from '../runtime';
 import { RootState } from '../reducer';
-import { Game as GameType, User } from '../reducer/types';
+import { Game as GameType } from '../reducer/types';
 import { errorFromServer } from '../thunkActions/errorHandling';
 import { enterLobby } from '../reducer/outgoingMessages';
 import Lobby from './Lobby';
@@ -14,8 +14,8 @@ import { View, Text, ActivityIndicator } from 'react-native';
 
 const LobbyContainer: React.FC = () => {
   const [formState, setFormState] = useState({
-    maxPlayers: 2,
-    language: 'en',
+    maxPlayers: 2, // TODO: here it is number by in setFormState it is set to string
+    language: 'ru', // TODO: need proper handling of default language
     sendingFormEnabled: true,
   });
   
@@ -43,7 +43,7 @@ const LobbyContainer: React.FC = () => {
   };
   
   // Handle form field changes
-  const handleChange = (name: string, value: any): void => {
+  const handleChange = (name: string, value: string): void => {
     setFormState(prev => ({
       ...prev,
       [name]: value,
@@ -108,7 +108,6 @@ const LobbyContainer: React.FC = () => {
   // Process games for the lobby view
   const processGames = () => {
     if (!Array.isArray(lobby)) return null;
-    console.log('lobby', lobby);
     return lobby.reduce(
       (allGames: { [key: string]: GameType[] }, game) => {
         if (

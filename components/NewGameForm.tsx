@@ -1,11 +1,10 @@
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import TranslationContainer from "@/components/Translation/TranslationContainer";
-import { Picker } from "@react-native-picker/picker";
 import React from "react";
 
 interface Props {
   values: { maxPlayers: number; language: string };
-  onChange: (name: string, value: string | number) => void;
+  onChange: (name: string, value: string) => void;
   onSubmit: () => Promise<void>;
   disabled: boolean;
 }
@@ -14,46 +13,67 @@ export function NewGameForm(props: Props) {
   return <View style={styles.formContainer}>
     <View style={styles.formCard}>
 
-      <View style={styles.formRow} key={1}>
+      <View style={styles.formRow}>
         <Text style={styles.label}>
           <TranslationContainer translationKey="qty" />
         </Text>
         <TextInput
           style={styles.input}
-          keyboardType="numeric"
+          keyboardType="number-pad"
           maxLength={1}
           value={props.values.maxPlayers.toString()}
-          onChangeText={(text) => props.onChange('maxPlayers', parseInt(text) || 2)}
+          onChangeText={(maxPlayers) => props.onChange("maxPlayers", maxPlayers)}
         />
       </View>
 
-      <View style={styles.formRow} key={2}>
+      <View style={styles.formRow}>
 
         <View style={styles.halfRow}>
           <Text style={styles.label}>
             <TranslationContainer translationKey="language" />
           </Text>
-          <View style={styles.smallPickerContainer}>
-            <Picker
-              selectedValue={props.values.language}
-              style={styles.smallPicker}
-              onValueChange={(value) => props.onChange('language', value)}
+          <View style={styles.languageButtonGroup}>
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                props.values.language === 'en' && styles.activeLanguageButton
+              ]}
+              onPress={() => props.onChange('language', 'en')}
             >
-              <Picker.Item label="RU" value="ru" />
-              <Picker.Item label="EN" value="en" />
-            </Picker>
+              <Text style={[
+                styles.languageButtonText,
+                props.values.language === 'en' && styles.activeLanguageText
+              ]}>
+                EN
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[
+                styles.languageButton,
+                props.values.language === 'ru' && styles.activeLanguageButton
+              ]}
+              onPress={() => props.onChange('language', 'ru')}
+            >
+              <Text style={[
+                styles.languageButtonText,
+                props.values.language === 'ru' && styles.activeLanguageText
+              ]}>
+                RU
+              </Text>
+            </TouchableOpacity>
           </View>
         </View>
 
-          <TouchableOpacity
-            style={[styles.inlineButton, props.disabled && styles.buttonDisabled]}
-            onPress={props.onSubmit}
-            disabled={props.disabled}
-          >
-            <Text style={styles.buttonText}>
-              <TranslationContainer translationKey="submit" />
-            </Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.inlineButton, props.disabled && styles.buttonDisabled]}
+          onPress={props.onSubmit}
+          disabled={props.disabled}
+        >
+          <Text style={styles.buttonText}>
+            <TranslationContainer translationKey="submit" />
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   </View>
@@ -64,6 +84,7 @@ const { width } = Dimensions.get('window');
 const styles = StyleSheet.create({
   formContainer: {
     alignItems: 'center',
+    marginBottom: 30,
   },
   formCard: {
     backgroundColor: '#f9f9f9',
@@ -86,7 +107,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     columnGap: 20
-
   },
   halfRow: {
     flexDirection: 'row',
@@ -107,6 +127,34 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     backgroundColor: '#fff',
+    minWidth: 40,
+  },
+  languageButtonGroup: {
+    flexDirection: 'row',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    width: 80,
+    height: 36,
+    overflow: 'hidden',
+  },
+  languageButton: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    paddingHorizontal: 5,
+  },
+  activeLanguageButton: {
+    backgroundColor: '#3f51b5',
+  },
+  languageButtonText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  activeLanguageText: {
+    color: '#fff',
   },
   buttonDisabled: {
     backgroundColor: '#9e9e9e',
@@ -116,19 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
-  },
-  smallPickerContainer: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    width: 80,
-    height: 36,
-    justifyContent: 'center',
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-  },
-  smallPicker: {
-    height: 36,
   },
   inlineButton: {
     backgroundColor: '#3f51b5',
