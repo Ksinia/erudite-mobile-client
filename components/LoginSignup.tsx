@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 4,
+    borderRadius: 5,
     padding: 10,
     fontSize: 16,
     color: '#333',
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     height: 50,
-    borderRadius: 4,
+    borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
