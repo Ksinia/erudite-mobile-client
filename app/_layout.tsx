@@ -4,6 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet } from 'react-native';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 import store from "@/store";
@@ -12,6 +14,16 @@ import SocketInitializer from '@/components/SocketInitializer';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  safeArea: {
+    flex: 1,
+  },
+});
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -31,14 +43,20 @@ export default function RootLayout() {
 
   return (
     <Provider store={store}>
-      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-        {/* Initialize socket connections */}
-        <SocketInitializer />
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="+not-found" />
-        </Stack>
-      </ThemeProvider>
+      <SafeAreaProvider>
+        <View style={styles.container}>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            {/* Initialize socket connections */}
+            <SocketInitializer />
+            <SafeAreaView style={styles.safeArea}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+            </SafeAreaView>
+          </ThemeProvider>
+        </View>
+      </SafeAreaProvider>
     </Provider>
   );
 }

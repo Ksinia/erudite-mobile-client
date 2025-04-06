@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Platform, StatusBar } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -24,7 +24,6 @@ const Toolbar: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="dark-content" />
       <ScrollView horizontal={false} contentContainerStyle={styles.scrollContainer}>
         <View style={styles.navItem}>
           <LangSwitchContainer/>
@@ -81,16 +80,15 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     backgroundColor: '#f5f5f5',
-    paddingTop: Platform.OS === 'ios' ? 44 : StatusBar.currentHeight || 0,
   },
   scrollContainer: {
     flexDirection: 'row',
     paddingHorizontal: 2,
-    height: 44,
-    justifyContent: 'space-between', // Distribute items evenly
+    height: 30,
+    justifyContent: 'space-between',
   },
   navItem: {
-    paddingHorizontal: 5, // Reduced from 10
+    paddingHorizontal: 5,
     justifyContent: 'center',
     height: '100%',
   },
