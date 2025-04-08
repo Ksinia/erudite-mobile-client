@@ -1,5 +1,6 @@
 import React from 'react';
 import { Text, View, StyleSheet, ScrollView } from "react-native";
+import { useRouter } from 'expo-router';
 
 import { User, Game } from "@/reducer/types";
 import RoomTile from './RoomTile';
@@ -20,6 +21,7 @@ type OwnProps = {
 };
 
 function Lobby(props: OwnProps) {
+  const router = useRouter();
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
@@ -41,7 +43,7 @@ function Lobby(props: OwnProps) {
           <View style={styles.rooms}>
             {props.userTurnGames.map((game) => (
               <View key={game.id}>
-                <RoomTile room={game} user={props.user} />
+                <RoomTile room={game} user={props.user} onPress={(id) => router.push(`/game/${id}`)} />
               </View>
             ))}
           </View>
@@ -56,7 +58,7 @@ function Lobby(props: OwnProps) {
           <View style={styles.rooms}>
             {props.otherTurnGames.map((game) => (
               <View key={game.id}>
-                <RoomTile room={game} user={props.user} />
+                <RoomTile room={game} user={props.user} onPress={(id) => router.push(`/game/${id}`)} />
               </View>
             ))}
           </View>
@@ -71,7 +73,7 @@ function Lobby(props: OwnProps) {
           <View style={styles.rooms}>
             {props.userWaitingGames.map((game) => (
               <View key={game.id}>
-                <RoomTile room={game} user={props.user} />
+                <RoomTile room={game} user={props.user} onPress={(id) => router.push(`/game/${id}`)} />
               </View>
             ))}
           </View>
@@ -86,7 +88,7 @@ function Lobby(props: OwnProps) {
           <View style={styles.rooms}>
             {props.otherWaitingGames.map((game) => (
               <View key={game.id}>
-                <RoomTile room={game} user={props.user} />
+                <RoomTile room={game} user={props.user} onPress={(id) => router.push(`/game/${id}`)} />
               </View>
             ))}
           </View>
@@ -101,7 +103,7 @@ function Lobby(props: OwnProps) {
           <View style={styles.rooms}>
             {props.otherGames.map((game) => (
               <View key={game.id}>
-                <RoomTile room={game} user={props.user} />
+                <RoomTile room={game} user={props.user} onPress={(id) => router.push(`/game/${id}`)} />
               </View>
             ))}
           </View>
