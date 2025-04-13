@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
     height: 120,
     display: 'flex',
     flexDirection: 'column',
+    backgroundColor: '#ffffff', // Added solid background color to fix shadow rendering
     // Add shadow for better appearance
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
