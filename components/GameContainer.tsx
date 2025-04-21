@@ -8,7 +8,9 @@ import { RootState } from '@/reducer';
 import { User, Game as GameType } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
 import { noDuplications } from '@/reducer/duplicatedWords';
+import { sendTurn } from '@/thunkActions/turn';
 import Game from './Game';
+import { AppDispatch } from "@/store";
 
 /**
  * extract added letters from whole new hand
@@ -68,7 +70,7 @@ interface Props {
 }
 
 const GameContainer: React.FC<Props> = ({ gameId }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
   
   const user = useSelector((state: RootState) => state.user);
@@ -204,37 +206,19 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
   const confirmTurn = useCallback(async () => {
     if (!user || !game) return;
     
+    // Convert empty strings to null for API
     const userBoardToSend = userBoard.map((row) =>
-      row.map((cell) => {
-        if (cell === '') {
-          return null;
-        } else {
-          return cell;
-        }
-      })
+      row.map((cell) => cell === '' ? null : cell)
     );
     
-    try {
-      const response = await fetch(`${backendUrl}/game/${gameId}/turn`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${user.jwt}`,
-        },
-        body: JSON.stringify({
-          userBoard: userBoardToSend,
-          wildCardOnBoard,
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // The socket middleware will update the game state
-    } catch (error) {
-      dispatch(errorFromServer(error, 'confirmTurn'));
-    }
+    // Use the thunk action which handles the API call and dispatching to Redux
+    dispatch(sendTurn(
+      gameId,
+      user.jwt,
+      userBoardToSend,
+      wildCardOnBoard
+    ));
+    
   }, [user, game, userBoard, wildCardOnBoard, gameId, dispatch]);
 
   // Validate turn handler
@@ -383,6 +367,9 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     }
   }, [game?.id, user?.id]); // Only re-run when game ID or user ID changes
 
+  const stringifiedLetters = JSON.stringify(game?.letters)
+  const stringifiedBoard = JSON.stringify(game?.board)
+
   // Update component state when game updates
   useEffect(() => {
     if (!user || !game || !game.turnOrder.includes(user.id)) {
@@ -394,14 +381,6 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       return;
     }
     
-    // Use a ref to track previous game state to avoid unnecessary updates
-    const gameStateKey = JSON.stringify({
-      userLetters: game.letters[user.id],
-      board: game.board,
-      turn: game.turn,
-      phase: game.phase
-    });
-    
     // Store the current game state for processing
     const serverLetters = game.letters[user.id];
     const prevLetters = getPreviousLetters(
@@ -409,18 +388,13 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       wildCardOnBoard,
       userLetters
     );
+
     
-    // Only update when we detect a change in the user's letters or board
-    // if player has fewer letters than on server, just add letters from server
     if (prevLetters.length < serverLetters.length) {
-      const addedLetters = arrayDifference(
-        prevLetters,
-        serverLetters
-      );
-      setUserLetters(serverLetters);
+
     }
     // if player's letters are same as on server, adjust for collisions
-    else if (
+    if (
       JSON.stringify([...prevLetters].sort()) ===
       JSON.stringify([...serverLetters].sort())
     ) {
@@ -452,16 +426,16 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
         setWildCardLetters(updatedWildCardLetters);
       }
     }
-    // if player's letters are different than on server, reset completely
-    else if (JSON.stringify([...prevLetters].sort()) !==
-             JSON.stringify([...serverLetters].sort())) {
+    // if player's letters are different from on server, reset completely
+    else {
       setUserLetters([...serverLetters]);
       setUserBoard(emptyUserBoard.map((row) => row.slice()));
       setWildCardLetters([]);
       setWildCardOnBoard({});
     }
-  }, [game?.id, game?.turn, game?.phase, 
-      JSON.stringify(game?.letters), JSON.stringify(game?.board)]);
+
+  }, [game?.id, game?.turn, game?.phase,
+    stringifiedLetters, stringifiedBoard]);
 
   // Clean up on unmount
   useEffect(() => {
