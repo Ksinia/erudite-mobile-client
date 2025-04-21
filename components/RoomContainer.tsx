@@ -71,7 +71,20 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       
-      // The data will be processed by socket middleware
+      // Parse the response and dispatch it to Redux
+      const data = await response.json();
+      
+      // Similar to how the web client does it in fetchGame thunk
+      if (data && data.payload && data.payload.game) {
+        // Dispatch the game data directly to the Redux store
+        dispatch({
+          type: 'GAME_UPDATED',
+          payload: {
+            gameId: gameId,
+            game: data.payload.game
+          }
+        });
+      }
     } catch (error) {
       dispatch(errorFromServer(error, 'fetchGame'));
     } finally {
