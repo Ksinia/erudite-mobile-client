@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
 
@@ -123,7 +123,7 @@ const Board: React.FC<Props> = ({
                 const isNewLetter = !!board[y][x] && !previousBoard[y][x];
                 
                 return (
-                  <TouchableOpacity
+                  <Pressable
                     key={`cell-${x}-${y}`}
                     style={[
                       styles.cell,
@@ -161,7 +161,7 @@ const Board: React.FC<Props> = ({
                     {userBoard[y][x] && (
                       <Text style={styles.userLetter}>{userBoard[y][x]}</Text>
                     )}
-                  </TouchableOpacity>
+                  </Pressable>
                 );
               })}
             </View>

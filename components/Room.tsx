@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 
 import { User, Game as GameType } from '@/reducer/types';
 import TranslationContainer from './Translation/TranslationContainer';
@@ -79,25 +79,25 @@ function Room(props: Props) {
         <View style={styles.actionContainer}>
           {props.room.phase === 'waiting' &&
             !props.room.users.find((user) => user.id === props.user?.id) && (
-              <TouchableOpacity 
+              <Pressable 
                 style={styles.button} 
                 onPress={props.onClickJoin}
               >
                 <Text style={styles.buttonText}>
                   <TranslationContainer translationKey="join" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
           {props.room.users.find((user) => user.id === props.user?.id) &&
             props.room.phase === 'ready' && (
-              <TouchableOpacity 
+              <Pressable 
                 style={styles.button} 
                 onPress={props.onClickStart}
               >
                 <Text style={styles.buttonText}>
                   <TranslationContainer translationKey="start" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             )}
         </View>
       )}

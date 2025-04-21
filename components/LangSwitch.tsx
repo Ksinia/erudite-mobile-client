@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet } from 'react-native';
 import { setLanguage } from "@/components/Translation/reducer";
 import { LANG_NAMES } from "@/constants/translations";
 
@@ -12,7 +12,7 @@ const LangSwitch: React.FC<Props> = ({ locale, setLanguage }) => {
   return (
     <View style={styles.langContainer}>
       {LANG_NAMES.map((language, i) => (
-        <TouchableOpacity
+        <Pressable
           key={i}
           style={styles.langButton}
           onPress={() => {
@@ -29,7 +29,7 @@ const LangSwitch: React.FC<Props> = ({ locale, setLanguage }) => {
           >
             {language.name}
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       ))}
     </View>
   );

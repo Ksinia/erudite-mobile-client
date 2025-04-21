@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
@@ -34,11 +34,11 @@ export default function UserScreen() {
         <Text style={styles.value}>{user.id}</Text>
       </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+      <Pressable style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>
           <TranslationContainer translationKey="log_out" />
         </Text>
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
 }

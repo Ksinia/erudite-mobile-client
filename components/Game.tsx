@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 
 import { letterValues } from '@/constants/letterValues';
 import { Game as GameType, User } from '@/reducer/types';
@@ -70,7 +70,7 @@ const Game: React.FC<Props> = (props) => {
         {props.user && (
           <View style={styles.lettersContainer}>
             {props.userLetters.map((letter, index) => (
-              <TouchableOpacity
+              <Pressable
                 key={index}
                 style={[
                   styles.letterTile,
@@ -82,7 +82,7 @@ const Game: React.FC<Props> = (props) => {
                 <Text style={styles.letterValue}>
                   {letterValues[props.game.language][letter]}
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             ))}
           </View>
         )}
@@ -98,14 +98,14 @@ const Game: React.FC<Props> = (props) => {
         
         <View style={styles.buttonContainer}>
           {showPlayAgain && (
-            <TouchableOpacity
+            <Pressable
               style={styles.button}
               onPress={props.playAgainWithSamePlayers}
             >
               <Text style={styles.buttonText}>
                 <TranslationContainer translationKey="play_again" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           
           {props.duplicatedWords.length > 0 && (
@@ -118,7 +118,7 @@ const Game: React.FC<Props> = (props) => {
           )}
           
           {showConfirmButton && (
-            <TouchableOpacity
+            <Pressable
               style={styles.button}
               onPress={props.confirmTurn}
               disabled={props.wildCardLetters.some(
@@ -132,29 +132,29 @@ const Game: React.FC<Props> = (props) => {
                   <TranslationContainer translationKey="confirm" />
                 )}
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           
           {showReturnButton && (
-            <TouchableOpacity
+            <Pressable
               style={styles.button}
               onPress={props.returnLetters}
             >
               <Text style={styles.buttonText}>
                 <TranslationContainer translationKey="return" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           
           {showChangeButton && (
-            <TouchableOpacity
+            <Pressable
               style={styles.button}
               onPress={props.change}
             >
               <Text style={styles.buttonText}>
                 <TranslationContainer translationKey="change" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           )}
           
           {props.game.phase === 'validation' &&
@@ -169,7 +169,7 @@ const Game: React.FC<Props> = (props) => {
           
           {showValidationButtons && (
             <View style={styles.validationButtons}>
-              <TouchableOpacity
+              <Pressable
                 style={[styles.button, styles.confirmButton]}
                 onPress={() => props.validateTurn('yes')}
               >
@@ -184,9 +184,9 @@ const Game: React.FC<Props> = (props) => {
                     ]}
                   />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
               
-              <TouchableOpacity
+              <Pressable
                 style={[styles.button, styles.rejectButton]}
                 onPress={() => props.validateTurn('no')}
               >
@@ -201,7 +201,7 @@ const Game: React.FC<Props> = (props) => {
                     ]}
                   />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </View>
           )}
           
@@ -225,14 +225,14 @@ const Game: React.FC<Props> = (props) => {
               </Text>
               
               {showUndoButton && (
-                <TouchableOpacity
+                <Pressable
                   style={styles.button}
                   onPress={props.undo}
                 >
                   <Text style={styles.buttonText}>
                     <TranslationContainer translationKey="undo" />
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               )}
             </View>
           )}

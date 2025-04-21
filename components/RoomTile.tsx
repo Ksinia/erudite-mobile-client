@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, Pressable } from 'react-native';
 
 import { User, Game } from "@/reducer/types";
 import { RootState } from "@/reducer";
@@ -65,7 +65,7 @@ class RoomTile extends Component<Props> {
     const messagesCount = {108: 0}  // temp change to constant
 
     return (
-      <TouchableOpacity onPress={this.handlePress} activeOpacity={0.7}>
+      <Pressable onPress={this.handlePress} activeOpacity={0.7}>
         <View style={styles.roomTile}>
           <View
             style={[styles.tileHeader, { backgroundColor: getTileColor(this.props) }]}
@@ -118,7 +118,7 @@ class RoomTile extends Component<Props> {
             </View>
           )}
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   }
 }

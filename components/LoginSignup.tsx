@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { Link } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
@@ -76,7 +76,7 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
           </Text>
         )}
         
-        <TouchableOpacity 
+        <Pressable 
           style={styles.submitButton}
           onPress={onSubmit}
         >
@@ -85,33 +85,33 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
               translationKey={isSignUp ? 'sign_up' : 'log_in'}
             />
           </Text>
-        </TouchableOpacity>
+        </Pressable>
         
         <View style={styles.links}>
           {isSignUp ? (
             <Link href="/login" asChild>
-              <TouchableOpacity>
+              <Pressable>
                 <Text style={styles.linkText}>
                   <TranslationContainer translationKey="already_signed_up" />
                 </Text>
-              </TouchableOpacity>
+              </Pressable>
             </Link>
           ) : (
             <>
               <Link href="/signup" asChild>
-                <TouchableOpacity>
+                <Pressable>
                   <Text style={styles.linkText}>
                     <TranslationContainer translationKey="no_account" />
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </Link>
               
               <Link href="/forgot-password" asChild>
-                <TouchableOpacity>
+                <Pressable>
                   <Text style={styles.linkText}>
                     <TranslationContainer translationKey="forgot" />
                   </Text>
-                </TouchableOpacity>
+                </Pressable>
               </Link>
             </>
           )}

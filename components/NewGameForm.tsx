@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Dimensions, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
 import TranslationContainer from "@/components/Translation/TranslationContainer";
 import React from "react";
 import { Colors } from "@/constants/Colors";
@@ -34,7 +34,7 @@ export function NewGameForm(props: Props) {
             <TranslationContainer translationKey="language" />
           </Text>
           <View style={styles.languageButtonGroup}>
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.languageButton,
                 props.values.language === 'en' && styles.activeLanguageButton
@@ -47,9 +47,9 @@ export function NewGameForm(props: Props) {
               ]}>
                 EN
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity
+            <Pressable
               style={[
                 styles.languageButton,
                 props.values.language === 'ru' && styles.activeLanguageButton
@@ -62,11 +62,11 @@ export function NewGameForm(props: Props) {
               ]}>
                 RU
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </View>
         </View>
 
-        <TouchableOpacity
+        <Pressable
           style={[styles.inlineButton, props.disabled && styles.buttonDisabled]}
           onPress={props.onSubmit}
           disabled={props.disabled}
@@ -74,7 +74,7 @@ export function NewGameForm(props: Props) {
           <Text style={styles.buttonText}>
             <TranslationContainer translationKey="submit" />
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </View>
   </View>

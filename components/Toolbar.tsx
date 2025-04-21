@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -29,45 +29,45 @@ const Toolbar: React.FC = () => {
           <LangSwitchContainer/>
         </View>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/rules')}>
+        <Pressable style={styles.navItem} onPress={() => navigateTo('/rules')}>
           <Text style={styles.navText}>
             <TranslationContainer translationKey="toolbar_rules" />
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
-        <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/')}>
+        <Pressable style={styles.navItem} onPress={() => navigateTo('/')}>
           <Text style={styles.navText}>
             <TranslationContainer translationKey="toolbar_list" />
           </Text>
-        </TouchableOpacity>
+        </Pressable>
 
         {!user ? (
           <>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/signup')}>
+            <Pressable style={styles.navItem} onPress={() => navigateTo('/signup')}>
               <Text style={styles.navText}>
                 <TranslationContainer translationKey="sign_up" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/login')}>
+            <Pressable style={styles.navItem} onPress={() => navigateTo('/login')}>
               <Text style={styles.navText}>
                 <TranslationContainer translationKey="log_in" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </>
         ) : (
           <>
-            <TouchableOpacity style={styles.navItem} onPress={() => navigateTo('/user')}>
+            <Pressable style={styles.navItem} onPress={() => navigateTo('/user')}>
               <Text style={styles.navText}>
                 <TranslationContainer translationKey="welcome" /> {user.name}!
               </Text>
-            </TouchableOpacity>
+            </Pressable>
 
-            <TouchableOpacity style={styles.navItem} onPress={handleLogout}>
+            <Pressable style={styles.navItem} onPress={handleLogout}>
               <Text style={styles.navText}>
                 <TranslationContainer translationKey="log_out" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           </>
         )}
       </ScrollView>
