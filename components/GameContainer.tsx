@@ -417,7 +417,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
         prevLetters,
         serverLetters
       );
-      setUserLetters(current => [...current, ...addedLetters]);
+      setUserLetters(serverLetters);
     }
     // if player's letters are same as on server, adjust for collisions
     else if (
@@ -447,7 +447,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       );
       
       if (boardChanged) {
-        setUserLetters(updatedUserLetters);
+        setUserLetters(serverLetters);
         setUserBoard(updatedUserBoard);
         setWildCardLetters(updatedWildCardLetters);
       }
