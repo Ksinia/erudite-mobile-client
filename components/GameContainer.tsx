@@ -222,8 +222,8 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
           'Authorization': `Bearer ${user.jwt}`,
         },
         body: JSON.stringify({
-          board: userBoardToSend,
-          wildCards: wildCardOnBoard
+          userBoard: userBoardToSend,
+          wildCardOnBoard,
         }),
       });
       
