@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
+import { Colors } from '@/constants/Colors';
 
 type Props = {
   clickBoard: (x: number, y: number) => void;
@@ -217,28 +218,28 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   centerCell: {
-    backgroundColor: '#ffd700',
+    backgroundColor: '#f0f0f0', // Light gray for center cell
   },
   ordinary: {
     backgroundColor: '#fff',
   },
   wordTriple: {
-    backgroundColor: '#ff6347',
+    backgroundColor: Colors.red, // w3 - word triple
   },
   wordDouble: {
-    backgroundColor: '#ffa07a',
+    backgroundColor: Colors.blue, // w2 - word double
   },
   letterTriple: {
-    backgroundColor: '#4682b4',
+    backgroundColor: Colors.orange, // l3 - letter triple
   },
   letterDouble: {
-    backgroundColor: '#87ceeb',
+    backgroundColor: Colors.green, // l2 - letter double
   },
   userLetterCell: {
-    backgroundColor: '#e6e6fa',
+    backgroundColor: Colors.lightPurple, // Light purple for user letters
   },
   newLetterCell: {
-    backgroundColor: '#98fb98',
+    backgroundColor: Colors.lightGoldenrod, // Light goldenrod for new letters
   },
   multiply: {
     fontSize: 10,

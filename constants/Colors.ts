@@ -7,10 +7,13 @@ const tintColorLight = '#0a7ea4';
 const tintColorDark = '#fff';
 
 export const Colors = {
-  red: 'rgba(250, 128, 114, 0.5)',
-  orange: 'rgba(255, 165, 0, 0.5)',
-  green: 'rgba(154, 205, 50, 0.5)',
-  blue: 'rgba(70, 130, 180, 0.5)',
+  // Board bonus cell colors (matching client CSS)
+  red: 'rgba(250, 128, 114, 0.5)',     // w3 (word triple)
+  orange: 'rgba(255, 165, 0, 0.5)',    // l3 (letter triple)
+  green: 'rgba(154, 205, 50, 0.5)',    // l2 (letter double)
+  blue: 'rgba(70, 130, 180, 0.5)',     // w2 (word double)
+  lightPurple: 'rgba(230, 230, 250, 1)',
+  lightGoldenrod: 'lightgoldenrodyellow', // For new letters
   buttonPrimary: '#3f51b5',
   light: {
     text: '#11181C',
