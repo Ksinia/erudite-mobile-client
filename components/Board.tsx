@@ -156,32 +156,32 @@ const Board: React.FC<Props> = ({
                 ]}
                 onPress={() => clickBoard(x, y)}
               >
-                {!letter && !userBoard[y][x] && (
+                {!letter && !userBoard[y][x] ? (
                   <>
                     <Text style={styles.multiply}>{cell.multiply}</Text>
                     <Text style={styles.unit}>
                       <TranslationContainer translationKey={cell.unit} />
                     </Text>
                   </>
-                )}
+                ) : null}
 
                 {/* Show letter value */}
-                {(letter || userBoard[y][x]) && (
+                {(letter || userBoard[y][x]) ? (
                   <Text style={styles.letterValue}>
                     {letter && values[letter[0]]}
                     {userBoard[y][x] && values[userBoard[y][x][0]]}
                   </Text>
-                )}
+                ) : null}
 
                 {/* Show letter */}
-                {letter && (
+                {letter ? (
                   <Text style={styles.letter}>{letter}</Text>
-                )}
+                ) : null}
 
                 {/* Show user letter */}
-                {userBoard[y][x] && (
+                {userBoard[y][x] ? (
                   <Text style={styles.userLetter}>{userBoard[y][x]}</Text>
-                )}
+                ): null}
               </Pressable>
             );
           })}
