@@ -59,10 +59,31 @@ const Board: React.FC<Props> = ({
   values, 
   wildCardOnBoard 
 }) => {
-  // Calculate board cell size based on screen width
   const screenWidth = Dimensions.get('window').width;
-  const cellSize = Math.floor((screenWidth - 30) / 15); // 15 cells per row with some margin
-  
+  const boardWidth = Math.min(screenWidth * 0.9, 504); // 90% width, max 31.5em
+  const cellSize = boardWidth / 15;
+
+  const dynamicStyles = {
+    boardTableCell: {
+      width: cellSize,
+      height: cellSize,
+    },
+    // Adjust font sizes based on cell size if needed
+    cell: {
+      fontSize: cellSize * 0.5,
+    },
+    multiply: {
+      fontSize: cellSize * 0.5,
+    },
+    unit: {
+      fontSize: cellSize * 0.22,
+    },
+    valueOnBoard: {
+      top: -cellSize * 0.3,
+      right: -cellSize * 0.02,
+    }
+  };
+
   // Create an empty 15x15 board
   const boardWithBonuses = Array(15).fill(null).map((_, y) => {
     return Array(15).fill(null).map((_, x) => {
@@ -126,6 +147,7 @@ const Board: React.FC<Props> = ({
                 key={`cell-${x}-${y}`}
                 style={[
                   styles.cell,
+                  dynamicStyles.boardTableCell,
                   { width: cellSize, height: cellSize },
                   getBonusStyle(cell.cellClass),
                   isCenter && styles.centerCell,
@@ -187,10 +209,11 @@ const getBonusStyle = (bonusType: string) => {
 
 const styles = StyleSheet.create({
   boardContainer: {
-    // padding: 2,
-    // backgroundColor: '#f0f0f0',
-    borderWidth: 1,
-    borderColor: '#ddd',
+    marginHorizontal: 'auto',
+    width: '90%',
+    maxWidth: 504,
+    aspectRatio: 1,
+    overflow: 'hidden',
   },
   loadingContainer: {
     padding: 20,
@@ -199,6 +222,7 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
+    paddingLeft: 7,
   },
   cell: {
     borderWidth: 1,
@@ -206,6 +230,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
+    marginRight: -1,
+    marginBottom: -1,
   },
   centerCell: {
     backgroundColor: '#f0f0f0', // Light gray for center cell
