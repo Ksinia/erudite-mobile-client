@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import { Link } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
+import { Colors } from "@/constants/Colors";
 
 type Props = {
   onChange: (name: string, value: string) => void;
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
     marginBottom: 20,
-    backgroundColor: '#3f51b5',
+    backgroundColor: Colors.buttonPrimary,
   },
   buttonText: {
     color: 'white',
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
   },
   linkText: {
     textDecorationLine: 'underline',
-    color: '#3f51b5',
+    color: Colors.buttonPrimary,
   },
 });
 

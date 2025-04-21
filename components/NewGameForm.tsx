@@ -1,6 +1,7 @@
 import { Dimensions, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import TranslationContainer from "@/components/Translation/TranslationContainer";
 import React from "react";
+import { Colors } from "@/constants/Colors";
 
 interface Props {
   values: { maxPlayers: number; language: string };
@@ -146,7 +147,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   activeLanguageButton: {
-    backgroundColor: '#3f51b5',
+    backgroundColor: Colors.buttonPrimary,
   },
   languageButtonText: {
     fontSize: 14,
@@ -166,7 +167,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   inlineButton: {
-    backgroundColor: '#3f51b5',
+    backgroundColor: Colors.buttonPrimary,
     padding: 8,
     borderRadius: 5,
     flex: 1/2,
