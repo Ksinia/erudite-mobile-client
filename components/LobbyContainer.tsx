@@ -81,6 +81,7 @@ const LobbyContainer: React.FC = () => {
         router.push(`/game/${data.id}`);
       } catch (error) {
         dispatch(errorFromServer(error, 'create game onSubmit'));
+      } finally {
         // Re-enable the form
         setFormState(prev => ({ ...prev, sendingFormEnabled: true }));
       }
