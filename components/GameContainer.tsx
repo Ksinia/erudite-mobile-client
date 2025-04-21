@@ -364,72 +364,104 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     }
   }, [user, game, router, dispatch]);
 
-  // Initialize letters when user changes
+  // Initialize letters when game first loads or changes
   useEffect(() => {
-    if (user && game && game.turnOrder.includes(user.id)) {
-      const userLetters = game.letters[user.id];
-      setUserLetters(userLetters);
-      setUserBoard(emptyUserBoard.map((row) => row.slice()));
-      setWildCardLetters([]);
-      setWildCardOnBoard({});
-      setLoading(false);
+    // Only initialize on first load or when game ID changes
+    if (!game) {
+      return;
     }
-  }, [user, game, emptyUserBoard]);
-
-  // Update component state when game updates
-  useEffect(() => {
-    if (user && game && game.turnOrder.includes(user.id)) {
-      const prevLetters = getPreviousLetters(
-        userBoard,
-        wildCardOnBoard,
-        userLetters
-      );
-      
-      // if player has fewer letters than on server, just add letters from server
-      if (prevLetters.length < game.letters[user.id].length) {
-        const addedLetters = arrayDifference(
-          prevLetters,
-          game.letters[user.id]
-        );
-        const updatedUserLetters = userLetters.concat(addedLetters);
-
-        setUserLetters(updatedUserLetters);
-      // if player's letters are same as on server, don't change anything except for collisions between user letters on the board and other letters on the board
-      } else if (
-        JSON.stringify(prevLetters.slice().sort()) ===
-        JSON.stringify(game.letters[user.id].slice().sort())
-      ) {
-        let updatedWildCardLetters = wildCardLetters.slice();
-        let updatedUserLetters = [...userLetters];
-        const updatedUserBoard = userBoard.map((line, yIndex) =>
-          line.map((cell, xIndex) => {
-            if (cell && game.board[yIndex][xIndex] !== null) {
-              updatedUserLetters.push(cell[0]);
-              if (cell[0] === '*') {
-                updatedWildCardLetters = wildCardLetters.filter(
-                  (letterObject) =>
-                    letterObject.x !== xIndex || letterObject.y !== yIndex
-                );
-              }
-              return '';
-            } else {
-              return cell;
-            }
-          })
-        );
-        setUserLetters(updatedUserLetters);
-        setUserBoard(updatedUserBoard);
-        setWildCardLetters(updatedWildCardLetters);
-      // if player's letters are different (or more) than on server, update player's letters
-      } else {
-        const userLetters = game.letters[user.id];
-        setUserLetters(userLetters);
+    
+    if (user && game.turnOrder.includes(user.id)) {
+      // Only update if we're in a game phase that needs letters
+      if (game.phase === 'turn' || game.phase === 'validation' || game.phase === 'finished') {
+        setUserLetters([...game.letters[user.id]]);
         setUserBoard(emptyUserBoard.map((row) => row.slice()));
         setWildCardLetters([]);
         setWildCardOnBoard({});
       }
+      setLoading(false);
     }
-  }, [user, game, userBoard, wildCardOnBoard, userLetters, wildCardLetters, emptyUserBoard]);
+  }, [game?.id, user?.id]); // Only re-run when game ID or user ID changes
+
+  // Update component state when game updates
+  useEffect(() => {
+    if (!user || !game || !game.turnOrder.includes(user.id)) {
+      return;
+    }
+    
+    // Skip updates for certain game phases to prevent infinite loops
+    if (game.phase === 'waiting' || game.phase === 'ready') {
+      return;
+    }
+    
+    // Use a ref to track previous game state to avoid unnecessary updates
+    const gameStateKey = JSON.stringify({
+      userLetters: game.letters[user.id],
+      board: game.board,
+      turn: game.turn,
+      phase: game.phase
+    });
+    
+    // Store the current game state for processing
+    const serverLetters = game.letters[user.id];
+    const prevLetters = getPreviousLetters(
+      userBoard,
+      wildCardOnBoard,
+      userLetters
+    );
+    
+    // Only update when we detect a change in the user's letters or board
+    // if player has fewer letters than on server, just add letters from server
+    if (prevLetters.length < serverLetters.length) {
+      const addedLetters = arrayDifference(
+        prevLetters,
+        serverLetters
+      );
+      setUserLetters(current => [...current, ...addedLetters]);
+    }
+    // if player's letters are same as on server, adjust for collisions
+    else if (
+      JSON.stringify([...prevLetters].sort()) ===
+      JSON.stringify([...serverLetters].sort())
+    ) {
+      let boardChanged = false;
+      let updatedWildCardLetters = [...wildCardLetters];
+      let updatedUserLetters = [...userLetters];
+      
+      const updatedUserBoard = userBoard.map((line, yIndex) =>
+        line.map((cell, xIndex) => {
+          if (cell && game.board[yIndex][xIndex] !== null) {
+            updatedUserLetters.push(cell[0]);
+            boardChanged = true;
+            if (cell[0] === '*') {
+              updatedWildCardLetters = updatedWildCardLetters.filter(
+                (letterObject) =>
+                  letterObject.x !== xIndex || letterObject.y !== yIndex
+              );
+            }
+            return '';
+          } else {
+            return cell;
+          }
+        })
+      );
+      
+      if (boardChanged) {
+        setUserLetters(updatedUserLetters);
+        setUserBoard(updatedUserBoard);
+        setWildCardLetters(updatedWildCardLetters);
+      }
+    }
+    // if player's letters are different than on server, reset completely
+    else if (JSON.stringify([...prevLetters].sort()) !==
+             JSON.stringify([...serverLetters].sort())) {
+      setUserLetters([...serverLetters]);
+      setUserBoard(emptyUserBoard.map((row) => row.slice()));
+      setWildCardLetters([]);
+      setWildCardOnBoard({});
+    }
+  }, [game?.id, game?.turn, game?.phase, 
+      JSON.stringify(game?.letters), JSON.stringify(game?.board)]);
 
   // Clean up on unmount
   useEffect(() => {
