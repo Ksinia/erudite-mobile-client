@@ -107,69 +107,65 @@ const Board: React.FC<Props> = ({
   }
 
   return (
-    <ScrollView horizontal contentContainerStyle={styles.horizontalScrollContent}>
-      <ScrollView contentContainerStyle={styles.boardScrollContent}>
-        <View style={styles.boardContainer}>
-          {boardWithBonuses.map((row, y) => (
-            <View key={`row-${y}`} style={styles.row}>
-              {row.map((cell, x) => {
-                // Get letter from board or wildcard
-                const letter = wildCardOnBoard[y] && wildCardOnBoard[y][x]
-                  ? wildCardOnBoard[y][x]
-                  : board[y][x];
-                  
-                // Determine cell style based on various conditions
-                const isCenter = y === 7 && x === 7;
-                const hasUserLetter = userBoard[y][x] !== '';
-                const isNewLetter = !!board[y][x] && !previousBoard[y][x];
-                
-                return (
-                  <Pressable
-                    key={`cell-${x}-${y}`}
-                    style={[
-                      styles.cell,
-                      { width: cellSize, height: cellSize },
-                      getBonusStyle(cell.cellClass),
-                      isCenter && styles.centerCell,
-                      hasUserLetter && styles.userLetterCell,
-                      isNewLetter && styles.newLetterCell,
-                    ]}
-                    onPress={() => clickBoard(x, y)}
-                  >
-                    {!letter && !userBoard[y][x] && (
-                      <>
-                        <Text style={styles.multiply}>{cell.multiply}</Text>
-                        <Text style={styles.unit}>
-                          <TranslationContainer translationKey={cell.unit} />
-                        </Text>
-                      </>
-                    )}
-                    
-                    {/* Show letter value */}
-                    {(letter || userBoard[y][x]) && (
-                      <Text style={styles.letterValue}>
-                        {letter && values[letter[0]]}
-                        {userBoard[y][x] && values[userBoard[y][x][0]]}
-                      </Text>
-                    )}
-                    
-                    {/* Show letter */}
-                    {letter && (
-                      <Text style={styles.letter}>{letter}</Text>
-                    )}
-                    
-                    {/* Show user letter */}
-                    {userBoard[y][x] && (
-                      <Text style={styles.userLetter}>{userBoard[y][x]}</Text>
-                    )}
-                  </Pressable>
-                );
-              })}
-            </View>
-          ))}
+    <View style={styles.boardContainer}>
+      {boardWithBonuses.map((row, y) => (
+        <View key={`row-${y}`} style={styles.row}>
+          {row.map((cell, x) => {
+            // Get letter from board or wildcard
+            const letter = wildCardOnBoard[y] && wildCardOnBoard[y][x]
+              ? wildCardOnBoard[y][x]
+              : board[y][x];
+
+            // Determine cell style based on various conditions
+            const isCenter = y === 7 && x === 7;
+            const hasUserLetter = userBoard[y][x] !== '';
+            const isNewLetter = !!board[y][x] && !previousBoard[y][x];
+
+            return (
+              <Pressable
+                key={`cell-${x}-${y}`}
+                style={[
+                  styles.cell,
+                  { width: cellSize, height: cellSize },
+                  getBonusStyle(cell.cellClass),
+                  isCenter && styles.centerCell,
+                  hasUserLetter && styles.userLetterCell,
+                  isNewLetter && styles.newLetterCell,
+                ]}
+                onPress={() => clickBoard(x, y)}
+              >
+                {!letter && !userBoard[y][x] && (
+                  <>
+                    <Text style={styles.multiply}>{cell.multiply}</Text>
+                    <Text style={styles.unit}>
+                      <TranslationContainer translationKey={cell.unit} />
+                    </Text>
+                  </>
+                )}
+
+                {/* Show letter value */}
+                {(letter || userBoard[y][x]) && (
+                  <Text style={styles.letterValue}>
+                    {letter && values[letter[0]]}
+                    {userBoard[y][x] && values[userBoard[y][x][0]]}
+                  </Text>
+                )}
+
+                {/* Show letter */}
+                {letter && (
+                  <Text style={styles.letter}>{letter}</Text>
+                )}
+
+                {/* Show user letter */}
+                {userBoard[y][x] && (
+                  <Text style={styles.userLetter}>{userBoard[y][x]}</Text>
+                )}
+              </Pressable>
+            );
+          })}
         </View>
-      </ScrollView>
-    </ScrollView>
+      ))}
+    </View>
   );
 };
 
@@ -190,17 +186,11 @@ const getBonusStyle = (bonusType: string) => {
 };
 
 const styles = StyleSheet.create({
-  horizontalScrollContent: {
-    flexGrow: 1,
-  },
-  boardScrollContent: {
-    flexGrow: 1,
-  },
   boardContainer: {
-    padding: 2,
-    backgroundColor: '#f0f0f0',
+    // padding: 2,
+    // backgroundColor: '#f0f0f0',
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#ddd',
   },
   loadingContainer: {
     padding: 20,
