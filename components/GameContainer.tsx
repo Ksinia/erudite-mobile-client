@@ -203,7 +203,8 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
   }, [userBoard, wildCardOnBoard, userLetters, emptyUserBoard]);
 
   // Confirm turn handler
-  const confirmTurn = useCallback(async () => {
+  const confirmTurn = async () => {
+    console.log("confirming turn")
     if (!user || !game) return;
     
     // Convert empty strings to null for API
@@ -219,7 +220,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       wildCardOnBoard
     ));
     
-  }, [user, game, userBoard, wildCardOnBoard, gameId, dispatch]);
+  };
 
   // Validate turn handler
   const validateTurn = useCallback(async (validation: 'yes' | 'no') => {
@@ -348,68 +349,82 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     }
   }, [user, game, router, dispatch]);
 
-  // Initialize letters when game first loads or changes
+  // Initial setup useEffect (equivalent to componentDidMount)
   useEffect(() => {
-    // Only initialize on first load or when game ID changes
+    // Skip if no game data
     if (!game) {
       return;
     }
     
+    // Only initialize if user is part of the game
     if (user && game.turnOrder.includes(user.id)) {
-      // Only update if we're in a game phase that needs letters
-      if (game.phase === 'turn' || game.phase === 'validation' || game.phase === 'finished') {
-        setUserLetters([...game.letters[user.id]]);
-        setUserBoard(emptyUserBoard.map((row) => row.slice()));
-        setWildCardLetters([]);
-        setWildCardOnBoard({});
-      }
       setLoading(false);
+      
+      // Complete reset of everything on initial mount
+      const userLetters = game.letters[user.id];
+      setUserLetters([...userLetters]);
+      setUserBoard(emptyUserBoard.map((row) => row.slice()));
+      setWildCardLetters([]);
+      setWildCardOnBoard({});
     }
-  }, [game?.id, user?.id]); // Only re-run when game ID or user ID changes
+  }, [game?.id]); // Only run when game ID changes (new game loaded)
 
-  const stringifiedLetters = JSON.stringify(game?.letters)
-  const stringifiedBoard = JSON.stringify(game?.board)
-
-  // Update component state when game updates
+  // Game updates useEffect (equivalent to componentDidUpdate)
   useEffect(() => {
-    if (!user || !game || !game.turnOrder.includes(user.id)) {
+    // Skip if no game data or not initial load
+    if (!game || !user || !game.turnOrder.includes(user.id)) {
       return;
     }
     
-    // Skip updates for certain game phases to prevent infinite loops
+    // Skip for initial phases where letters don't matter
     if (game.phase === 'waiting' || game.phase === 'ready') {
       return;
     }
     
-    // Store the current game state for processing
+    // Get user's letters from server
     const serverLetters = game.letters[user.id];
+    
+    // Get letters that user currently has (including those placed on board)
     const prevLetters = getPreviousLetters(
       userBoard,
-      wildCardOnBoard,
+      wildCardOnBoard, 
       userLetters
     );
-
     
+    // CASE 1: User has fewer letters than on server - add the missing ones
     if (prevLetters.length < serverLetters.length) {
-
-    }
-    // if player's letters are same as on server, adjust for collisions
-    if (
-      JSON.stringify([...prevLetters].sort()) ===
+      const addedLetters = arrayDifference(
+        prevLetters,
+        serverLetters
+      );
+      
+      // Use the same pattern as web client - concat the new letters
+      const updatedUserLetters = userLetters.concat(addedLetters);
+      
+      setUserLetters(updatedUserLetters);
+    } 
+    // CASE 2: User has the right number of letters - check for collisions
+    else if (
+      JSON.stringify([...prevLetters].sort()) === 
       JSON.stringify([...serverLetters].sort())
     ) {
+      // Handle collisions - letters on board that the server has placed
+      let wildCardLettersUpdated = [...wildCardLetters];
+      let updatedLetters = [...userLetters];
       let boardChanged = false;
-      let updatedWildCardLetters = [...wildCardLetters];
-      let updatedUserLetters = [...userLetters];
       
-      const updatedUserBoard = userBoard.map((line, yIndex) =>
+      const updatedUserBoard = userBoard.map((line, yIndex) => 
         line.map((cell, xIndex) => {
+          // If user has a letter on a cell that now has a server letter
           if (cell && game.board[yIndex][xIndex] !== null) {
-            updatedUserLetters.push(cell[0]);
+            // Return that letter to the user's hand
+            updatedLetters.push(cell[0]);
             boardChanged = true;
+            
+            // Handle wildcards specially
             if (cell[0] === '*') {
-              updatedWildCardLetters = updatedWildCardLetters.filter(
-                (letterObject) =>
+              wildCardLettersUpdated = wildCardLetters.filter(
+                (letterObject) => 
                   letterObject.x !== xIndex || letterObject.y !== yIndex
               );
             }
@@ -420,22 +435,29 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
         })
       );
       
+      // Only update if we actually had board collisions
       if (boardChanged) {
-        setUserLetters(serverLetters);
+        setUserLetters(updatedLetters);
         setUserBoard(updatedUserBoard);
-        setWildCardLetters(updatedWildCardLetters);
+        setWildCardLetters(wildCardLettersUpdated);
       }
-    }
-    // if player's letters are different from on server, reset completely
-    else {
+    } 
+    // CASE 3: User's letters don't match server - reset completely
+    else if (
+      JSON.stringify([...prevLetters].sort()) !== 
+      JSON.stringify([...serverLetters].sort())
+    ) {
+      // Complete reset of everything
       setUserLetters([...serverLetters]);
       setUserBoard(emptyUserBoard.map((row) => row.slice()));
       setWildCardLetters([]);
       setWildCardOnBoard({});
     }
-
-  }, [game?.id, game?.turn, game?.phase,
-    stringifiedLetters, stringifiedBoard]);
+  }, [
+    // Dependencies for update checks
+    game?.turn, game?.board, game?.letters, 
+    user, userBoard, wildCardOnBoard, userLetters, emptyUserBoard
+  ]);
 
   // Clean up on unmount
   useEffect(() => {
