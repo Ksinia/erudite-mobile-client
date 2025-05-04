@@ -4,6 +4,7 @@ import { errorFromServer } from './errorHandling';
 import { AppDispatch } from '@/store';
 import { GameUpdatedAction } from "@/reducer/games";
 import { MyThunkAction } from "@/reducer/types";
+import { addGameToSocket } from '@/reducer/outgoingMessages';
 
 /**
  * Sends the user's turn to the server
@@ -43,7 +44,7 @@ export const sendTurn = (
       dispatch(action);
       
       // Make sure we're still subscribed to this game
-      dispatch({ type: 'ADD_GAME_TO_SOCKET', payload: gameId });
+      dispatch(addGameToSocket(gameId));
     } catch (error) {
       console.error('Error sending turn:', error);
       dispatch(errorFromServer(error, 'turn'));
