@@ -1,4 +1,4 @@
-import { backendUrl } from '../runtime';
+import { backendUrl } from "@/runtime";
 import { errorFromServer } from './errorHandling';
 import { AppDispatch } from '@/store';
 
@@ -43,25 +43,5 @@ export const fetchGame = (gameId: number, jwt: string | null) => {
     } catch (error) {
       dispatch(errorFromServer(error, 'fetch game'));
     }
-  };
-};
-
-// Add this game to socket monitoring
-export const monitorGame = (gameId: number) => {
-  return (dispatch: AppDispatch) => {
-    dispatch({ 
-      type: 'socket/addGameToSocket', 
-      data: gameId 
-    });
-  };
-};
-
-// Remove this game from socket monitoring
-export const unmonitorGame = (gameId: number) => {
-  return (dispatch: AppDispatch) => {
-    dispatch({ 
-      type: 'socket/removeGameFromSocket', 
-      data: gameId 
-    });
   };
 };

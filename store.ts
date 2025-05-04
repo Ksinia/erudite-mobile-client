@@ -71,6 +71,11 @@ socket.on('reconnect', async () => {
   store.dispatch(socketConnected());
 });
 
+// Add logging for socket messages
+socket.on('message', (message) => {
+  console.log('Socket message received:', message?.type);
+});
+
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 

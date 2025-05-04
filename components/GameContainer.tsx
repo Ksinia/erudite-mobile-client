@@ -380,7 +380,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     if (game.phase === 'waiting' || game.phase === 'ready') {
       return;
     }
-    
+
     // Get user's letters from server
     const serverLetters = game.letters[user.id];
     
@@ -454,9 +454,13 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       setWildCardOnBoard({});
     }
   }, [
-    // Dependencies for update checks
-    game?.turn, game?.board, game?.letters, 
-    user, userBoard, wildCardOnBoard, userLetters, emptyUserBoard
+    // Dependencies for update checks - the key is to include ALL game properties that might change
+    game?.id, game?.turn, game?.phase, 
+    JSON.stringify(game?.board), JSON.stringify(game?.letters),
+    user?.id, 
+    // We need these local states as well to handle collisions and letter returns
+    userBoard, wildCardOnBoard, userLetters, 
+    emptyUserBoard
   ]);
 
   // Clean up on unmount

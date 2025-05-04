@@ -7,9 +7,10 @@ import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
 import { User, Game } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
-import { addGameToSocket, enterLobby } from '@/reducer/outgoingMessages'; 
+import { addGameToSocket, enterLobby, removeGameFromSocket } from "@/reducer/outgoingMessages";
 import Room from './Room';
 import TranslationContainer from './Translation/TranslationContainer';
+import { socketConnected } from "@/reducer/socketConnectionState";
 
 interface Props {
   gameId: number;
@@ -27,7 +28,7 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
   
   // Get the game from state - either from lobby or games reducer
   const game = games[gameId] || (Array.isArray(lobby) ? lobby.find(g => g.id === gameId) : null);
-  
+
   // On component mount, subscribe to game updates
   useEffect(() => {
     // Subscribe to game updates via socket
@@ -41,18 +42,9 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
     }
     
     return () => {
-      // We could unsubscribe here if needed
+      removeGameFromSocket(gameId);
     };
-  }, []);
-  
-  // When the game state changes in Redux, update our loading state
-  // This is the key effect that responds to GAME_UPDATED socket messages
-  useEffect(() => {
-    if (game) {
-      console.log('Game updated:', gameId, game);
-      setLoading(false);
-    }
-  }, [games, lobby, gameId]);
+  }, [gameId, user, socketConnected, dispatch]);
   
   const fetchGame = async () => {
     if (!user) {

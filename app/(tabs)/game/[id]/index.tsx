@@ -5,7 +5,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
 import GameContainer from '@/components/GameContainer';
 import { RootState } from '@/reducer';
-import { fetchGame, monitorGame, unmonitorGame } from '@/thunkActions/game';
+import { fetchGame } from '@/thunkActions/game';
+import { addGameToSocket, removeGameFromSocket } from "@/reducer/outgoingMessages";
 
 export default function GameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -29,21 +30,14 @@ export default function GameScreen() {
     
     // Add game to socket monitoring
     if (socketConnected) {
-      dispatch(monitorGame(gameId));
+      dispatch(addGameToSocket(gameId));
     }
     
     // Clean up when unmounting
     return () => {
-      dispatch(unmonitorGame(gameId));
+      dispatch(removeGameFromSocket(gameId));
     };
   }, [gameId, user, socketConnected, dispatch]);
-  
-  // Reconnect to socket if connection state changes
-  useEffect(() => {
-    if (socketConnected) {
-      dispatch(monitorGame(gameId));
-    }
-  }, [socketConnected, gameId, dispatch]);
   
   // Determine which container to render based on game phase
   const shouldRenderGameContainer = 
