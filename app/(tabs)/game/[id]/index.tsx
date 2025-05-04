@@ -1,16 +1,21 @@
-import React, { useEffect } from 'react';
-import { StyleSheet, SafeAreaView, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import { useSelector, useDispatch } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
 import GameContainer from '@/components/GameContainer';
 import { RootState } from '@/reducer';
 import { fetchGame } from '@/thunkActions/game';
-import { addGameToSocket, removeGameFromSocket } from "@/reducer/outgoingMessages";
+import { addGameToSocket, removeGameFromSocket, enterLobby } from "@/reducer/outgoingMessages";
+import TranslationContainer from '@/components/Translation/TranslationContainer';
 
 export default function GameScreen() {
+  const [loading, setLoading] = useState(true);
+  
   const { id } = useLocalSearchParams<{ id: string }>();
-  const gameId = parseInt(id as string, 10);
+  // Ensure gameId is a valid number
+  const gameId = id ? parseInt(id as string, 10) : 0;
+  const isValidGameId = !isNaN(gameId) && gameId > 0;
   const dispatch = useDispatch();
   
   // Get game state to determine which container to use
@@ -22,22 +27,43 @@ export default function GameScreen() {
   // Get the game from state - either from lobby or games reducer
   const game = games[gameId] || (Array.isArray(lobby) ? lobby.find(g => g.id === gameId) : null);
   
-  // Fetch game data when component mounts or parameters change
+  // Fetch game data and handle socket subscription
   useEffect(() => {
-    // Fetch game data if we don't have it yet or if the user changes
+    // Only proceed if gameId is valid
+    if (!isValidGameId) {
+      setLoading(false);
+      return;
+    }
+
+    // Fetch game data
     const jwt = user ? user.jwt : null;
     dispatch(fetchGame(gameId, jwt));
     
     // Add game to socket monitoring
     if (socketConnected) {
+      console.log('Adding game to socket:', gameId);
       dispatch(addGameToSocket(gameId));
+    } else {
+      // If not connected yet, we'll rely on the socketConnected dependency
+      // to trigger this effect again when connection is established
+      console.log('Socket not connected yet, will add game later');
     }
     
     // Clean up when unmounting
     return () => {
-      dispatch(removeGameFromSocket(gameId));
+      if (isValidGameId) {
+        dispatch(removeGameFromSocket(gameId));
+      }
+      dispatch(enterLobby()); // Update lobby data when leaving game screen
     };
-  }, [gameId, user, socketConnected, dispatch]);
+  }, [gameId, user, socketConnected, dispatch, isValidGameId]);
+  
+  // Separate effect to update loading state
+  useEffect(() => {
+    if (game) {
+      setLoading(false);
+    }
+  }, [game]);
   
   // Determine which container to render based on game phase
   const shouldRenderGameContainer = 
@@ -45,6 +71,46 @@ export default function GameScreen() {
     (game.phase === 'turn' || 
      game.phase === 'validation' || 
      game.phase === 'finished');
+  
+  // Invalid game ID check
+  if (!isValidGameId) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.content, styles.center]}>
+          <Text>
+            <TranslationContainer translationKey="invalid_game_id" fallback="Invalid game ID" />
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+  
+  // Show loading state if we're still fetching data
+  if (loading && !game) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.content, styles.center]}>
+          <ActivityIndicator size="large" color="#0a7ea4" />
+          <Text style={{ marginTop: 10 }}>
+            <TranslationContainer translationKey="loading" />
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+  
+  // Show not found if there's no game after loading
+  if (!loading && !game) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={[styles.content, styles.center]}>
+          <Text>
+            <TranslationContainer translationKey="game_not_found" />
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
   
   return (
     <SafeAreaView style={styles.container}>
@@ -66,5 +132,9 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+  },
+  center: {
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

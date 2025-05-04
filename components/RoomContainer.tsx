@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouter } from 'expo-router';
@@ -7,17 +7,16 @@ import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
 import { User, Game } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
-import { addGameToSocket, enterLobby, removeGameFromSocket } from "@/reducer/outgoingMessages";
+import { addGameToSocket, enterLobby } from "@/reducer/outgoingMessages";
 import Room from './Room';
 import TranslationContainer from './Translation/TranslationContainer';
-import { socketConnected } from "@/reducer/socketConnectionState";
 
 interface Props {
   gameId: number;
 }
 
 const RoomContainer: React.FC<Props> = ({ gameId }) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   
   const router = useRouter();
   const dispatch = useDispatch();
@@ -28,61 +27,6 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
   
   // Get the game from state - either from lobby or games reducer
   const game = games[gameId] || (Array.isArray(lobby) ? lobby.find(g => g.id === gameId) : null);
-
-  // On component mount, subscribe to game updates
-  useEffect(() => {
-    // Subscribe to game updates via socket
-    dispatch(addGameToSocket(gameId));
-    
-    // If we don't have the game data yet, fetch it
-    if (!game) {
-      fetchGame();
-    } else {
-      setLoading(false);
-    }
-    
-    return () => {
-      removeGameFromSocket(gameId);
-    };
-  }, [gameId, user, socketConnected, dispatch]);
-  
-  const fetchGame = async () => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const response = await fetch(`${backendUrl}/game/${gameId}`, {
-        headers: {
-          'Authorization': `Bearer ${user.jwt}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      
-      // Parse the response and dispatch it to Redux
-      const data = await response.json();
-      
-      // Similar to how the web client does it in fetchGame thunk
-      if (data && data.payload && data.payload.game) {
-        // Dispatch the game data directly to the Redux store
-        dispatch({
-          type: 'GAME_UPDATED',
-          payload: {
-            gameId: gameId,
-            game: data.payload.game
-          }
-        });
-      }
-    } catch (error) {
-      dispatch(errorFromServer(error, 'fetchGame'));
-    } finally {
-      setLoading(false);
-    }
-  };
   
   const onClickStart = async (): Promise<void> => {
     if (!user) return;
@@ -102,6 +46,8 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
       }
       
       // The game state will be updated through socket
+      // Make sure this game is being monitored via socket
+      dispatch(addGameToSocket(gameId));
       
       // Explicitly re-enter the lobby to refresh the games list
       // This ensures the lobby state is updated when we navigate back
@@ -131,14 +77,15 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
       }
       
       // The backend will emit GAME_UPDATED to the socket
-      // Redux will automatically update the games state
-      // Our useEffect hook above will react to this change
+      // Make sure this game is being monitored via socket
+      dispatch(addGameToSocket(gameId));
       
       // Explicitly re-enter the lobby to refresh the games list
       // This ensures the lobby state is updated when we navigate back
       dispatch(enterLobby());
     } catch (error) {
       dispatch(errorFromServer(error, 'onClickJoin'));
+    } finally {
       setLoading(false);
     }
   };
