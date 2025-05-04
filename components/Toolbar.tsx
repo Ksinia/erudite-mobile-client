@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { logOutAndClearStorage } from "@/reducer/auth";
 import { RootState } from "@/reducer";
+import { enterLobby } from "@/reducer/outgoingMessages";
 import TranslationContainer from './Translation/TranslationContainer';
 import LangSwitchContainer from "@/components/LangSwitchContainer";
 
@@ -35,7 +36,14 @@ const Toolbar: React.FC = () => {
           </Text>
         </Pressable>
 
-        <Pressable style={styles.navItem} onPress={() => navigateTo('/')}>
+        <Pressable 
+          style={styles.navItem} 
+          onPress={() => {
+            // Update lobby data when navigating to lobby
+            dispatch(enterLobby());
+            navigateTo('/');
+          }}
+        >
           <Text style={styles.navText}>
             <TranslationContainer translationKey="toolbar_list" />
           </Text>
