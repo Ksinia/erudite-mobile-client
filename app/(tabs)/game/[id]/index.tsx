@@ -39,24 +39,21 @@ export default function GameScreen() {
     const jwt = user ? user.jwt : null;
     dispatch(fetchGame(gameId, jwt));
     
-    // Add game to socket monitoring
-    if (socketConnected) {
-      console.log('Adding game to socket:', gameId);
-      dispatch(addGameToSocket(gameId));
-    } else {
-      // If not connected yet, we'll rely on the socketConnected dependency
-      // to trigger this effect again when connection is established
-      console.log('Socket not connected yet, will add game later');
-    }
+    // Always try to add game to socket monitoring, regardless of current connection state
+    // This is critical because:
+    // 1. If socket is connected, it will subscribe immediately
+    // 2. If socket is disconnected but reconnects later, the middleware will handle the subscription
+    console.log('Adding game to socket:', gameId);
+    dispatch(addGameToSocket(gameId));
     
-    // Clean up when unmounting
+    // Clean up when unmounting or game ID changes
     return () => {
       if (isValidGameId) {
+        console.log('Removing game from socket:', gameId);
         dispatch(removeGameFromSocket(gameId));
       }
-      dispatch(enterLobby()); // Update lobby data when leaving game screen
     };
-  }, [gameId, user, socketConnected, dispatch, isValidGameId]);
+  }, [gameId, user, dispatch, isValidGameId]);
   
   // Separate effect to update loading state
   useEffect(() => {

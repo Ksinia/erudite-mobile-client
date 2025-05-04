@@ -66,7 +66,19 @@ socket.on('reconnect', async () => {
     store.dispatch(addUserToSocket(user.jwt));
   }
   
-  // Check current screen and dispatch appropriate actions
+  // Get current state
+  const state = store.getState();
+  
+  // Re-subscribe to any active games
+  // Look through the games reducer for any active games
+  const gameIds = Object.keys(state.games);
+  
+  console.log('Reconnecting to games:', gameIds);
+  gameIds.forEach(id => {
+    store.dispatch(addGameToSocket(parseInt(id, 10)));
+  });
+  
+  // Refresh lobby data
   store.dispatch(enterLobby());
   store.dispatch(socketConnected());
 });
