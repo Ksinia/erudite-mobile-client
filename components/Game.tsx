@@ -6,6 +6,7 @@ import { Game as GameType, User } from '@/reducer/types';
 import Board from './Board';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
+import WildCardForm from './WildCardForm';
 
 type Props = {
   game: GameType;
@@ -31,7 +32,6 @@ type Props = {
 };
 
 const Game: React.FC<Props> = (props) => {
-  const showWildCardForm = props.wildCardLetters.length > 0;
   const showPlayAgain = props.game.phase === 'finished' && props.user;
   const showConfirmButton = props.user &&
     props.game.turnOrder[props.game.turn] === props.user.id &&
@@ -67,6 +67,12 @@ const Game: React.FC<Props> = (props) => {
       </View>
       
       <View style={styles.controlsContainer}>
+        <WildCardForm
+          wildCardLetters={props.wildCardLetters}
+          onChange={(letter, index, x, y) => props.onChangeWildCard(index, letter, x, y)}
+          alphabet={Object.keys(letterValues[props.game.language])}
+        />
+
         {props.user && (
           <View style={styles.lettersContainer}>
             {props.userLetters.map((letter, index) => (
@@ -84,15 +90,6 @@ const Game: React.FC<Props> = (props) => {
                 </Text>
               </Pressable>
             ))}
-          </View>
-        )}
-        
-        {showWildCardForm && (
-          <View style={styles.wildCardForm}>
-            <Text style={styles.sectionTitle}>
-              <TranslationContainer translationKey="choose_letter" />
-            </Text>
-            {/* WildCardForm - to be implemented */}
           </View>
         )}
         
@@ -393,9 +390,6 @@ const styles = StyleSheet.create({
     bottom: 2,
     right: 2,
     fontSize: 10,
-  },
-  wildCardForm: {
-    marginVertical: 10,
   },
   sectionTitle: {
     fontSize: 16,
