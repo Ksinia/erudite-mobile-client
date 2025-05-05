@@ -67,6 +67,7 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
     language: 'Letters set: ',
     forgot: 'Forgot password?',
     select: 'Please select a letter for *',
+    selected: 'Selected',
     duplicated: 'Cannot confirm this turn. Duplicated words: {}',
     finished: 'Your finished games',
     archived: 'Your archived games',
@@ -85,6 +86,7 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
     change_password: 'Password change',
     password_changed: 'Password successfully changed',
     email: 'Email',
+    position: 'Position',
     rules: `Rules of the Game
     
       Between 2 to 8 players can participate in the game. 
@@ -178,6 +180,7 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
     language: 'Набор букв: ',
     forgot: 'Забыли пароль?',
     select: 'Пожалуйста, выберите букву для *',
+    selected: 'Выбрана',
     duplicated: 'Нельзя подтвердить ход. Повторяющиеся слова: {}',
     finished: 'Ваши законченные игры',
     archived: 'Ваши архивные игры',
@@ -197,6 +200,7 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
     change_password: 'Смена пароля',
     password_changed: 'Пароль успешно изменен',
     email: 'Почта',
+    position: 'Позиция',
     rules: `Правила игры
     
       В игре принимают участие от 2 до 8 человек. 
