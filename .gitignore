@@ -41,3 +41,4 @@ android/app/src/main/res/raw/node_modules_*
 
 expo-env.d.ts
 # @end expo-cli
+/credentials.json
