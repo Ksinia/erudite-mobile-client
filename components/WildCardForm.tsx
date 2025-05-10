@@ -49,19 +49,27 @@ function WildCardForm(props: OwnProps) {
             style={styles.wildcardHeader}
             onPress={() => toggleExpand(index)}
           >
-            {multipleWildcards && (
-              <View style={styles.positionContainer}>
-                <TranslationContainer translationKey="position" />
-                <Text style={styles.positionText}>
-                  : ({wildCard.x + 1}, {wildCard.y + 1})
-                </Text>
-              </View>
-            )}
-            <Text style={styles.selectedLetterLabel}>
-              {wildCard.letter ?? wildCard.letter}
-            </Text>
+            <View style={styles.headerLeftContent}>
+              <Text style={styles.dropdownIndicator}>
+                {expandedIndex === index ? '▼' : '>'}
+              </Text>
+              {multipleWildcards && (
+                <View style={styles.positionContainer}>
+                  <TranslationContainer translationKey="position" />
+                  <Text style={styles.positionText}>
+                    : ({wildCard.x + 1}, {wildCard.y + 1})
+                  </Text>
+                </View>
+              )}
+            </View>
+            <View style={styles.headerRightContent}>
+              <Text style={styles.selectedLetterLabel}>
+                {wildCard.letter ? wildCard.letter : '-'}
+              </Text>
+            </View>
+
           </TouchableOpacity>
-          
+
           {expandedIndex === index && (
             <View style={styles.letterGrid}>
               {props.alphabet.map((letter) => (
@@ -74,7 +82,7 @@ function WildCardForm(props: OwnProps) {
                     ]}
                     onPress={() => handleLetterPress(letter, index, wildCard.x, wildCard.y)}
                   >
-                    <Text 
+                    <Text
                       style={[
                         styles.letterText,
                         wildCard.letter === letter && styles.selectedLetterText
@@ -123,9 +131,21 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
+  headerLeftContent: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  headerRightContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    minWidth: 40,
+    justifyContent: 'flex-end',
+  },
   positionContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 8,
   },
   positionText: {
     fontSize: 12,
@@ -134,6 +154,13 @@ const styles = StyleSheet.create({
   selectedLetterLabel: {
     fontWeight: 'bold',
     color: '#3f51b5',
+    fontSize: 18,
+  },
+  dropdownIndicator: {
+    fontSize: 16,
+    color: '#666',
+    fontWeight: 'bold',
+    marginRight: 4,
   },
   letterGrid: {
     flexDirection: 'row',
