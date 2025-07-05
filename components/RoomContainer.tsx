@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
-import { useRouter } from 'expo-router';
+import { useSelector } from 'react-redux';
 
 import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
-import { User, Game } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
 import { addGameToSocket, enterLobby } from "@/reducer/outgoingMessages";
+import { fetchGame } from '@/thunkActions/game';
+import { useAppDispatch } from '@/hooks/redux';
 import Room from './Room';
 import TranslationContainer from './Translation/TranslationContainer';
 
@@ -18,8 +18,7 @@ interface Props {
 const RoomContainer: React.FC<Props> = ({ gameId }) => {
   const [loading, setLoading] = useState(false);
   
-  const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   
   const user = useSelector((state: RootState) => state.user);
   const lobby = useSelector((state: RootState) => state.lobby);
@@ -27,6 +26,15 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
   
   // Get the game from state - either from lobby or games reducer
   const game = games[gameId] || (Array.isArray(lobby) ? lobby.find(g => g.id === gameId) : null);
+  
+  // Fetch game data when component mounts or gameId changes
+  useEffect(() => {
+    if (user?.jwt) {
+      dispatch(fetchGame(gameId, user.jwt));
+      // Also add this game to socket monitoring to receive real-time updates
+      dispatch(addGameToSocket(gameId));
+    }
+  }, [gameId, user?.jwt, dispatch]);
   
   const onClickStart = async (): Promise<void> => {
     if (!user) return;
