@@ -52,6 +52,7 @@
     "@types/jest": "^29.5.12",
     "@types/react": "~18.2.45",
     "@types/react-test-renderer": "^18.0.7",
+    "@types/redux-socket.io": "^1.4.6",
     "@types/ws": "^8.18.0",
     "eslint": "^8.57.0",
     "eslint-config-expo": "^7.0.0",
