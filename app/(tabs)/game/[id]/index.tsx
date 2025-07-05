@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
 import GameContainer from '@/components/GameContainer';
 import { RootState } from '@/reducer';
 import { fetchGame } from '@/thunkActions/game';
 import { addGameToSocket, removeGameFromSocket, enterLobby } from "@/reducer/outgoingMessages";
 import TranslationContainer from '@/components/Translation/TranslationContainer';
+import { useAppDispatch } from "@/hooks/redux";
 
 export default function GameScreen() {
   const [loading, setLoading] = useState(true);
@@ -16,7 +17,7 @@ export default function GameScreen() {
   // Ensure gameId is a valid number
   const gameId = id ? parseInt(id as string, 10) : 0;
   const isValidGameId = !isNaN(gameId) && gameId > 0;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   
   // Get game state to determine which container to use
   const games = useSelector((state: RootState) => state.games);

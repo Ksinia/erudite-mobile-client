@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,6 +11,7 @@ import { enterLobby } from '../reducer/outgoingMessages';
 import Lobby from './Lobby';
 import TranslationContainer from './Translation/TranslationContainer';
 import { View, Text, ActivityIndicator } from 'react-native';
+import { useAppDispatch } from "@/hooks/redux";
 
 const LobbyContainer: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -20,7 +21,7 @@ const LobbyContainer: React.FC = () => {
   });
   
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   
   const lobby = useSelector((state: RootState) => state.lobby);
   const user = useSelector((state: RootState) => state.user);

@@ -1,17 +1,18 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useDispatch, useSelector } from 'react-redux';
+import { Href, useRouter } from "expo-router";
+import { useSelector } from 'react-redux';
 
 import { logOutAndClearStorage } from "@/reducer/auth";
 import { RootState } from "@/reducer";
 import { enterLobby } from "@/reducer/outgoingMessages";
 import TranslationContainer from './Translation/TranslationContainer';
 import LangSwitchContainer from "@/components/LangSwitchContainer";
+import { useAppDispatch } from "@/hooks/redux";
 
 const Toolbar: React.FC = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useSelector((state: RootState) => state.user);
 
   const handleLogout = () => {
@@ -19,7 +20,7 @@ const Toolbar: React.FC = () => {
     router.replace('/');
   };
 
-  const navigateTo = (path: string) => {
+  const navigateTo = (path: Href<string>) => {
     router.push(path);
   };
 

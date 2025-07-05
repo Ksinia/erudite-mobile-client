@@ -1,17 +1,18 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { RootState } from '../reducer';
-import { getProfileFetch } from '../thunkActions/authorization';
+import { RootState } from "@/reducer";
+import { getProfileFetch } from "@/thunkActions/authorization";
 import { 
   addUserToSocket, 
   removeUserFromSocket 
-} from '../reducer/outgoingMessages';
+} from "@/reducer/outgoingMessages";
+import { useAppDispatch } from "@/hooks/redux";
 
 // This component does not render anything, it just manages socket connections
 const SocketInitializer: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const user = useSelector((state: RootState) => state.user);
   const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
 

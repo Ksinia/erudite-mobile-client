@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
 import { backendUrl } from '@/runtime';
@@ -10,7 +10,7 @@ import { errorFromServer } from '@/thunkActions/errorHandling';
 import { noDuplications } from '@/reducer/duplicatedWords';
 import { sendTurn } from '@/thunkActions/turn';
 import Game from './Game';
-import { AppDispatch } from "@/store";
+import { useAppDispatch } from "@/hooks/redux";
 
 /**
  * extract added letters from whole new hand
@@ -70,7 +70,7 @@ interface Props {
 }
 
 const GameContainer: React.FC<Props> = ({ gameId }) => {
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
   const router = useRouter();
   
   const user = useSelector((state: RootState) => state.user);

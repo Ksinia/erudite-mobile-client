@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
 import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
 import TranslationContainer from '../../components/Translation/TranslationContainer';
+import { useAppDispatch } from "@/hooks/redux";
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const router = useRouter();
 
   const handleLogout = () => {

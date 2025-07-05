@@ -1,7 +1,6 @@
 import { backendUrl } from '../runtime';
 import { WildCardOnBoard } from '../components/GameContainer';
 import { errorFromServer } from './errorHandling';
-import { AppDispatch } from '@/store';
 import { GameUpdatedAction } from "@/reducer/games";
 import { MyThunkAction } from "@/reducer/types";
 import { addGameToSocket } from '@/reducer/outgoingMessages';

@@ -1,14 +1,15 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import LangSwitch from './LangSwitch';
 import { setLanguage } from "@/components/Translation/reducer";
 import { RootState } from "@/reducer";
+import { useAppDispatch } from "@/hooks/redux";
 
 const LangSwitchContainer: React.FC = () => {
   const locale = useSelector((state: RootState) => state.translation.locale);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleSetLanguage = (params: { locale: string }) => {
     dispatch(setLanguage(params));

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
-import { loginSignupFunction } from '../thunkActions/authorization';
-import { RootState } from '../reducer';
-import { clearError } from '../reducer/error';
+import { loginSignupFunction } from "@/thunkActions/authorization";
+import { RootState } from "@/reducer";
+import { clearError } from "@/reducer/error";
 import LoginSignup from './LoginSignup';
+import { useAppDispatch } from "@/hooks/redux";
 
 const SignupContainer: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -15,7 +16,7 @@ const SignupContainer: React.FC = () => {
   });
   
   const router = useRouter();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const error = useSelector((state: RootState) => state.error);
   
   const handleChange = (name: string, value: string): void => {
