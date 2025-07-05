@@ -31,7 +31,12 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
   useEffect(() => {
     if (user?.jwt) {
       dispatch(fetchGame(gameId, user.jwt));
-      // Also add this game to socket monitoring to receive real-time updates
+    }
+  }, [gameId, user?.jwt, dispatch, JSON.stringify(game)]);
+  
+  // Separate effect to ensure socket subscription (without dependency on game state)
+  useEffect(() => {
+    if (user?.jwt) {
       dispatch(addGameToSocket(gameId));
     }
   }, [gameId, user?.jwt, dispatch]);
