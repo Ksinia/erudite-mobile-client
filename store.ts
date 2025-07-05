@@ -5,6 +5,7 @@ import io from 'socket.io-client';
 import rootReducer from './reducer';
 import { backendUrl } from './runtime';
 import { outgoingSocketActions } from './constants/outgoingMessageTypes';
+import { IncomingMessageTypes } from './constants/incomingMessageTypes';
 import {
   socketConnected,
   socketDisconnected,
@@ -14,6 +15,12 @@ import {
   addUserToSocket,
   enterLobby,
 } from './reducer/outgoingMessages';
+
+// Define the shape of socket messages
+interface SocketMessage {
+  type: IncomingMessageTypes | string;
+  payload?: unknown;
+}
 
 // Create the socket connection
 const socket = io(backendUrl, {
@@ -84,7 +91,7 @@ socket.on('reconnect', async () => {
 });
 
 // Add logging for socket messages
-socket.on('message', (message) => {
+socket.on('message', (message: SocketMessage) => {
   console.log('Socket message received:', message?.type);
 });
 
