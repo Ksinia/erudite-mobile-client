@@ -66,18 +66,15 @@ const getPreviousLetters = (
 };
 
 interface Props {
-  gameId: number;
+  game: GameType;
 }
 
-const GameContainer: React.FC<Props> = ({ gameId }) => {
+const GameContainer: React.FC<Props> = ({ game }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
   
   const user = useSelector((state: RootState) => state.user);
-  const games = useSelector((state: RootState) => state.games);
   const duplicatedWords = useSelector((state: RootState) => state.duplicatedWords);
-  
-  const game = games[gameId];
   
   const emptyUserBoard = Array(15)
     .fill(null)
@@ -214,7 +211,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     
     // Use the thunk action which handles the API call and dispatching to Redux
     dispatch(sendTurn(
-      gameId,
+      game.id,
       user.jwt,
       userBoardToSend,
       wildCardOnBoard
@@ -223,11 +220,12 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
   };
 
   // Validate turn handler
+  // TODO: check if I really need callback here
   const validateTurn = useCallback(async (validation: 'yes' | 'no') => {
     if (!user || !game) return;
     
     try {
-      const response = await fetch(`${backendUrl}/game/${gameId}/approve`, {
+      const response = await fetch(`${backendUrl}/game/${game.id}/approve`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -244,7 +242,7 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     } catch (error) {
       dispatch(errorFromServer(error, 'validateTurn'));
     }
-  }, [user, game, gameId, dispatch]);
+  }, [user, game, dispatch]);
 
   // Get next turn
   const getNextTurn = useCallback((game: GameType) => {
@@ -272,14 +270,14 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
     } catch (error) {
       dispatch(errorFromServer(error, 'undo'));
     }
-  }, [user, game, gameId, dispatch]);
+  }, [user, game, dispatch]);
 
   // Change letters handler
   const change = useCallback(async () => {
     if (!user || !game) return;
     
     try {
-      const response = await fetch(`${backendUrl}/game/${gameId}/change`, {
+      const response = await fetch(`${backendUrl}/game/${game.id}/change`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -293,12 +291,10 @@ const GameContainer: React.FC<Props> = ({ gameId }) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
-      // The socket middleware will update the game state
     } catch (error) {
       dispatch(errorFromServer(error, 'change'));
     }
-  }, [user, game, gameId, dispatch]);
+  }, [user, game, dispatch]);
 
   // Find turn user
   const findTurnUser = useCallback((game: GameType, id: number): User => {

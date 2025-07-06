@@ -3,7 +3,6 @@ import { WildCardOnBoard } from '../components/GameContainer';
 import { errorFromServer } from './errorHandling';
 import { GameUpdatedAction } from "@/reducer/games";
 import { MyThunkAction } from "@/reducer/types";
-import { addGameToSocket } from '@/reducer/outgoingMessages';
 
 /**
  * Sends the user's turn to the server
@@ -41,9 +40,6 @@ export const sendTurn = (
       // This dispatched action will update the game state
       // But actual game updates should also come through socket for all players
       dispatch(action);
-      
-      // Make sure we're still subscribed to this game
-      dispatch(addGameToSocket(gameId));
     } catch (error) {
       console.error('Error sending turn:', error);
       dispatch(errorFromServer(error, 'turn'));

@@ -55,6 +55,7 @@ const Game: React.FC<Props> = (props) => {
     
   return (
     <ScrollView style={styles.container}>
+      <Text style={styles.titleText}>{props.game.id}</Text>
       <View style={styles.boardContainer}>
         <Board
           clickBoard={(x, y) => props.clickBoard(x, y)}
@@ -491,6 +492,12 @@ const styles = StyleSheet.create({
   turnText: {
     flexWrap: 'wrap',
   },
+  titleText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    margin: 'auto',
+    marginTop: 10,
+  }
 });
 
 export default Game;
