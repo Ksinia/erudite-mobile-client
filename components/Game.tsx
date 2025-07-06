@@ -360,34 +360,33 @@ const styles = StyleSheet.create({
   },
   lettersContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'center',
+    justifyContent: "center",
     marginVertical: 10,
+    gap: 4,
   },
   letterTile: {
-    width: 40,
-    height: 40,
-    margin: 4,
+    width: 45,
+    height: 45,
+
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#ddd',
-    position: 'relative',
   },
   selectedLetterTile: {
     backgroundColor: '#e0e0e0',
     borderColor: '#aaa',
   },
   letterText: {
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 34,
+    lineHeight: 34,
   },
   letterValue: {
     position: 'absolute',
-    bottom: 2,
-    right: 2,
+    top: 1,
+    right: 1,
     fontSize: 10,
   },
   sectionTitle: {
