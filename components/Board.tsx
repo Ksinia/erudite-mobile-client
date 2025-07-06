@@ -139,7 +139,6 @@ const Board: React.FC<Props> = ({
 
             // Determine cell style based on various conditions
             const isCenter = y === 7 && x === 7;
-            const hasUserLetter = userBoard[y][x] !== '';
             const isNewLetter = !!board[y][x] && !previousBoard[y][x];
 
             return (
@@ -151,8 +150,6 @@ const Board: React.FC<Props> = ({
                   { width: cellSize, height: cellSize },
                   getBonusStyle(cell.cellClass),
                   isCenter && styles.centerCell,
-                  hasUserLetter && styles.userLetterCell,
-                  isNewLetter && styles.newLetterCell,
                 ]}
                 onPress={() => clickBoard(x, y)}
               >
@@ -175,12 +172,12 @@ const Board: React.FC<Props> = ({
 
                 {/* Show letter */}
                 {letter ? (
-                  <Text style={styles.letter}>{letter}</Text>
+                  <Text style={[styles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
                 ) : null}
 
                 {/* Show user letter */}
                 {userBoard[y][x] ? (
-                  <Text style={styles.userLetter}>{userBoard[y][x]}</Text>
+                  <Text style={[styles.letter, styles.userLetter]}>{userBoard[y][x]}</Text>
                 ): null}
               </Pressable>
             );
@@ -210,10 +207,10 @@ const getBonusStyle = (bonusType: string) => {
 const styles = StyleSheet.create({
   boardContainer: {
     marginHorizontal: 'auto',
-    width: '90%',
-    maxWidth: 504,
     aspectRatio: 1,
-    overflow: 'hidden',
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
   },
   loadingContainer: {
     padding: 20,
@@ -222,16 +219,17 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    paddingLeft: 7,
   },
   cell: {
-    borderWidth: 1,
+    borderTopWidth: 1,
+    borderLeftWidth: 1,
     borderColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    marginRight: -1,
-    marginBottom: -1,
+    padding: 0,
+    width: '100%',
+    height: '100%',
   },
   centerCell: {
     backgroundColor: '#f0f0f0', // Light gray for center cell
@@ -251,37 +249,36 @@ const styles = StyleSheet.create({
   letterDouble: {
     backgroundColor: Colors.green, // l2 - letter double
   },
-  userLetterCell: {
-    backgroundColor: Colors.lightPurple, // Light purple for user letters
-  },
-  newLetterCell: {
-    backgroundColor: Colors.lightGoldenrod, // Light goldenrod for new letters
-  },
   multiply: {
     fontSize: 10,
-    position: 'absolute',
-    top: 2,
-    right: 2,
+    color: 'whitesmoke',
   },
   unit: {
-    fontSize: 9,
+    fontSize: 7,
     textAlign: 'center',
+    color: 'whitesmoke',
   },
   letterValue: {
-    fontSize: 9,
+    fontSize: 8,
     position: 'absolute',
-    bottom: 2,
-    right: 2,
+    top: 0.5,
+    right: 0.5,
   },
   letter: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
+    width: "100%",
+    height: "100%",
+    textAlign: 'center',
   },
   userLetter: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2196f3',
+    color: 'rgb(221, 43, 43)',
   },
+  newLetter: {
+    color: 'rgb(43, 160, 43)',
+    backgroundColor: 'lightgoldenrodyellow',
+    zIndex: -10,
+  }
 });
 
 export default Board;

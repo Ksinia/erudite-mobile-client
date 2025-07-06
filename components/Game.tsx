@@ -67,7 +67,7 @@ const Game: React.FC<Props> = (props) => {
         />
       </View>
       
-      <View style={styles.controlsContainer}>
+      <View>
         <WildCardForm
           wildCardLetters={props.wildCardLetters}
           onChange={(letter, index, x, y) => props.onChangeWildCard(index, letter, x, y)}
@@ -168,7 +168,7 @@ const Game: React.FC<Props> = (props) => {
           {showValidationButtons && (
             <View style={styles.validationButtons}>
               <Pressable
-                style={[styles.button, styles.confirmButton]}
+                style={styles.button}
                 onPress={() => props.validateTurn('yes')}
               >
                 <Text style={styles.buttonText}>
@@ -185,7 +185,7 @@ const Game: React.FC<Props> = (props) => {
               </Pressable>
               
               <Pressable
-                style={[styles.button, styles.rejectButton]}
+                style={styles.button}
                 onPress={() => props.validateTurn('no')}
               >
                 <Text style={styles.buttonText}>
@@ -352,13 +352,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    padding: 10,
   },
   boardContainer: {
     marginVertical: 10,
     alignItems: 'center',
-  },
-  controlsContainer: {
-    padding: 10,
   },
   lettersContainer: {
     flexDirection: 'row',
@@ -406,22 +404,19 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 4,
     marginVertical: 5,
-    alignItems: 'center',
+    display: 'flex',
+    flex: 1,
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
-  },
-  confirmButton: {
-    backgroundColor: '#4caf50',
-  },
-  rejectButton: {
-    backgroundColor: '#f44336',
+    textAlign: 'center',
   },
   validationButtons: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    gap: 4,
     marginVertical: 5,
+    width: '100%',
   },
   errorText: {
     color: '#f44336',
