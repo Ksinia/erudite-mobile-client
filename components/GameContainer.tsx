@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useRouter } from 'expo-router';
+import { useFocusEffect, useRouter } from "expo-router";
 
 import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
@@ -75,8 +75,8 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   
   const user = useSelector((state: RootState) => state.user);
   const duplicatedWords = useSelector((state: RootState) => state.duplicatedWords);
-  
-  const emptyUserBoard = Array(15)
+
+  const emptyUserBoard: string[][] =  Array(15)
     .fill(null)
     .map((_) => Array(15).fill(''));
 
@@ -86,7 +86,6 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   const [userBoard, setUserBoard] = useState<string[][]>(emptyUserBoard.map((row) => row.slice()));
   const [wildCardLetters, setWildCardLetters] = useState<{ letter: string; x: number; y: number }[]>([]);
   const [wildCardOnBoard, setWildCardOnBoard] = useState<WildCardOnBoard>({});
-  const [loading, setLoading] = useState<boolean>(true);
 
   // Board click handler
   const clickBoard = useCallback((x: number, y: number) => {
@@ -94,7 +93,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     let updUserLetters = userLetters.slice();
     let updatedWildCardLetters = wildCardLetters.slice();
     const userLetterOnBoard = userBoard[y][x];
-    const letterOnBoard = game?.board[y][x] || null;
+    const letterOnBoard = game.board[y][x] || null;
     const updatedWildCardOnBoard = { ...wildCardOnBoard };
 
     // if the cell is occupied by * and it is your turn you can exchange it
@@ -102,7 +101,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     if (
       letterOnBoard &&
       letterOnBoard[0] === '*' &&
-      game?.phase === 'turn' &&
+      game.phase === 'turn' &&
       user &&
       user.id === game.turnOrder[game.turn] &&
       chosenLetterIndex !== null &&
@@ -202,7 +201,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   // Confirm turn handler
   const confirmTurn = async () => {
     console.log("confirming turn")
-    if (!user || !game) return;
+    if (!user) return;
     
     // Convert empty strings to null for API
     const userBoardToSend = userBoard.map((row) =>
@@ -222,7 +221,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   // Validate turn handler
   // TODO: check if I really need callback here
   const validateTurn = useCallback(async (validation: 'yes' | 'no') => {
-    if (!user || !game) return;
+    if (!user) return;
     
     try {
       const response = await fetch(`${backendUrl}/game/${game.id}/approve`, {
@@ -251,10 +250,10 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   // Undo handler
   const undo = useCallback(async () => {
-    if (!user || !game) return;
+    if (!user) return;
     
     try {
-      const response = await fetch(`${backendUrl}/game/${gameId}/undo`, {
+      const response = await fetch(`${backendUrl}/game/${game.id}/undo`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +273,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   // Change letters handler
   const change = useCallback(async () => {
-    if (!user || !game) return;
+    if (!user) return;
     
     try {
       const response = await fetch(`${backendUrl}/game/${game.id}/change`, {
@@ -318,7 +317,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   // Play again with same players
   const playAgainWithSamePlayers = useCallback(async () => {
-    if (!user || !game) return;
+    if (!user) return;
     
     try {
       const response = await fetch(`${backendUrl}/create`, {
@@ -345,134 +344,88 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     }
   }, [user, game, router, dispatch]);
 
-  // Initial setup useEffect (equivalent to componentDidMount)
-  useEffect(() => {
-    // Skip if no game data
-    if (!game) {
-      return;
-    }
-    
-    // Only initialize if user is part of the game
-    if (user && game.turnOrder.includes(user.id)) {
-      setLoading(false);
-      
-      // Complete reset of everything on initial mount
-      const userLetters = game.letters[user.id];
-      setUserLetters([...userLetters]);
-      setUserBoard(emptyUserBoard.map((row) => row.slice()));
-      setWildCardLetters([]);
-      setWildCardOnBoard({});
-    }
-  }, [game?.id]); // Only run when game ID changes (new game loaded)
+  useFocusEffect(
+    // To avoid running the effect too often, it's important to wrap the callback in useCallback before passing it to useFocusEffect
+    useCallback(() => {
+      if (
+        user && game.turnOrder.includes(user.id)
+      ) {
+        // Get user's letters from server
+        const serverLetters = game.letters[user.id];
 
-  // Game updates useEffect (equivalent to componentDidUpdate)
-  useEffect(() => {
-    // Skip if no game data or not initial load
-    if (!game || !user || !game.turnOrder.includes(user.id)) {
-      return;
-    }
-    
-    // Skip for initial phases where letters don't matter
-    if (game.phase === 'waiting' || game.phase === 'ready') {
-      return;
-    }
+        // Get letters that user currently has (including those placed on board)
+        const prevLetters = getPreviousLetters(
+          userBoard,
+          wildCardOnBoard,
+          userLetters
+        );
 
-    // Get user's letters from server
-    const serverLetters = game.letters[user.id];
-    
-    // Get letters that user currently has (including those placed on board)
-    const prevLetters = getPreviousLetters(
-      userBoard,
-      wildCardOnBoard, 
-      userLetters
-    );
-    
-    // CASE 1: User has fewer letters than on server - add the missing ones
-    if (prevLetters.length < serverLetters.length) {
-      const addedLetters = arrayDifference(
-        prevLetters,
-        serverLetters
-      );
-      
-      // Use the same pattern as web client - concat the new letters
-      const updatedUserLetters = userLetters.concat(addedLetters);
-      
-      setUserLetters(updatedUserLetters);
-    } 
-    // CASE 2: User has the right number of letters - check for collisions
-    else if (
-      JSON.stringify([...prevLetters].sort()) === 
-      JSON.stringify([...serverLetters].sort())
-    ) {
-      // Handle collisions - letters on board that the server has placed
-      let wildCardLettersUpdated = [...wildCardLetters];
-      let updatedLetters = [...userLetters];
-      let boardChanged = false;
-      
-      const updatedUserBoard = userBoard.map((line, yIndex) => 
-        line.map((cell, xIndex) => {
-          // If user has a letter on a cell that now has a server letter
-          if (cell && game.board[yIndex][xIndex] !== null) {
-            // Return that letter to the user's hand
-            updatedLetters.push(cell[0]);
-            boardChanged = true;
-            
-            // Handle wildcards specially
-            if (cell[0] === '*') {
-              wildCardLettersUpdated = wildCardLetters.filter(
-                (letterObject) => 
-                  letterObject.x !== xIndex || letterObject.y !== yIndex
-              );
-            }
-            return '';
-          } else {
-            return cell;
+        // CASE 1: User has fewer letters than on server - add the missing ones
+        if (prevLetters.length < serverLetters.length) {
+          const addedLetters = arrayDifference(
+            prevLetters,
+            serverLetters
+          );
+          const updatedUserLetters = userLetters.concat(addedLetters);
+
+          setUserLetters(updatedUserLetters);
+        }
+        // CASE 2: User has the same letters - check for collisions
+        else if (
+          JSON.stringify([...prevLetters].sort()) ===
+          JSON.stringify([...serverLetters].sort())
+        ) {
+          // Handle collisions - letters on board that the server has placed
+          let wildCardLettersUpdated = [...wildCardLetters];
+          let updatedLetters = [...userLetters];
+          let boardChanged = false;
+
+          const updatedUserBoard = userBoard.map((line, yIndex) =>
+            line.map((cell, xIndex) => {
+              // If user has a letter on a cell that now has a server letter
+              if (cell && game.board[yIndex][xIndex] !== null) {
+                // Return that letter to the user's hand
+                updatedLetters.push(cell[0]);
+                boardChanged = true;
+
+                // Handle wildcards specially
+                if (cell[0] === '*') {
+                  wildCardLettersUpdated = wildCardLetters.filter(
+                    (letterObject) =>
+                      letterObject.x !== xIndex || letterObject.y !== yIndex
+                  );
+                }
+                return '';
+              } else {
+                return cell;
+              }
+            })
+          );
+
+          // Only update if we actually had board collisions
+          if (boardChanged) {
+            setUserLetters(updatedLetters);
+            setUserBoard(updatedUserBoard);
+            setWildCardLetters(wildCardLettersUpdated);
           }
-        })
-      );
-      
-      // Only update if we actually had board collisions
-      if (boardChanged) {
-        setUserLetters(updatedLetters);
-        setUserBoard(updatedUserBoard);
-        setWildCardLetters(wildCardLettersUpdated);
+        }
+        // CASE 3: User's letters don't match server - reset completely
+        else if (
+          JSON.stringify([...prevLetters].sort()) !==
+          JSON.stringify([...serverLetters].sort())
+        ) {
+          // Complete reset of everything
+          setUserLetters([...serverLetters]);
+          setUserBoard(emptyUserBoard.map((row) => row.slice()));
+          setWildCardLetters([]);
+          setWildCardOnBoard({});
+        }
       }
-    } 
-    // CASE 3: User's letters don't match server - reset completely
-    else if (
-      JSON.stringify([...prevLetters].sort()) !== 
-      JSON.stringify([...serverLetters].sort())
-    ) {
-      // Complete reset of everything
-      setUserLetters([...serverLetters]);
-      setUserBoard(emptyUserBoard.map((row) => row.slice()));
-      setWildCardLetters([]);
-      setWildCardOnBoard({});
-    }
-  }, [
-    // Dependencies for update checks - the key is to include ALL game properties that might change
-    game?.id, game?.turn, game?.phase, 
-    JSON.stringify(game?.board), JSON.stringify(game?.letters),
-    user?.id, 
-    // We need these local states as well to handle collisions and letter returns
-    userBoard, wildCardOnBoard, userLetters, 
-    emptyUserBoard
-  ]);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      dispatch(noDuplications());
-    };
-  }, [dispatch]);
-
-  if (!game || loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text>Loading game...</Text>
-      </View>
-    );
-  }
+      return () => {
+        dispatch(noDuplications());
+      };
+    }, [user, userBoard, userLetters, wildCardLetters, wildCardOnBoard,game.board, game.letters,  game.turnOrder, dispatch])
+  )
 
   const userBoardEmpty = !userBoard.some((row: string[]) => !!row.join(''));
 
