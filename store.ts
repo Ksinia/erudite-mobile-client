@@ -28,13 +28,27 @@ const socket = io(backendUrl, {
   transports: ['websocket'] // Use WebSocket-only for better mobile performance
 });
 
-// Create the Redux-Socket.io middleware - wrap in a function for Redux Toolkit compatibility
+// Create the Redux-Socket.io middleware with logging
 const socketIoMiddleware = () => {
   const middleware = createSocketIoMiddleware(
     socket,
     outgoingSocketActions.map(type => type.toString()),
     {
       eventName: 'message',
+      execute: (action, emit, next, dispatch) => {
+        // Log outgoing socket messages
+        console.log('🔴 OUTGOING SOCKET MESSAGE:', {
+          type: action.type,
+          payload: action.payload,
+          timestamp: new Date().toISOString()
+        });
+        
+        // Send the message
+        emit('message', action);
+        
+        // Continue with Redux dispatch
+        next(action);
+      }
     }
   );
   
@@ -90,9 +104,44 @@ socket.on('reconnect', async () => {
   store.dispatch(socketConnected());
 });
 
-// Add logging for socket messages
+// Add comprehensive logging for incoming socket messages
 socket.on('message', (message: SocketMessage) => {
-  console.log('Socket message received:', message?.type);
+  console.log('🟢 INCOMING SOCKET MESSAGE:', {
+    type: message?.type,
+    payload: message?.payload,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Log socket errors
+socket.on('error', (error: unknown) => {
+  console.error('🔥 SOCKET ERROR:', {
+    error: error,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Log connection state changes
+socket.on('connect_error', (error: any) => {
+  console.error('🔥 SOCKET CONNECTION ERROR:', {
+    error: error.message,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Log when socket is connecting
+socket.on('connecting', () => {
+  console.log('🔵 SOCKET CONNECTING...', {
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Log reconnection attempts
+socket.on('reconnect_attempt', (attemptNumber: number) => {
+  console.log('🔵 SOCKET RECONNECT ATTEMPT:', {
+    attempt: attemptNumber,
+    timestamp: new Date().toISOString()
+  });
 });
 
 export type RootState = ReturnType<typeof store.getState>;
