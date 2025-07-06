@@ -23,24 +23,21 @@ const RoomContainer: React.FC<Props> = ({ gameId }) => {
   const user = useSelector((state: RootState) => state.user);
   const lobby = useSelector((state: RootState) => state.lobby);
   const games = useSelector((state: RootState) => state.games);
-  
+  const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
+
   // Get the game from state - either from lobby or games reducer
   const game = games[gameId] || (Array.isArray(lobby) ? lobby.find(g => g.id === gameId) : null);
   
   // Fetch game data when component mounts or gameId changes
   useEffect(() => {
-    if (user?.jwt) {
-      dispatch(fetchGame(gameId, user.jwt));
-    }
-  }, [gameId, user?.jwt, dispatch, JSON.stringify(game)]);
-  
-  // Separate effect to ensure socket subscription (without dependency on game state)
-  useEffect(() => {
-    if (user?.jwt) {
+    console.log("useEffect in game");
+    if (socketConnectionState && gameId) {
+      console.log("fetching game and adding game to socket");
+      dispatch(fetchGame(gameId, user?.jwt ?? null));
       dispatch(addGameToSocket(gameId));
     }
-  }, [gameId, user?.jwt, dispatch]);
-  
+  }, [gameId, user?.jwt, dispatch, socketConnectionState]);
+
   const onClickStart = async (): Promise<void> => {
     if (!user) return;
     
