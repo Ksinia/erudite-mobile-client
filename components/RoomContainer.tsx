@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { View, ActivityIndicator, Text } from 'react-native';
 import { useSelector } from 'react-redux';
 
-import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
 import { errorFromServer } from '@/thunkActions/errorHandling';
 import { useAppDispatch } from '@/hooks/redux';
 import Room from './Room';
 import TranslationContainer from './Translation/TranslationContainer';
 import { Game } from "@/reducer/types";
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 interface Props {
   game: Game;

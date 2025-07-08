@@ -1,8 +1,10 @@
-import { backendUrl } from '../runtime';
-import { WildCardOnBoard } from '../components/GameContainer';
+import { WildCardOnBoard } from "@/components/GameContainer";
 import { errorFromServer } from './errorHandling';
 import { GameUpdatedAction } from "@/reducer/games";
 import { MyThunkAction } from "@/reducer/types";
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 /**
  * Sends the user's turn to the server

@@ -3,7 +3,6 @@ import createSocketIoMiddleware from 'redux-socket.io';
 import io from 'socket.io-client';
 
 import rootReducer from './reducer';
-import { backendUrl } from './runtime';
 import { outgoingSocketActions } from './constants/outgoingMessageTypes';
 import { IncomingMessageTypes } from './constants/incomingMessageTypes';
 import {
@@ -15,6 +14,9 @@ import {
   addUserToSocket,
   enterLobby,
 } from './reducer/outgoingMessages';
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 // Define the shape of socket messages
 interface SocketMessage {

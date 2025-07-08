@@ -1,6 +1,8 @@
-import { backendUrl } from "@/runtime";
 import { errorFromServer } from './errorHandling';
 import { AppDispatch } from '@/store';
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 // Fetch game data from the server
 export const fetchGame = (gameId: number, jwt: string | null) => {

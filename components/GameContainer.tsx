@@ -3,7 +3,6 @@ import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect, useRouter } from "expo-router";
 
-import { backendUrl } from '@/runtime';
 import { RootState } from '@/reducer';
 import { User, Game as GameType } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
@@ -11,6 +10,9 @@ import { noDuplications } from '@/reducer/duplicatedWords';
 import { sendTurn } from '@/thunkActions/turn';
 import Game from './Game';
 import { useAppDispatch } from "@/hooks/redux";
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 /**
  * extract added letters from whole new hand

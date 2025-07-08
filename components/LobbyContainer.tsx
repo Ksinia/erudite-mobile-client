@@ -3,15 +3,17 @@ import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { backendUrl } from '../runtime';
-import { RootState } from '../reducer';
+import { RootState } from "@/reducer";
 import { Game as GameType } from '../reducer/types';
-import { errorFromServer } from '../thunkActions/errorHandling';
-import { enterLobby } from '../reducer/outgoingMessages';
+import { errorFromServer } from "@/thunkActions/errorHandling";
+import { enterLobby } from "@/reducer/outgoingMessages";
 import Lobby from './Lobby';
 import TranslationContainer from './Translation/TranslationContainer';
 import { View, Text, ActivityIndicator } from 'react-native';
 import { useAppDispatch } from "@/hooks/redux";
+import config from "@/config"
+
+const backendUrl = config.backendUrl;
 
 const LobbyContainer: React.FC = () => {
   const [formState, setFormState] = useState({
