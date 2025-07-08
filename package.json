@@ -4,11 +4,14 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
+    "start-on-ios-simulator": "expo start --dev-client --ios",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
-    "ios": "eas build --platform ios --profile development && npx expo start --dev-client",
-    "ios-preview": "eas build --platform ios --profile preview && npx expo start --dev-client",
-    "ios-simulator": "eas build --platform ios --profile development-simulator && npx expo start --dev-client",
+    "ios": "eas build --platform ios --profile development && expo start --dev-client",
+    "ios-preview": "eas build --platform ios --profile preview && expo start --dev-client",
+    "ios-simulator": "eas build --platform ios --profile development-simulator && expo start --dev-client",
+    "install-build-on-simulator": "eas build:run --profile development-simulator --platform ios",
+    "update-simulator-build": "eas update --environment development --channel development-simulator --message",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint"
