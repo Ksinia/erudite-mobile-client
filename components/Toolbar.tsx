@@ -79,6 +79,11 @@ const Toolbar: React.FC = () => {
             </Pressable>
           </>
         )}
+          <Pressable style={styles.navItem} onPress={() => navigateTo('/debug')}>
+            <Text style={styles.navText}>
+              Debug
+            </Text>
+          </Pressable>
       </ScrollView>
       <View style={styles.borderBottom} />
     </View>

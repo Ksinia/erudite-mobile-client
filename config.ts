@@ -1,11 +1,9 @@
-const environment = process.env.EXPO_PUBLIC_ENVIRONMENT;
+const nodeEnvironment = process.env.NODE_ENV;
 
 const getBackendUrl = () => {
-  switch (environment) {
+  switch (nodeEnvironment) {
     case 'development':
       return 'http://localhost:4000';
-    case 'preview':
-      return 'https://k-erudite.herokuapp.com';
     case 'production':
       return 'https://k-erudite.herokuapp.com';
     default:
@@ -13,12 +11,14 @@ const getBackendUrl = () => {
   }
 };
 
-console.log("backend url:", getBackendUrl());
-console.log("environment:", environment);
 
 const config = {
-  environment,
-  backendUrl: getBackendUrl(),
+  environment: nodeEnvironment,
+  backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL ?? getBackendUrl(),
 };
+
+console.log("backend url:", config.backendUrl);
+console.log("nodeEnvironment:", nodeEnvironment);
+
 
 export default config;
