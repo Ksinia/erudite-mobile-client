@@ -13,8 +13,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/reducer';
 import { clearMessages } from '@/reducer/chat';
 import { sendChatMessage } from '@/reducer/outgoingMessages';
-import { Game, User, Message } from '@/reducer/types';
+import { User, Message } from '@/reducer/types';
 import { useAppDispatch } from '@/hooks/redux';
+import { TRANSLATIONS } from '@/constants/translations';
 
 interface ChatProps {
   players: User[];
@@ -27,6 +28,15 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase }) => {
   
   const user = useSelector((state: RootState) => state.user);
   const chat = useSelector((state: RootState) => state.chat);
+  const locale = useSelector((state: RootState) => state.translation?.locale ?? 'ru_RU');
+  
+  const getTranslation = (key: string): string => {
+    try {
+      return TRANSLATIONS[locale][key] || key;
+    } catch {
+      return key;
+    }
+  };
 
   useEffect(() => {
     return () => {
@@ -58,7 +68,7 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase }) => {
               style={styles.input}
               value={message}
               onChangeText={setMessage}
-              placeholder="Message"
+              placeholder={getTranslation('message')}
               placeholderTextColor="#999"
               onSubmitEditing={handleSendMessage}
               returnKeyType="send"
