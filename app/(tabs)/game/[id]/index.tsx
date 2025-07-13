@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSelector } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
 import GameContainer from '@/components/GameContainer';
+import Chat from '@/components/Chat';
 import { RootState } from '@/reducer';
 import { fetchGame } from '@/thunkActions/game';
 import { addGameToSocket, removeGameFromSocket } from "@/reducer/outgoingMessages";
@@ -52,16 +53,29 @@ export default function GameScreen() {
     game.phase === 'turn' ||
     game.phase === 'validation' ||
     game.phase === 'finished';
+  
+  const isPlayerInGame = user && game.users.some(player => player.id === user.id);
+  const shouldShowChat = game.phase === 'waiting' || game.phase === 'ready' || isPlayerInGame;
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        {shouldRenderGameContainer ? (
-          <GameContainer game={game} />
-        ) : (
-          <RoomContainer game={game} />
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+        <View style={styles.gameArea}>
+          {shouldRenderGameContainer ? (
+            <GameContainer game={game} />
+          ) : (
+            <RoomContainer game={game} />
+          )}
+        </View>
+        {shouldShowChat && (
+          <View style={styles.chatArea}>
+            <Chat 
+              players={game.users}
+              gamePhase={game.phase}
+            />
+          </View>
         )}
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -71,11 +85,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  content: {
+  scrollView: {
     flex: 1,
   },
+  content: {
+    flexGrow: 1,
+  },
   center: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  gameArea: {
+  },
+  chatArea: {
+    height: 400,
   },
 });
