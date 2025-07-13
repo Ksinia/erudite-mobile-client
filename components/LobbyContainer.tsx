@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Localization from 'expo-localization';
 
 import { RootState } from "@/reducer";
 import { Game as GameType } from '../reducer/types';
@@ -15,10 +16,30 @@ import config from "@/config"
 
 const backendUrl = config.backendUrl;
 
+const getLanguage = async () => {
+  try {
+    const storedLanguage = await AsyncStorage.getItem('language');
+    if (storedLanguage) {
+      return storedLanguage;
+    }
+  } catch (error) {
+    console.error('Error getting language from AsyncStorage:', error);
+  }
+
+  const deviceLocale = Localization.getLocales()[0];
+  const deviceLanguage = deviceLocale?.languageCode || 'en';
+
+  if (deviceLanguage.startsWith('ru')) {
+    return 'ru';
+  } else {
+    return 'en';
+  }
+};
+
 const LobbyContainer: React.FC = () => {
   const [formState, setFormState] = useState({
     maxPlayers: 2, // TODO: here it is number by in setFormState it is set to string
-    language: 'ru', // TODO: need proper handling of default language
+    language: getLanguage(),
     sendingFormEnabled: true,
   });
   
@@ -29,23 +50,6 @@ const LobbyContainer: React.FC = () => {
   const user = useSelector((state: RootState) => state.user);
   const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
   
-  // Get preferred language (similar to the web version)
-  const getLanguage = async () => {
-    try {
-      const storedLanguage = await AsyncStorage.getItem('language');
-      if (storedLanguage) {
-        return storedLanguage;
-      }
-    } catch (error) {
-      console.error('Error getting language from AsyncStorage:', error);
-    }
-    
-    // Default language based on device locale
-    // This is a simplified version of the web implementation
-    return 'en';
-  };
-  
-  // Handle form field changes
   const handleChange = (name: string, value: string): void => {
     setFormState(prev => ({
       ...prev,
@@ -53,7 +57,6 @@ const LobbyContainer: React.FC = () => {
     }));
   };
   
-  // Handle form submission
   const handleSubmit = async (): Promise<void> => {
     if (formState.sendingFormEnabled && user) {
       setFormState(prev => ({ ...prev, sendingFormEnabled: false }));
@@ -78,7 +81,7 @@ const LobbyContainer: React.FC = () => {
         const data = await response.json();
         
         // Save language preference
-        await AsyncStorage.setItem('language', formState.language);
+        await AsyncStorage.setItem('language', await formState.language);
         
         // Navigate to game
         router.push(`/game/${data.id}`);
