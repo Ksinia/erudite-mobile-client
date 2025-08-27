@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView, AppState, AppStateStatus } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSelector } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
@@ -15,6 +15,7 @@ export default function GameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const gameId = id ? parseInt(id as string, 10) : 0;
   const dispatch = useAppDispatch();
+  const appState = useRef(AppState.currentState);
 
   const games = useSelector((state: RootState) => state.games);
   const user = useSelector((state: RootState) => state.user);
@@ -33,6 +34,33 @@ export default function GameScreen() {
       };
     }, [gameId, dispatch, socketConnected, user?.jwt])
   )
+
+  // Handle app state changes for game socket subscription
+  useEffect(() => {
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      console.log('GameScreen - App state changing from', appState.current, 'to', nextAppState);
+      
+      if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
+        // App has come to the foreground - reconnect to game socket
+        console.log('GameScreen - App foregrounded, reconnecting to game:', gameId);
+        if (socketConnected) {
+          dispatch(addGameToSocket(gameId));
+        }
+      } else if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
+        // App has gone to the background - disconnect from game socket
+        console.log('GameScreen - App backgrounded, disconnecting from game:', gameId);
+        dispatch(removeGameFromSocket(gameId));
+      }
+
+      appState.current = nextAppState;
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription?.remove();
+    };
+  }, [gameId, socketConnected, dispatch]);
 
   const game = games[gameId]
 
