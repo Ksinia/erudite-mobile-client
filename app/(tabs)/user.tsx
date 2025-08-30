@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 
@@ -7,6 +7,7 @@ import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
 import TranslationContainer from '../../components/Translation/TranslationContainer';
 import { useAppDispatch } from "@/hooks/redux";
+import TestNotifications from '@/components/TestNotifications';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -25,7 +26,7 @@ export default function UserScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.title}>
         <TranslationContainer translationKey="welcome" /> {user.name}!
       </Text>
@@ -35,12 +36,14 @@ export default function UserScreen() {
         <Text style={styles.value}>{user.id}</Text>
       </View>
 
+      <TestNotifications />
+
       <Pressable style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>
           <TranslationContainer translationKey="log_out" />
         </Text>
       </Pressable>
-    </View>
+    </ScrollView>
   );
 }
 

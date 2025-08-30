@@ -11,6 +11,7 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import store from "@/store";
 import { Provider } from "react-redux";
 import SocketInitializer from '@/components/SocketInitializer';
+import NotificationHandler from '@/components/NotificationHandler';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -46,8 +47,9 @@ export default function RootLayout() {
       <SafeAreaProvider>
         <View style={styles.container}>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            {/* Initialize socket connections */}
+            {/* Initialize socket connections and notifications */}
             <SocketInitializer />
+            <NotificationHandler />
             <SafeAreaView style={styles.safeArea}>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

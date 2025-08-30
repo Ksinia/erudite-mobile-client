@@ -45,8 +45,25 @@ const socketIoMiddleware = () => {
           timestamp: new Date().toISOString()
         });
         
-        // Send the message
-        emit('message', action);
+        // Enhance ADD_USER_TO_SOCKET action with push token
+        if (action.type === 'ADD_USER_TO_SOCKET') {
+          const state = store.getState();
+          const pushSubscription = state.subscription;
+          
+          const enhancedAction = {
+            ...action,
+            payload: {
+              jwt: action.payload,
+              pushToken: pushSubscription?.data || null
+            }
+          };
+          
+          console.log('🔴 Enhanced user socket action with push token:', enhancedAction);
+          emit('message', enhancedAction);
+        } else {
+          // Send the message as-is for other actions
+          emit('message', action);
+        }
         
         // Continue with Redux dispatch
         next(action);

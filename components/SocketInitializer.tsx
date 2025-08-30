@@ -9,7 +9,9 @@ import {
   addUserToSocket, 
   removeUserFromSocket 
 } from "@/reducer/outgoingMessages";
+import { subscriptionRegistered } from "@/reducer/subscription";
 import { useAppDispatch } from "@/hooks/redux";
+import NotificationService from "@/services/NotificationService";
 
 // This component does not render anything, it just manages socket connections
 const SocketInitializer: React.FC = () => {
@@ -73,6 +75,27 @@ const SocketInitializer: React.FC = () => {
       subscription?.remove();
     };
   }, [user, socketConnectionState, dispatch]);
+
+  // Initialize push notifications
+  useEffect(() => {
+    const initializePushNotifications = async () => {
+      try {
+        // Set up notification categories
+        await NotificationService.setupNotificationCategories();
+        
+        // Get push token
+        const pushToken = await NotificationService.getExpoPushToken();
+        if (pushToken) {
+          console.log('Got Expo push token:', pushToken.data);
+          dispatch(subscriptionRegistered(pushToken as any)); // Type assertion needed due to Web API PushSubscription vs our type
+        }
+      } catch (error) {
+        console.error('Error initializing push notifications:', error);
+      }
+    };
+
+    initializePushNotifications();
+  }, [dispatch]);
 
   // This component doesn't render anything
   return null;
