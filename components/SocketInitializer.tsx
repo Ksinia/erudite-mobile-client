@@ -87,7 +87,7 @@ const SocketInitializer: React.FC = () => {
         const pushToken = await NotificationService.getExpoPushToken();
         if (pushToken) {
           console.log('Got Expo push token:', pushToken.data);
-          dispatch(subscriptionRegistered(pushToken as any)); // Type assertion needed due to Web API PushSubscription vs our type
+          dispatch(subscriptionRegistered(pushToken));
         }
       } catch (error) {
         console.error('Error initializing push notifications:', error);

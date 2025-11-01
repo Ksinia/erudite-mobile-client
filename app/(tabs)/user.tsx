@@ -7,7 +7,6 @@ import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
 import TranslationContainer from '../../components/Translation/TranslationContainer';
 import { useAppDispatch } from "@/hooks/redux";
-import TestNotifications from '@/components/TestNotifications';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -35,8 +34,6 @@ export default function UserScreen() {
         <Text style={styles.label}>User ID:</Text>
         <Text style={styles.value}>{user.id}</Text>
       </View>
-
-      <TestNotifications />
 
       <Pressable style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>

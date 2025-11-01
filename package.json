@@ -12,6 +12,7 @@
     "ios-simulator": "eas build --platform ios --profile development-simulator && expo start --dev-client",
     "install-build-on-simulator": "eas build:run --profile development-simulator --platform ios",
     "update-simulator-build": "eas update --environment development --channel development-simulator --message",
+    "update-preview-build": "eas update --environment preview --channel preview",
     "web": "expo start --web",
     "test": "jest --watchAll",
     "lint": "expo lint"
