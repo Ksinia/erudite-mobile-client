@@ -1,0 +1,18 @@
+{
+  "Simulator Target Bundle": "com.xsenia.erudite",
+  "aps": {
+    "alert": {
+      "title": "New Chat Message",
+      "body": "Player123: Hello from simulated push!"
+    },
+    "sound": "default",
+    "badge": 1
+  },
+  "categoryId": "chat_message",
+  "experienceId": "@xsenia/client-react-native",
+  "scopeKey": "@xsenia/client-react-native",
+  "body": {
+    "type": "chat_message",
+    "gameId": 122
+  }
+}

@@ -20,11 +20,7 @@ class NotificationService {
   private expoPushToken: string | null = null;
 
   async requestPermissions(): Promise<boolean> {
-    if (!Device.isDevice) {
-      console.warn('Push notifications only work on physical devices');
-      return false;
-    }
-
+    // On simulator, we can still request permissions for local notifications
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 

@@ -97,7 +97,7 @@ export default function GameScreen() {
         </View>
         {shouldShowChat && (
           <View style={styles.chatArea}>
-            <Chat 
+            <Chat
               players={game.users}
               gamePhase={game.phase}
             />

@@ -31,10 +31,25 @@ const TestNotifications: React.FC = () => {
     setDebugInfo(prev => [...prev.slice(-4), `${new Date().toLocaleTimeString()}: ${info}`]);
   };
 
+  const requestPermissions = async () => {
+    addDebugInfo('Requesting notification permissions...');
+    try {
+      const hasPermission = await NotificationService.requestPermissions();
+      if (hasPermission) {
+        addDebugInfo('Permissions granted!');
+        checkPermissions();
+      } else {
+        addDebugInfo('Permissions denied');
+      }
+    } catch (error) {
+      addDebugInfo(`Error: ${error}`);
+    }
+  };
+
   const requestTokenManually = async () => {
     addDebugInfo('Starting manual token request...');
     addDebugInfo(`Device.isDevice: ${Device.isDevice}`);
-    
+
     try {
       const token = await NotificationService.getExpoPushToken();
       if (token) {
@@ -42,7 +57,7 @@ const TestNotifications: React.FC = () => {
         dispatch(subscriptionRegistered(token));
         addDebugInfo('Token dispatched to Redux');
       } else {
-        addDebugInfo('Token was null');
+        addDebugInfo('Token was null (expected on simulator)');
       }
     } catch (error) {
       addDebugInfo(`Error: ${error}`);
@@ -50,37 +65,21 @@ const TestNotifications: React.FC = () => {
   };
 
   const sendTestNotification = async () => {
-    if (!subscription?.data) {
-      Alert.alert('Error', 'No push token available');
-      return;
-    }
-
     try {
-      // This would normally be sent from your backend
-      const message = {
-        to: subscription.data,
-        sound: 'default',
-        title: 'Test Game Update',
-        body: 'Your turn in the game!',
-        data: {
-          type: 'game_update',
-          gameId: 123
-        },
-        categoryId: 'game_update'
-      };
-
-      // For testing, we'll schedule a local notification instead
       await Notifications.scheduleNotificationAsync({
         content: {
-          title: message.title,
-          body: message.body,
-          data: message.data,
-          categoryIdentifier: message.categoryId,
+          title: 'Test Game Update',
+          body: 'Your turn in the game!',
+          data: {
+            type: 'game_update',
+            gameId: 174
+          },
+          categoryIdentifier: 'game_update',
         },
         trigger: { seconds: 2 },
       });
 
-      Alert.alert('Success', 'Test notification scheduled for 2 seconds');
+      Alert.alert('Success', 'Test game notification scheduled for 2 seconds. Put app in background to see it!');
     } catch (error) {
       console.error('Error sending test notification:', error);
       Alert.alert('Error', 'Failed to send test notification');
@@ -95,14 +94,14 @@ const TestNotifications: React.FC = () => {
           body: 'Player123: Hello everyone!',
           data: {
             type: 'chat_message',
-            gameId: 456
+            gameId: 174  // Using same gameId as game notification - replace with real game ID
           },
           categoryIdentifier: 'chat_message',
         },
         trigger: { seconds: 2 },
       });
 
-      Alert.alert('Success', 'Test chat notification scheduled for 2 seconds');
+      Alert.alert('Success', 'Test chat notification scheduled for 2 seconds. Put app in background to see it!');
     } catch (error) {
       console.error('Error sending test chat notification:', error);
       Alert.alert('Error', 'Failed to send test chat notification');
@@ -135,16 +134,22 @@ const TestNotifications: React.FC = () => {
         </Text>
       )}
 
+      {permissions !== 'granted' && (
+        <TouchableOpacity style={[styles.button, styles.warningButton]} onPress={requestPermissions}>
+          <Text style={styles.buttonText}>Grant Notification Permissions</Text>
+        </TouchableOpacity>
+      )}
+
       <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={requestTokenManually}>
         <Text style={styles.buttonText}>Request Push Token</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={sendTestNotification}>
-        <Text style={styles.buttonText}>Send Test Game Notification</Text>
-      </TouchableOpacity>
-
       <TouchableOpacity style={styles.button} onPress={sendTestChatNotification}>
         <Text style={styles.buttonText}>Send Test Chat Notification</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.button} onPress={sendTestNotification}>
+        <Text style={styles.buttonText}>Send Test Game Notification</Text>
       </TouchableOpacity>
 
       {debugInfo.length > 0 && (
@@ -191,6 +196,9 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     backgroundColor: '#FF9500',
+  },
+  warningButton: {
+    backgroundColor: '#FF3B30',
   },
   buttonText: {
     color: 'white',

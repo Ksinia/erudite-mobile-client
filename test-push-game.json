@@ -1,0 +1,14 @@
+{
+  "Simulator Target Bundle": "com.xsenia.erudite",
+  "aps": {
+    "alert": {
+      "title": "Your Turn!",
+      "body": "It's your turn in the game"
+    },
+    "sound": "default",
+    "badge": 1,
+    "category": "game_update"
+  },
+  "type": "game_update",
+  "gameId": 123
+}
