@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { useSelector } from 'react-redux';
 import config from '@/config';
 import { RootState } from '@/reducer';
-import { useAppDispatch } from '@/hooks/redux';
 import TranslationContainer from './Translation/TranslationContainer';
-import { errorFromServer } from '@/thunkActions/errorHandling';
-import { clearError } from '@/reducer/error';
 
 const backendUrl = config.backendUrl;
 
@@ -17,25 +14,15 @@ interface OwnProps {
 export default function ChangePassword({ jwtFromUrl }: OwnProps) {
   const [password, setPassword] = useState('');
   const [changed, setChanged] = useState(false);
+  const [localError, setLocalError] = useState<string | null>(null);
 
-  const dispatch = useAppDispatch();
   const user = useSelector((state: RootState) => state.user);
-  const error = useSelector((state: RootState) => state.error);
-
-  useEffect(() => {
-    dispatch(clearError());
-  }, [dispatch]);
 
   const onSubmit = async () => {
-    dispatch(clearError());
+    setLocalError(null);
 
     if (!user && !jwtFromUrl) {
-      dispatch(
-        errorFromServer(
-          'Only logged in user can change password',
-          'new password onSubmit'
-        )
-      );
+      setLocalError('Only logged in user can change password');
       return;
     }
 
@@ -54,21 +41,22 @@ export default function ChangePassword({ jwtFromUrl }: OwnProps) {
         body: JSON.stringify({ password }),
       });
 
-      const data = await response.json();
-
       if (response.ok) {
         setPassword('');
         setChanged(true);
+        setLocalError(null);
       } else {
-        dispatch(
-          errorFromServer(
-            data.message || 'Failed to change password',
-            'new password onSubmit'
-          )
-        );
+        // Only try to parse JSON for error responses
+        try {
+          const data = await response.json();
+          setLocalError(data.message || 'Failed to change password');
+        } catch {
+          // If JSON parsing fails, use status text
+          setLocalError(`Failed to change password: ${response.statusText}`);
+        }
       }
     } catch (error) {
-      dispatch(errorFromServer(error, 'new password onSubmit'));
+      setLocalError(error instanceof Error ? error.message : 'An error occurred');
     }
   };
 
@@ -103,7 +91,7 @@ export default function ChangePassword({ jwtFromUrl }: OwnProps) {
         </Text>
       )}
 
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {localError && <Text style={styles.errorText}>{localError}</Text>}
     </View>
   );
 }
