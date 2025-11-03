@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#3f51b5',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
@@ -135,7 +135,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   successText: {
-    color: '#4CAF50',
     fontSize: 16,
     marginTop: 10,
     textAlign: 'center',
