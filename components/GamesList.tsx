@@ -21,7 +21,7 @@ function GamesList(props: OwnProps) {
   return (
     <View style={styles.container}>
       {props.gamesList ? (
-        props.gamesList.length > 0 && (
+        props.gamesList.length > 0 ? (
           <View>
             <Text style={styles.title}>
               <TranslationContainer translationKey={props.category} />
@@ -37,6 +37,10 @@ function GamesList(props: OwnProps) {
               ))}
             </View>
           </View>
+        ) : (
+          <Text style={styles.emptyText}>
+            <TranslationContainer translationKey={`no_${props.category}_games`} />
+          </Text>
         )
       ) : (
         <Text style={styles.loadingText}>
@@ -63,7 +67,6 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 16,
     color: '#666',
-    fontStyle: 'italic',
     textAlign: 'center',
     marginVertical: 20,
   },

@@ -36,11 +36,6 @@ export default function UserScreen() {
         <TranslationContainer translationKey="welcome" /> {user.name}!
       </Text>
 
-      <View style={styles.infoContainer}>
-        <Text style={styles.label}>User ID:</Text>
-        <Text style={styles.value}>{user.id}</Text>
-      </View>
-
       {jwt && (
         <>
           <Collapsible
