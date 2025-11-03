@@ -23,9 +23,6 @@ function GamesList(props: OwnProps) {
       {props.gamesList ? (
         props.gamesList.length > 0 ? (
           <View>
-            <Text style={styles.title}>
-              <TranslationContainer translationKey={props.category} />
-            </Text>
             <View style={styles.gamesList}>
               {props.gamesList.map((game) => (
                 <RoomTile
