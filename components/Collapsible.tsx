@@ -1,41 +1,52 @@
-// import Ionicons from '@expo/vector-icons/Ionicons';
-// import { PropsWithChildren, useState } from 'react';
-// import { StyleSheet, Pressable, useColorScheme } from 'react-native';
-//
-// import { ThemedText } from '@/components/ThemedText';
-// import { ThemedView } from '@/components/ThemedView';
-// import { Colors } from '@/constants/Colors';
-//
-// export function Collapsible({ children, title }: PropsWithChildren & { title: string }) {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const theme = useColorScheme() ?? 'light';
-//
-//   return (
-//     <ThemedView>
-//       <Pressable
-//         style={styles.heading}
-//         onPress={() => setIsOpen((value) => !value)}
-//         activeOpacity={0.8}>
-//         <Ionicons
-//           name={isOpen ? 'chevron-down' : 'chevron-forward-outline'}
-//           size={18}
-//           color={theme === 'light' ? Colors.light.icon : Colors.dark.icon}
-//         />
-//         <ThemedText type="defaultSemiBold">{title}</ThemedText>
-//       </Pressable>
-//       {isOpen && <ThemedView style={styles.content}>{children}</ThemedView>}
-//     </ThemedView>
-//   );
-// }
-//
-// const styles = StyleSheet.create({
-//   heading: {
-//     flexDirection: 'row',
-//     alignItems: 'center',
-//     gap: 6,
-//   },
-//   content: {
-//     marginTop: 6,
-//     marginLeft: 24,
-//   },
-// });
+import React, { useState } from 'react';
+import { StyleSheet, Pressable, View, Text } from 'react-native';
+import TranslationContainer from './Translation/TranslationContainer';
+
+type Props = {
+  component: JSX.Element;
+  translationKeyExpand: string;
+  translationKeyCollapse: string;
+};
+
+export function Collapsible({ component, translationKeyExpand, translationKeyCollapse }: Props) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggle = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Pressable style={styles.button} onPress={toggle}>
+        <Text style={styles.buttonText}>
+          <TranslationContainer
+            translationKey={isOpen ? translationKeyCollapse : translationKeyExpand}
+          />
+        </Text>
+      </Pressable>
+      {isOpen && <View style={styles.content}>{component}</View>}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    marginVertical: 10,
+  },
+  button: {
+    backgroundColor: '#2196F3',
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  content: {
+    marginTop: 10,
+  },
+});
+
+export default Collapsible;

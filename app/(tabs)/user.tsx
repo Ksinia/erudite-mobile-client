@@ -7,6 +7,10 @@ import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
 import TranslationContainer from '../../components/Translation/TranslationContainer';
 import { useAppDispatch } from "@/hooks/redux";
+import Collapsible from '../../components/Collapsible';
+import FinishedGamesContainer from '../../components/FinishedGamesContainer';
+import ArchivedGamesContainer from '../../components/ArchivedGamesContainer';
+import ChangePassword from '../../components/ChangePassword';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -24,16 +28,34 @@ export default function UserScreen() {
     return null;
   }
 
+  const jwt = user.jwt || '';
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>
         <TranslationContainer translationKey="welcome" /> {user.name}!
       </Text>
-      
+
       <View style={styles.infoContainer}>
         <Text style={styles.label}>User ID:</Text>
         <Text style={styles.value}>{user.id}</Text>
       </View>
+
+      {jwt && (
+        <>
+          <Collapsible
+            translationKeyExpand="expand_finished"
+            translationKeyCollapse="collapse_finished"
+            component={<FinishedGamesContainer jwt={jwt} />}
+          />
+          <Collapsible
+            translationKeyExpand="expand_archived"
+            translationKeyCollapse="collapse_archived"
+            component={<ArchivedGamesContainer jwt={jwt} />}
+          />
+          <ChangePassword />
+        </>
+      )}
 
       <Pressable style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>
