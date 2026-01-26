@@ -7,6 +7,7 @@ import Board from './Board';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
 import WildCardForm from './WildCardForm';
+import Results from './Results';
 
 type Props = {
   game: GameType;
@@ -288,12 +289,7 @@ const Game: React.FC<Props> = (props) => {
         </View>
         
         {props.game.phase === 'finished' && 'result' in props.game && (
-          <View style={styles.resultsContainer}>
-            <Text style={styles.sectionTitle}>
-              <TranslationContainer translationKey="results" />
-            </Text>
-            {/* Results component - to be implemented */}
-          </View>
+          <Results game={props.game} />
         )}
         
         <Text style={styles.lettersRemaining}>
@@ -458,9 +454,6 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'right',
     fontWeight: 'bold',
-  },
-  resultsContainer: {
-    marginVertical: 10,
   },
   lettersRemaining: {
     textAlign: 'center',
