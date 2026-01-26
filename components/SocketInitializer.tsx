@@ -5,11 +5,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { RootState } from "@/reducer";
 import { getProfileFetch } from "@/thunkActions/authorization";
-import { 
-  addUserToSocket, 
-  removeUserFromSocket 
+import {
+  addUserToSocket,
+  removeUserFromSocket
 } from "@/reducer/outgoingMessages";
 import { subscriptionRegistered } from "@/reducer/subscription";
+import { setLanguage } from "@/components/Translation/reducer";
 import { useAppDispatch } from "@/hooks/redux";
 import NotificationService from "@/services/NotificationService";
 
@@ -20,16 +21,23 @@ const SocketInitializer: React.FC = () => {
   const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
   const appState = useRef(AppState.currentState);
 
-  // Initialize the user from stored JWT when app starts
+  // Initialize from storage when app starts
   useEffect(() => {
     const initializeFromStorage = async () => {
       try {
+        // Load saved locale
+        const savedLocale = await AsyncStorage.getItem('locale');
+        if (savedLocale) {
+          dispatch(setLanguage({ locale: savedLocale }));
+        }
+
+        // Load saved JWT
         const jwt = await AsyncStorage.getItem('jwt');
         if (jwt) {
           dispatch(getProfileFetch(jwt));
         }
       } catch (error) {
-        console.error('Error retrieving JWT from AsyncStorage:', error);
+        console.error('Error initializing from AsyncStorage:', error);
       }
     };
 

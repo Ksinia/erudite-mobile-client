@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as Localization from 'expo-localization';
 
 import { RootState } from "@/reducer";
 import { Game as GameType } from '../reducer/types';
@@ -16,43 +15,32 @@ import config from "@/config"
 
 const backendUrl = config.backendUrl;
 
-const getLanguage = async () => {
-  try {
-    const storedLanguage = await AsyncStorage.getItem('language');
-    if (storedLanguage) {
-      return storedLanguage;
-    }
-  } catch (error) {
-    console.error('Error getting language from AsyncStorage:', error);
-  }
-
-  const deviceLocale = Localization.getLocales()[0];
-  const deviceLanguage = deviceLocale?.languageCode || 'en';
-
-  if (deviceLanguage.startsWith('ru')) {
-    return 'ru';
-  } else {
-    return 'en';
-  }
+// Convert interface locale (e.g., 'ru_RU') to game language (e.g., 'ru')
+const localeToGameLanguage = (locale: string): string => {
+  return locale.startsWith('ru') ? 'ru' : 'en';
 };
 
 const LobbyContainer: React.FC = () => {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const lobby = useSelector((state: RootState) => state.lobby);
+  const user = useSelector((state: RootState) => state.user);
+  const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
+  const interfaceLocale = useSelector((state: RootState) => state.translation.locale);
+
+  // Default game language from interface language
+  const defaultGameLanguage = localeToGameLanguage(interfaceLocale);
+
   const [formState, setFormState] = useState<{
     maxPlayers: number;
     language: string;
     sendingFormEnabled: boolean;
   }>({
     maxPlayers: 2,
-    language: 'en',
+    language: defaultGameLanguage,
     sendingFormEnabled: true,
   });
-  
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  
-  const lobby = useSelector((state: RootState) => state.lobby);
-  const user = useSelector((state: RootState) => state.user);
-  const socketConnectionState = useSelector((state: RootState) => state.socketConnectionState);
   
   const handleChange = (name: string, value: string): void => {
     setFormState(prev => ({
@@ -100,11 +88,16 @@ const LobbyContainer: React.FC = () => {
   
   // Initialize component
   useEffect(() => {
-    // Initialize language
-    getLanguage().then(lang => {
-      setFormState(prev => ({ ...prev, language: lang || 'en' }));
+    // Load stored language preference, or use interface language as default
+    AsyncStorage.getItem('language').then(storedLanguage => {
+      if (storedLanguage) {
+        setFormState(prev => ({ ...prev, language: storedLanguage }));
+      }
+      // If no stored preference, defaultGameLanguage is already set from interface locale
+    }).catch(error => {
+      console.error('Error getting language from AsyncStorage:', error);
     });
-    
+
     // Enter lobby via socket
     dispatch(enterLobby());
   }, [dispatch]);
