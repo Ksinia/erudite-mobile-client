@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { MyThunkAction } from '../reducer/types';
-import { LoginSuccessAction, loginSuccess } from '../reducer/auth';
+import { LoginSuccessAction } from '../reducer/auth';
 import { errorFromServer, loginSignupFunctionErrorCtx } from './errorHandling';
 import config from "@/config"
 

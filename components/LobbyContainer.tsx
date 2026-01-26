@@ -37,9 +37,13 @@ const getLanguage = async () => {
 };
 
 const LobbyContainer: React.FC = () => {
-  const [formState, setFormState] = useState({
-    maxPlayers: 2, // TODO: here it is number by in setFormState it is set to string
-    language: getLanguage(),
+  const [formState, setFormState] = useState<{
+    maxPlayers: number;
+    language: string;
+    sendingFormEnabled: boolean;
+  }>({
+    maxPlayers: 2,
+    language: 'en',
     sendingFormEnabled: true,
   });
   
@@ -81,7 +85,7 @@ const LobbyContainer: React.FC = () => {
         const data = await response.json();
         
         // Save language preference
-        await AsyncStorage.setItem('language', await formState.language);
+        await AsyncStorage.setItem('language', formState.language);
         
         // Navigate to game
         router.push(`/game/${data.id}`);

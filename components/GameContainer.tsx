@@ -71,21 +71,22 @@ interface Props {
   game: GameType;
 }
 
+// Empty board constant - defined outside component to avoid recreating on each render
+const EMPTY_USER_BOARD: string[][] = Array(15)
+  .fill(null)
+  .map(() => Array(15).fill(''));
+
 const GameContainer: React.FC<Props> = ({ game }) => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  
+
   const user = useSelector((state: RootState) => state.user);
   const duplicatedWords = useSelector((state: RootState) => state.duplicatedWords);
-
-  const emptyUserBoard: string[][] =  Array(15)
-    .fill(null)
-    .map((_) => Array(15).fill(''));
 
   // State management
   const [chosenLetterIndex, setChosenLetterIndex] = useState<number | null>(null);
   const [userLetters, setUserLetters] = useState<string[]>([]);
-  const [userBoard, setUserBoard] = useState<string[][]>(emptyUserBoard.map((row) => row.slice()));
+  const [userBoard, setUserBoard] = useState<string[][]>(EMPTY_USER_BOARD.map((row) => row.slice()));
   const [wildCardLetters, setWildCardLetters] = useState<{ letter: string; x: number; y: number }[]>([]);
   const [wildCardOnBoard, setWildCardOnBoard] = useState<WildCardOnBoard>({});
 
@@ -190,7 +191,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   // Return letters handler
   const returnLetters = useCallback(() => {
-    setUserBoard(emptyUserBoard.map((row) => row.slice()));
+    setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
     setUserLetters(getPreviousLetters(
       userBoard,
       wildCardOnBoard,
@@ -198,7 +199,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     ));
     setWildCardLetters([]);
     setWildCardOnBoard({});
-  }, [userBoard, wildCardOnBoard, userLetters, emptyUserBoard]);
+  }, [userBoard, wildCardOnBoard, userLetters]);
 
   // Confirm turn handler
   const confirmTurn = async () => {
@@ -418,7 +419,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         ) {
           // Complete reset of everything
           setUserLetters([...serverLetters]);
-          setUserBoard(emptyUserBoard.map((row) => row.slice()));
+          setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
           setWildCardLetters([]);
           setWildCardOnBoard({});
         }

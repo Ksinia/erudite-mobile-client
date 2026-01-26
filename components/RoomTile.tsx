@@ -29,7 +29,7 @@ function getActiveUserName(game: Game): string {
 
 function getWinnerName(game: Game): string {
   return game.users
-    .filter((user) => game.result.winner.includes(user.id.toString()))
+    .filter((user) => game.result.winner.includes(user.id))
     .map((user) => user.name)
     .join(', ');
 }
@@ -37,10 +37,7 @@ function getWinnerName(game: Game): string {
 function getTileColor(props: Props): string {
   const propsUser = props.user;
   if (props.room.phase === 'finished' && propsUser) {
-    return props.room.users
-      .filter((user) => props.room.result.winner.includes(user.id.toString()))
-      .map((user) => user.id)
-      .includes(propsUser.id)
+    return props.room.result.winner.includes(propsUser.id)
       ? Colors.green
       : Colors.red;
   }
@@ -62,10 +59,10 @@ class RoomTile extends Component<Props> {
   render() {
     const { id, maxPlayers, users, phase, language, turnOrder } =
       this.props.room;
-    const messagesCount = {108: 0}  // temp change to constant
+    const { messagesCount } = this.props;
 
     return (
-      <Pressable onPress={this.handlePress} activeOpacity={0.7}>
+      <Pressable onPress={this.handlePress}>
         <View style={styles.roomTile}>
           <View
             style={[styles.tileHeader, { backgroundColor: getTileColor(this.props) }]}

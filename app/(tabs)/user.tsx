@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
 

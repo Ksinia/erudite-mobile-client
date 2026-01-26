@@ -48,7 +48,7 @@ export interface Game {
   score: { [key in User['id']]: number };
   turns: Turn[];
   result: {
-    winner: string[]; // TODO: it should be a number
+    winner: number[];
     longestWord: { word: string; user: number }[];
     maxScoreWord: { word: string; value: number; user: number }[];
     bestTurnByCount: { qty: number; turn: Turn; user: number }[];

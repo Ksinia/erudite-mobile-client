@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, Href } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
 import { Colors } from "@/constants/Colors";
@@ -106,7 +106,7 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
                 </Pressable>
               </Link>
               
-              <Link href="/forgot-password" asChild>
+              <Link href={"/forgot-password" as Href} asChild>
                 <Pressable>
                   <Text style={styles.linkText}>
                     <TranslationContainer translationKey="forgot" />

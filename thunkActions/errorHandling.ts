@@ -1,4 +1,3 @@
-// import { ResponseError } from 'superagent';
 import { MyThunkAction } from "@/reducer/types";
 import {
   errorLoaded,
@@ -7,52 +6,6 @@ import {
   LogOutAction,
 } from "@/reducer/auth";
 import { loginOrSignupError, LoginOrSignupErrorAction } from "@/reducer/error";
-
-interface HTTPError extends Error {
-  status: number;
-  text: string;
-  method: string;
-  path: string;
-}
-
-interface Response extends NodeJS.ReadableStream {
-  accepted: boolean;
-  badRequest: boolean;
-  body: any;
-  charset: string;
-  clientError: boolean;
-  error: false | HTTPError;
-  files: any;
-  forbidden: boolean;
-  get(header: string): string;
-  get(header: "Set-Cookie"): string[];
-  header: { [index: string]: string };
-  headers: { [index: string]: string };
-  info: boolean;
-  links: Record<string, string>;
-  noContent: boolean;
-  notAcceptable: boolean;
-  notFound: boolean;
-  ok: boolean;
-  redirect: boolean;
-  serverError: boolean;
-  status: number;
-  statusCode: number;
-  statusType: number;
-  text: string;
-  type: string;
-  unauthorized: boolean;
-  xhr: any;
-  redirects: string[];
-}
-
-
-interface ResponseError extends Error {
-  status?: number | undefined;
-  response?: Response | undefined;
-  timeout?: boolean | undefined;
-}
-
 
 export const loginSignupFunctionErrorCtx = 'loginSignupFunction';
 

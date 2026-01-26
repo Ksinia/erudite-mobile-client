@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import createSocketIoMiddleware from 'redux-socket.io';
 import io from 'socket.io-client';
 
 import rootReducer from './reducer';
-import { outgoingSocketActions } from './constants/outgoingMessageTypes';
+import { createSocketMiddleware } from './middleware/socketMiddleware';
+import { outgoingSocketActions, OutgoingMessageTypes } from './constants/outgoingMessageTypes';
 import { IncomingMessageTypes } from './constants/incomingMessageTypes';
 import {
   socketConnected,
@@ -18,7 +18,7 @@ import config from "@/config"
 
 const backendUrl = config.backendUrl;
 
-// Define the shape of socket messages
+// Define the shape of socket messages (for logging)
 interface SocketMessage {
   type: IncomingMessageTypes | string;
   payload?: unknown;
@@ -30,59 +30,43 @@ const socket = io(backendUrl, {
   transports: ['websocket'] // Use WebSocket-only for better mobile performance
 });
 
-// Create the Redux-Socket.io middleware with logging
-const socketIoMiddleware = () => {
-  const middleware = createSocketIoMiddleware(
-    socket,
-    outgoingSocketActions.map(type => type.toString()),
-    {
-      eventName: 'message',
-      execute: (action, emit, next, dispatch) => {
-        // Log outgoing socket messages
-        console.log('🔴 OUTGOING SOCKET MESSAGE:', {
-          type: action.type,
-          payload: action.payload,
-          timestamp: new Date().toISOString()
-        });
-        
-        // Enhance ADD_USER_TO_SOCKET action with push token
-        if (action.type === 'ADD_USER_TO_SOCKET') {
-          const state = store.getState();
-          const pushSubscription = state.subscription;
-          
-          const enhancedAction = {
-            ...action,
-            payload: {
-              jwt: action.payload,
-              pushToken: pushSubscription?.data || null
-            }
-          };
-          
-          console.log('🔴 Enhanced user socket action with push token:', enhancedAction);
-          emit('message', enhancedAction);
-        } else {
-          // Send the message as-is for other actions
-          emit('message', action);
-        }
-        
-        // Continue with Redux dispatch
-        next(action);
+// Create the socket middleware with action enhancement for push tokens
+const socketMiddleware = createSocketMiddleware(
+  socket,
+  outgoingSocketActions,
+  {
+    eventName: 'message',
+    enhanceAction: (action, getState) => {
+      // Enhance ADD_USER_TO_SOCKET action with push token
+      if (action.type === OutgoingMessageTypes.ADD_USER_TO_SOCKET) {
+        const state = getState() as RootState;
+        const pushSubscription = state.subscription;
+
+        const enhancedAction = {
+          ...action,
+          payload: {
+            jwt: action.payload,
+            pushToken: pushSubscription?.data || null
+          }
+        };
+
+        console.log('🔴 Enhanced user socket action with push token:', enhancedAction);
+        return enhancedAction;
       }
+
+      return action;
     }
-  );
-  
-  return middleware;
-};
+  }
+);
 
 // Configure the store with middleware
 const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) => {
-    // Redux Toolkit already includes thunk by default
     return getDefaultMiddleware({
       serializableCheck: false, // Disable serializable check for socket.io
       immutableCheck: false, // Improve performance
-    }).concat(socketIoMiddleware());
+    }).concat(socketMiddleware);
   }
 });
 
@@ -99,25 +83,24 @@ socket.on('disconnect', () => {
 
 socket.on('reconnect', async () => {
   console.log('Socket reconnected');
-  
+
   // Re-authenticate user if logged in
   const user = store.getState().user;
   if (user) {
     store.dispatch(addUserToSocket(user.jwt));
   }
-  
+
   // Get current state
   const state = store.getState();
-  
+
   // Re-subscribe to any active games
-  // Look through the games reducer for any active games
   const gameIds = Object.keys(state.games);
-  
+
   console.log('Reconnecting to games:', gameIds);
   gameIds.forEach(id => {
     store.dispatch(addGameToSocket(parseInt(id, 10)));
   });
-  
+
   // Refresh lobby data
   store.dispatch(enterLobby());
   store.dispatch(socketConnected());
@@ -141,7 +124,7 @@ socket.on('error', (error: unknown) => {
 });
 
 // Log connection state changes
-socket.on('connect_error', (error: any) => {
+socket.on('connect_error', (error: Error) => {
   console.error('🔥 SOCKET CONNECTION ERROR:', {
     error: error.message,
     timestamp: new Date().toISOString()

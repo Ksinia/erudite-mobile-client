@@ -1,11 +1,10 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet } from 'react-native';
-import { setLanguage } from "@/components/Translation/reducer";
 import { LANG_NAMES } from "@/constants/translations";
 
 type Props = {
   locale: string;
-  setLanguage: typeof setLanguage;
+  setLanguage: (params: { locale: string }) => void;
 };
 
 const LangSwitch: React.FC<Props> = ({ locale, setLanguage }) => {
