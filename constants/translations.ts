@@ -1,5 +1,7 @@
 export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
   en_US: {
+    my_games: 'My Games',
+    no_active_games: 'You have no active games',
     create_room: 'Please create a new room or enter an existing room.',
     toolbar_list: 'List of games',
     toolbar_rules: 'Rules',
@@ -116,6 +118,8 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
       The rules of the game can be changed by mutual agreement between the participants.`,
   },
   ru_RU: {
+    my_games: 'Мои игры',
+    no_active_games: 'У вас нет активных игр',
     create_room: 'Пожалуйста, создайте комнату или войдите в существующую',
     toolbar_list: 'Список игр',
     toolbar_rules: 'Правила',
