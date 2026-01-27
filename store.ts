@@ -70,40 +70,42 @@ const store = configureStore({
   }
 });
 
+// Track if this is the first connection or a reconnection
+let hasConnectedBefore = false;
+
 // Setup socket event handlers
 socket.on('connect', () => {
-  console.log('Socket connected');
+  console.log('Socket connected, hasConnectedBefore:', hasConnectedBefore);
   store.dispatch(socketConnected());
-});
 
-socket.on('disconnect', () => {
-  console.log('Socket disconnected');
-  store.dispatch(socketDisconnected());
-});
+  if (hasConnectedBefore) {
+    // This is a reconnection - re-establish subscriptions
+    console.log('Socket reconnected - re-establishing subscriptions');
 
-socket.on('reconnect', async () => {
-  console.log('Socket reconnected');
+    // Re-authenticate user if logged in
+    const state = store.getState();
+    const user = state.user;
+    if (user) {
+      store.dispatch(addUserToSocket(user.jwt));
+    }
 
-  // Re-authenticate user if logged in
-  const user = store.getState().user;
-  if (user) {
-    store.dispatch(addUserToSocket(user.jwt));
+    // Re-subscribe to any active games
+    const gameIds = Object.keys(state.games);
+    console.log('Reconnecting to games:', gameIds);
+    gameIds.forEach(id => {
+      store.dispatch(addGameToSocket(parseInt(id, 10)));
+    });
+
+    // Refresh lobby data
+    store.dispatch(enterLobby());
   }
 
-  // Get current state
-  const state = store.getState();
+  hasConnectedBefore = true;
+});
 
-  // Re-subscribe to any active games
-  const gameIds = Object.keys(state.games);
-
-  console.log('Reconnecting to games:', gameIds);
-  gameIds.forEach(id => {
-    store.dispatch(addGameToSocket(parseInt(id, 10)));
-  });
-
-  // Refresh lobby data
-  store.dispatch(enterLobby());
-  store.dispatch(socketConnected());
+socket.on('disconnect', (reason) => {
+  console.log('Socket disconnected, reason:', reason);
+  store.dispatch(socketDisconnected());
 });
 
 // Add comprehensive logging for incoming socket messages

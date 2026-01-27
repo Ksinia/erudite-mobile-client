@@ -222,10 +222,9 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   };
 
   // Validate turn handler
-  // TODO: check if I really need callback here
   const validateTurn = useCallback(async (validation: 'yes' | 'no') => {
     if (!user) return;
-    
+
     try {
       const response = await fetch(`${backendUrl}/game/${game.id}/approve`, {
         method: 'POST',
@@ -235,16 +234,16 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         },
         body: JSON.stringify({ validation }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
-      // The socket middleware will update the game state
+
+      // Server returns 204 and sends update via socket
     } catch (error) {
       dispatch(errorFromServer(error, 'validateTurn'));
     }
-  }, [user, game, dispatch]);
+  }, [user, game.id, dispatch]);
 
   // Get next turn
   const getNextTurn = useCallback((game: GameType) => {
@@ -254,7 +253,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   // Undo handler
   const undo = useCallback(async () => {
     if (!user) return;
-    
+
     try {
       const response = await fetch(`${backendUrl}/game/${game.id}/undo`, {
         method: 'POST',
@@ -263,21 +262,21 @@ const GameContainer: React.FC<Props> = ({ game }) => {
           'Authorization': `Bearer ${user.jwt}`,
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
-      // The socket middleware will update the game state
+
+      // Server returns 204 and sends update via socket
     } catch (error) {
       dispatch(errorFromServer(error, 'undo'));
     }
-  }, [user, game, dispatch]);
+  }, [user, game.id, dispatch]);
 
   // Change letters handler
   const change = useCallback(async () => {
     if (!user) return;
-    
+
     try {
       const response = await fetch(`${backendUrl}/game/${game.id}/change`, {
         method: 'POST',
@@ -289,14 +288,16 @@ const GameContainer: React.FC<Props> = ({ game }) => {
           letters: game.letters[user.id],
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      // Server returns 204 and sends update via socket
     } catch (error) {
       dispatch(errorFromServer(error, 'change'));
     }
-  }, [user, game, dispatch]);
+  }, [user, game.id, game.letters, dispatch]);
 
   // Find turn user
   const findTurnUser = useCallback((game: GameType, id: number): User => {
@@ -438,7 +439,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
       setWildCardLetters([]);
       setWildCardOnBoard({});
     }
-  }, [game.board, game.letters, game.turnOrder, user]);
+  }, [game.board, game.letters, game.turnOrder, game.phase, game.turn, user]);
 
   // Cleanup duplicated words when screen loses focus
   useFocusEffect(
