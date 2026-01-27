@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect, useRouter } from "expo-router";
@@ -347,87 +347,106 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     }
   }, [user, game, router, dispatch]);
 
-  useFocusEffect(
-    // To avoid running the effect too often, it's important to wrap the callback in useCallback before passing it to useFocusEffect
-    useCallback(() => {
-      if (
-        user && game.turnOrder.includes(user.id)
-      ) {
-        // Get user's letters from server
-        const serverLetters = game.letters[user.id];
+  // Use refs to access current local state without causing effect re-runs
+  const localStateRef = useRef({
+    userBoard,
+    userLetters,
+    wildCardLetters,
+    wildCardOnBoard,
+  });
 
-        // Get letters that user currently has (including those placed on board)
-        const prevLetters = getPreviousLetters(
-          userBoard,
-          wildCardOnBoard,
-          userLetters
-        );
+  // Keep refs in sync with current state
+  useEffect(() => {
+    localStateRef.current = {
+      userBoard,
+      userLetters,
+      wildCardLetters,
+      wildCardOnBoard,
+    };
+  });
 
-        // CASE 1: User has fewer letters than on server - add the missing ones
-        if (prevLetters.length < serverLetters.length) {
-          const addedLetters = arrayDifference(
-            prevLetters,
-            serverLetters
-          );
-          const updatedUserLetters = userLetters.concat(addedLetters);
+  // Sync local state with game state when game changes from server
+  useEffect(() => {
+    if (!user || !game.turnOrder.includes(user.id)) return;
 
-          setUserLetters(updatedUserLetters);
-        }
-        // CASE 2: User has the same letters - check for collisions
-        else if (
-          JSON.stringify([...prevLetters].sort()) ===
-          JSON.stringify([...serverLetters].sort())
-        ) {
-          // Handle collisions - letters on board that the server has placed
-          let wildCardLettersUpdated = [...wildCardLetters];
-          let updatedLetters = [...userLetters];
-          let boardChanged = false;
+    const { userBoard: currentUserBoard, userLetters: currentUserLetters, wildCardLetters: currentWildCardLetters, wildCardOnBoard: currentWildCardOnBoard } = localStateRef.current;
 
-          const updatedUserBoard = userBoard.map((line, yIndex) =>
-            line.map((cell, xIndex) => {
-              // If user has a letter on a cell that now has a server letter
-              if (cell && game.board[yIndex][xIndex] !== null) {
-                // Return that letter to the user's hand
-                updatedLetters.push(cell[0]);
-                boardChanged = true;
+    // Get user's letters from server
+    const serverLetters = game.letters[user.id];
 
-                // Handle wildcards specially
-                if (cell[0] === '*') {
-                  wildCardLettersUpdated = wildCardLetters.filter(
-                    (letterObject) =>
-                      letterObject.x !== xIndex || letterObject.y !== yIndex
-                  );
-                }
-                return '';
-              } else {
-                return cell;
-              }
-            })
-          );
+    // Get letters that user currently has (including those placed on board)
+    const prevLetters = getPreviousLetters(
+      currentUserBoard,
+      currentWildCardOnBoard,
+      currentUserLetters
+    );
 
-          // Only update if we actually had board collisions
-          if (boardChanged) {
-            setUserLetters(updatedLetters);
-            setUserBoard(updatedUserBoard);
-            setWildCardLetters(wildCardLettersUpdated);
+    // CASE 1: User has fewer letters than on server - add the missing ones
+    if (prevLetters.length < serverLetters.length) {
+      const addedLetters = arrayDifference(
+        prevLetters,
+        serverLetters
+      );
+      const updatedUserLetters = currentUserLetters.concat(addedLetters);
+
+      setUserLetters(updatedUserLetters);
+    }
+    // CASE 2: User has the same letters - check for collisions
+    else if (
+      JSON.stringify([...prevLetters].sort()) ===
+      JSON.stringify([...serverLetters].sort())
+    ) {
+      // Handle collisions - letters on board that the server has placed
+      let wildCardLettersUpdated = [...currentWildCardLetters];
+      let updatedLetters = [...currentUserLetters];
+      let boardChanged = false;
+
+      const updatedUserBoard = currentUserBoard.map((line, yIndex) =>
+        line.map((cell, xIndex) => {
+          // If user has a letter on a cell that now has a server letter
+          if (cell && game.board[yIndex][xIndex] !== null) {
+            // Return that letter to the user's hand
+            updatedLetters.push(cell[0]);
+            boardChanged = true;
+
+            // Handle wildcards specially
+            if (cell[0] === '*') {
+              wildCardLettersUpdated = currentWildCardLetters.filter(
+                (letterObject) =>
+                  letterObject.x !== xIndex || letterObject.y !== yIndex
+              );
+            }
+            return '';
+          } else {
+            return cell;
           }
-        }
-        // CASE 3: User's letters don't match server - reset completely
-        else if (
-          JSON.stringify([...prevLetters].sort()) !==
-          JSON.stringify([...serverLetters].sort())
-        ) {
-          // Complete reset of everything
-          setUserLetters([...serverLetters]);
-          setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
-          setWildCardLetters([]);
-          setWildCardOnBoard({});
-        }
+        })
+      );
+
+      // Only update if we actually had board collisions
+      if (boardChanged) {
+        setUserLetters(updatedLetters);
+        setUserBoard(updatedUserBoard);
+        setWildCardLetters(wildCardLettersUpdated);
       }
+    }
+    // CASE 3: User's letters don't match server - reset completely
+    else {
+      // Complete reset of everything
+      setUserLetters([...serverLetters]);
+      setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
+      setWildCardLetters([]);
+      setWildCardOnBoard({});
+    }
+  }, [game.board, game.letters, game.turnOrder, user]);
+
+  // Cleanup duplicated words when screen loses focus
+  useFocusEffect(
+    useCallback(() => {
       return () => {
         dispatch(noDuplications());
       };
-    }, [user, userBoard, userLetters, wildCardLetters, wildCardOnBoard,game.board, game.letters,  game.turnOrder, dispatch])
+    }, [dispatch])
   )
 
   const userBoardEmpty = !userBoard.some((row: string[]) => !!row.join(''));
