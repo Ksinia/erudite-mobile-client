@@ -145,8 +145,14 @@ function Results({ game }: OwnProps) {
         <TranslationContainer translationKey="results" />
       </Text>
       <View style={styles.table}>
-        {results.map(([key, value]) => (
-          <View key={key} style={styles.row}>
+        {results.map(([key, value], index) => (
+          <View
+            key={key}
+            style={[
+              styles.row,
+              index === results.length - 1 && styles.lastRow,
+            ]}
+          >
             <Text style={styles.label}>
               <TranslationContainer translationKey={key} />
             </Text>
@@ -180,6 +186,9 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  lastRow: {
+    borderBottomWidth: 0,
   },
   label: {
     flex: 1,
