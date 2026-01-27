@@ -33,6 +33,8 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
             placeholderTextColor="#999"
             autoCapitalize="none"
             autoCorrect={false}
+            autoComplete="username"
+            textContentType="username"
             value={values.name}
             onChangeText={(text) => onChange('name', text)}
           />
@@ -49,6 +51,8 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
               placeholderTextColor="#999"
               autoCapitalize="none"
               autoCorrect={false}
+              autoComplete="email"
+              textContentType="emailAddress"
               keyboardType="email-address"
               value={values.email}
               onChangeText={(text) => onChange('email', text)}
@@ -65,6 +69,8 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
             placeholder=""
             placeholderTextColor="#999"
             secureTextEntry
+            autoComplete={isSignUp ? 'password-new' : 'password'}
+            textContentType={isSignUp ? 'newPassword' : 'password'}
             value={values.password}
             onChangeText={(text) => onChange('password', text)}
           />
