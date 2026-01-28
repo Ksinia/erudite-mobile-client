@@ -1,49 +1,31 @@
 import { errorFromServer } from './errorHandling';
-import { AppDispatch } from '@/store';
+import { GameUpdatedAction } from '@/reducer/games';
+import { MyThunkAction } from '@/reducer/types';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
 
 // Fetch game data from the server
-export const fetchGame = (gameId: number, jwt: string | null) => {
-  return async (dispatch: AppDispatch) => {
+export const fetchGame = (
+  gameId: number,
+  jwt: string | null
+): MyThunkAction<GameUpdatedAction> =>
+  async (dispatch) => {
     try {
-      let response;
-      
-      // Make the API request with appropriate headers
+      const headers: Record<string, string> = {};
       if (jwt) {
-        response = await fetch(`${backendUrl}/game/${gameId}`, {
-          headers: {
-            'Authorization': `Bearer ${jwt}`
-          }
-        });
-      } else {
-        response = await fetch(`${backendUrl}/game/${gameId}`);
+        headers['Authorization'] = `Bearer ${jwt}`;
       }
-      
-      // Handle errors
+
+      const response = await fetch(`${backendUrl}/game/${gameId}`, { headers });
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
-      // Parse the response
-      const data = await response.json();
-      
-      // Dispatch the game data to Redux
-      if (data && data.payload && data.payload.game) {
-        dispatch({
-          type: 'GAME_UPDATED',
-          payload: {
-            gameId: gameId,
-            game: data.payload.game
-          }
-        });
-      } else {
-        // Dispatch the whole response as the action
-        dispatch(data);
-      }
+
+      const action: GameUpdatedAction = await response.json();
+      dispatch(action);
     } catch (error) {
       dispatch(errorFromServer(error, 'fetch game'));
     }
   };
-};

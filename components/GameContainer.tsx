@@ -8,6 +8,7 @@ import { User, Game as GameType } from '@/reducer/types';
 import { errorFromServer } from '@/thunkActions/errorHandling';
 import { noDuplications } from '@/reducer/duplicatedWords';
 import { sendTurn } from '@/thunkActions/turn';
+import { fetchGame } from '@/thunkActions/game';
 import Game from './Game';
 import { useAppDispatch } from "@/hooks/redux";
 import config from "@/config"
@@ -239,7 +240,8 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Server returns 204 and sends update via socket
+      // Refetch game to ensure UI updates even if socket message is missed
+      dispatch(fetchGame(game.id, user.jwt));
     } catch (error) {
       dispatch(errorFromServer(error, 'validateTurn'));
     }
@@ -267,7 +269,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Server returns 204 and sends update via socket
+      dispatch(fetchGame(game.id, user.jwt));
     } catch (error) {
       dispatch(errorFromServer(error, 'undo'));
     }
@@ -293,7 +295,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // Server returns 204 and sends update via socket
+      dispatch(fetchGame(game.id, user.jwt));
     } catch (error) {
       dispatch(errorFromServer(error, 'change'));
     }

@@ -16,39 +16,45 @@ export default function GameScreen() {
   const gameId = id ? parseInt(id as string, 10) : 0;
   const dispatch = useAppDispatch();
   const appState = useRef(AppState.currentState);
+  const prevSocketConnected = useRef(false);
 
   const games = useSelector((state: RootState) => state.games);
   const user = useSelector((state: RootState) => state.user);
   const socketConnected = useSelector((state: RootState) => state.socketConnectionState);
 
+  // Handle screen focus/blur: join room on focus, leave on blur
   useFocusEffect(
-    // To avoid running the effect too often, it's important to wrap the callback in useCallback before passing it to useFocusEffect
     React.useCallback(() => {
-      console.log('useFocusEffect - gameId:', gameId);
       dispatch(fetchGame(gameId, user?.jwt ?? null));
-      socketConnected && dispatch(addGameToSocket(gameId));
+      if (socketConnected && user) {
+        dispatch(addGameToSocket(gameId));
+      }
 
       return () => {
-        console.log('GameScreen blurred - unsubscribing from game:', gameId);
         dispatch(removeGameFromSocket(gameId));
       };
-    }, [gameId, dispatch, socketConnected, user?.jwt])
+    }, [gameId, dispatch, user?.jwt]) // socketConnected intentionally excluded
   )
+
+  // When socket reconnects (false→true), rejoin room without removing first
+  // This matches the web client's componentDidUpdate behavior
+  useEffect(() => {
+    if (!prevSocketConnected.current && socketConnected && user) {
+      dispatch(addGameToSocket(gameId));
+    }
+    prevSocketConnected.current = socketConnected;
+  }, [socketConnected, gameId, dispatch]);
 
   // Handle app state changes for game socket subscription
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      console.log('GameScreen - App state changing from', appState.current, 'to', nextAppState);
-      
       if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
-        // App has come to the foreground - reconnect to game socket
-        console.log('GameScreen - App foregrounded, reconnecting to game:', gameId);
+        // App has come to the foreground - refetch game and reconnect
+        dispatch(fetchGame(gameId, user?.jwt ?? null));
         if (socketConnected) {
           dispatch(addGameToSocket(gameId));
         }
       } else if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
-        // App has gone to the background - disconnect from game socket
-        console.log('GameScreen - App backgrounded, disconnecting from game:', gameId);
         dispatch(removeGameFromSocket(gameId));
       }
 
@@ -60,7 +66,7 @@ export default function GameScreen() {
     return () => {
       subscription?.remove();
     };
-  }, [gameId, socketConnected, dispatch]);
+  }, [gameId, dispatch, user?.jwt]); // socketConnected intentionally excluded, use ref
 
   const game = games[gameId]
 
