@@ -1,93 +1,32 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { ThunkDispatch } from 'redux-thunk';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { TRANSLATIONS } from "@/constants/translations";
 import { RootState } from "@/reducer";
-import { errorFromServer } from "@/thunkActions/errorHandling";
-import { ErrorLoadedAction, LogOutAction } from "@/reducer/auth";
-import { LoginOrSignupErrorAction } from "@/reducer/error";
 import Translation from './Translation';
 
-interface StateProps {
-  locale: string;
-}
-
-interface OwnProps {
+interface Props {
   translationKey: string;
   args?: string[];
 }
-interface DispatchProps {
-  dispatch: ThunkDispatch<
-    RootState,
-    unknown,
-    LogOutAction | ErrorLoadedAction | LoginOrSignupErrorAction
-  >;
-}
 
-type Props = StateProps & OwnProps & DispatchProps;
+const TranslationContainer: React.FC<Props> = ({ translationKey, args }) => {
+  const locale = useSelector((state: RootState) => state.translation?.locale ?? 'ru_RU');
 
-interface State {
-  translation: string;
-}
-
-class TranslationContainer extends Component<Props, State> {
-  readonly state: State = { translation: '' };
-
-  componentDidMount() {
-    this._updateTranslation(
-      this.props.translationKey,
-      this.props.locale,
-      this.props.args
-    );
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    // update the translation if one of the props has changed
-    if (
-      this.props.translationKey !== prevProps.translationKey ||
-      this.props.locale !== prevProps.locale ||
-      this.props.args !== prevProps.args
-    ) {
-      this._updateTranslation(
-        this.props.translationKey,
-        this.props.locale,
-        this.props.args
-      );
-    }
-  }
-
-  _updateTranslation(
-    translationKey: string,
-    activeLanguageCode: string,
-    args?: string[]
-  ) {
-    if (translationKey && activeLanguageCode) {
-      try {
-        let translation = TRANSLATIONS[activeLanguageCode][translationKey];
-        if (args && args.length > 0) {
-          args.forEach((arg) => (translation = translation.replace('{}', arg)));
-        }
-        this.setState({
-          translation,
-        });
-      } catch (error) {
-        this.props.dispatch(errorFromServer(error, '_updateTranslation'));
+  const translation = useMemo(() => {
+    if (!translationKey || !locale) return '';
+    try {
+      let result = TRANSLATIONS[locale][translationKey];
+      if (args && args.length > 0) {
+        args.forEach((arg) => (result = result.replace('{}', arg)));
       }
+      return result;
+    } catch {
+      return '';
     }
-  }
+  }, [translationKey, locale, args]);
 
-  render() {
-    if (!this.state.translation || this.state.translation === '') return null;
-    return <Translation translation={this.state.translation} />;
-  }
-}
+  if (!translation) return null;
+  return <Translation translation={translation} />;
+};
 
-function mapStateToProps(state: RootState): StateProps {
-  return {
-    locale: state.translation?.locale ?? 'ru_RU', // temp
-  };
-}
-
-export default connect<StateProps, void, OwnProps, RootState>(mapStateToProps)(
-  TranslationContainer
-);
+export default TranslationContainer;

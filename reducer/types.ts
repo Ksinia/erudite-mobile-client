@@ -63,6 +63,7 @@ export interface Game {
   updatedAt: string;
   wordsForValidation: string[];
   activeUserId: null | number;
+  centerWord?: string;
 }
 
 export type MyThunkAction<A extends Action> = ThunkAction<
