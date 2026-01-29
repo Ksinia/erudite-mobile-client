@@ -21,14 +21,14 @@ function getActiveUserName(game: Game): string {
 
 function getWinnerName(game: Game): string {
   return game.users
-    .filter((user) => game.result.winner.includes(user.id))
+    .filter((user) => game.result.winner.includes(user.id.toString()))
     .map((user) => user.name)
     .join(', ');
 }
 
 function getTileColor(room: Game, user: User | null): string {
   if (room.phase === 'finished' && user) {
-    return room.result.winner.includes(user.id) ? Colors.green : Colors.red;
+    return room.result.winner.includes(user.id.toString()) ? Colors.green : Colors.red;
   }
   if (user && room.users.some((u) => u.id === user.id)) {
     return room.activeUserId === user.id ? Colors.red : Colors.orange;
