@@ -7,13 +7,28 @@ export interface ExpoPushToken {
   data: string;
 }
 
-// Configure notification behavior
+// Configure notification behavior - dynamically suppress based on active screen
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
+  handleNotification: async (notification) => {
+    const { data } = notification.request.content;
+
+    // Lazy import to avoid circular dependency
+    const store = require('@/store').default;
+    const activeGame = store.getState().activeGameScreen;
+
+    if (activeGame && data?.gameId && Number(data.gameId) === activeGame.gameId) {
+      // Suppress game_update if this game is already open
+      if (data.type !== 'chat_message') {
+        return { shouldShowAlert: false, shouldPlaySound: false, shouldSetBadge: false };
+      }
+      // Suppress chat_message if chat is visible
+      if (data.type === 'chat_message' && activeGame.chatVisible) {
+        return { shouldShowAlert: false, shouldPlaySound: false, shouldSetBadge: false };
+      }
+    }
+
+    return { shouldShowAlert: true, shouldPlaySound: true, shouldSetBadge: false };
+  },
 });
 
 class NotificationService {

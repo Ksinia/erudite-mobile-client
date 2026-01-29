@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -20,11 +20,13 @@ import { TRANSLATIONS } from '@/constants/translations';
 interface ChatProps {
   players: User[];
   gamePhase: string;
+  resetScroll?: number;
 }
 
-const Chat: React.FC<ChatProps> = ({ players, gamePhase }) => {
+const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState('');
+  const chatScrollRef = useRef<ScrollView>(null);
   
   const user = useSelector((state: RootState) => state.user);
   const chat = useSelector((state: RootState) => state.chat);
@@ -43,6 +45,12 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase }) => {
       dispatch(clearMessages());
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (resetScroll) {
+      chatScrollRef.current?.scrollTo({ y: 0, animated: false });
+    }
+  }, [resetScroll]);
 
   const handleSendMessage = () => {
     if (message.trim()) {
@@ -86,7 +94,8 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase }) => {
           </View>
         )}
         
-        <ScrollView 
+        <ScrollView
+          ref={chatScrollRef}
           style={styles.messagesContainer}
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={true}

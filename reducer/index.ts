@@ -13,6 +13,7 @@ import messagesCount from './messagesCount';
 import socketConnectionState from './socketConnectionState';
 import subscription from './subscription';
 import notificationNavigation from './notificationNavigation';
+import activeGameScreen from './activeGameScreen';
 
 const rootReducer = combineReducers({
   user,
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   socketConnectionState,
   subscription,
   notificationNavigation,
+  activeGameScreen,
 });
 
 export default rootReducer;

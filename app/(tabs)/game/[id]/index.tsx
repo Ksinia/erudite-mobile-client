@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView, AppState, AppStateStatus } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSelector } from 'react-redux';
@@ -11,6 +11,7 @@ import { addGameToSocket, removeGameFromSocket } from "@/reducer/outgoingMessage
 import TranslationContainer from '@/components/Translation/TranslationContainer';
 import { useAppDispatch } from "@/hooks/redux";
 import { clearNotificationNavigation } from '@/reducer/notificationNavigation';
+import { setActiveGameScreen, clearActiveGameScreen, setChatVisible } from '@/reducer/activeGameScreen';
 
 export default function GameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -19,6 +20,9 @@ export default function GameScreen() {
   const appState = useRef(AppState.currentState);
   const prevSocketConnected = useRef(false);
   const scrollViewRef = useRef<ScrollView>(null);
+  const chatYRef = useRef(0);
+  const scrollViewHeightRef = useRef(0);
+  const [chatResetScroll, setChatResetScroll] = useState(0);
 
   const games = useSelector((state: RootState) => state.games);
   const user = useSelector((state: RootState) => state.user);
@@ -32,9 +36,11 @@ export default function GameScreen() {
       if (socketConnected && user) {
         dispatch(addGameToSocket(gameId));
       }
+      dispatch(setActiveGameScreen({ gameId, chatVisible: false }));
 
       return () => {
         dispatch(removeGameFromSocket(gameId));
+        dispatch(clearActiveGameScreen());
       };
     }, [gameId, dispatch, user?.jwt]) // socketConnected intentionally excluded
   )
@@ -77,6 +83,7 @@ export default function GameScreen() {
   useEffect(() => {
     if (notificationNav && notificationNav.gameId === gameId && game) {
       dispatch(clearNotificationNavigation());
+      setChatResetScroll((c) => c + 1);
       setTimeout(() => {
         if (notificationNav.scrollToChat) {
           scrollViewRef.current?.scrollToEnd({ animated: true });
@@ -110,7 +117,18 @@ export default function GameScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        onLayout={(e) => { scrollViewHeightRef.current = e.nativeEvent.layout.height; }}
+        onScroll={(e) => {
+          const scrollY = e.nativeEvent.contentOffset.y;
+          const isChatVisible = chatYRef.current > 0 && scrollY + scrollViewHeightRef.current >= chatYRef.current;
+          dispatch(setChatVisible(isChatVisible));
+        }}
+        scrollEventThrottle={200}
+      >
         <View style={styles.gameArea}>
           {shouldRenderGameContainer ? (
             <GameContainer game={game} />
@@ -119,10 +137,11 @@ export default function GameScreen() {
           )}
         </View>
         {shouldShowChat && (
-          <View style={styles.chatArea}>
+          <View style={styles.chatArea} onLayout={(e) => { chatYRef.current = e.nativeEvent.layout.y; }}>
             <Chat
               players={game.users}
               gamePhase={game.phase}
+              resetScroll={chatResetScroll}
             />
           </View>
         )}
