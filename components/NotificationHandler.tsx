@@ -1,20 +1,19 @@
 import React, { useEffect } from 'react';
 import * as Notifications from 'expo-notifications';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 import NotificationService from '@/services/NotificationService';
+import { setNotificationNavigation } from '@/reducer/notificationNavigation';
+import { useAppDispatch } from '@/hooks/redux';
 
 const NotificationHandler: React.FC = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     // Handle notification received while app is in foreground
     const notificationListener = NotificationService.addNotificationReceivedListener((notification) => {
-      console.log('Notification received:', notification);
-      
-      // You can customize this behavior
-      // For example, show an in-app alert or update badge
       const { data } = notification.request.content;
-      
+
       if (data?.type === 'game_update') {
         console.log('Game update notification received');
       } else if (data?.type === 'chat_message') {
@@ -22,38 +21,35 @@ const NotificationHandler: React.FC = () => {
       }
     });
 
+    const navigateFromNotification = (data: Record<string, unknown>) => {
+      if (!data?.gameId) return;
+
+      dispatch(setNotificationNavigation({
+        gameId: Number(data.gameId),
+        scrollToChat: data.type === 'chat_message',
+      }));
+
+      router.push({
+        pathname: `/(tabs)/game/[id]`,
+        params: { id: data.gameId },
+      } as Href);
+    };
+
     // Handle notification response (when user taps notification)
     const responseListener = NotificationService.addNotificationResponseReceivedListener((response) => {
-      console.log('Notification response:', response);
-      
       const { data } = response.notification.request.content;
-      
-      // Navigate based on notification type
-      if (data?.type === 'game_update' && data?.gameId) {
-        console.log('Navigating to game:', data.gameId);
-        router.push(`/(tabs)/game/${data.gameId}`);
-      } else if (data?.type === 'chat_message' && data?.gameId) {
-        console.log('Navigating to game chat:', data.gameId);
-        router.push(`/(tabs)/game/${data.gameId}`);
-      } else if (data?.type === 'turn_notification' && data?.gameId) {
-        console.log('Navigating to game for turn:', data.gameId);
-        router.push(`/(tabs)/game/${data.gameId}`);
-      }
+      navigateFromNotification(data as Record<string, unknown>);
     });
 
     // Check if app was opened by a notification when it was killed/closed
     const checkInitialNotification = async () => {
       const response = await Notifications.getLastNotificationResponseAsync();
       if (response) {
-        console.log('App opened via notification:', response);
-        
         const { data } = response.notification.request.content;
-        if (data?.gameId) {
-          // Small delay to ensure navigation is ready
-          setTimeout(() => {
-            router.push(`/(tabs)/game/${data.gameId}`);
-          }, 1000);
-        }
+        // Small delay to ensure navigation is ready
+        setTimeout(() => {
+          navigateFromNotification(data as Record<string, unknown>);
+        }, 1000);
       }
     };
 
@@ -63,9 +59,8 @@ const NotificationHandler: React.FC = () => {
       notificationListener.remove();
       responseListener.remove();
     };
-  }, [router]);
+  }, [router, dispatch]);
 
-  // This component doesn't render anything
   return null;
 };
 

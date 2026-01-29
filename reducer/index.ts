@@ -12,6 +12,7 @@ import chat from './chat';
 import messagesCount from './messagesCount';
 import socketConnectionState from './socketConnectionState';
 import subscription from './subscription';
+import notificationNavigation from './notificationNavigation';
 
 const rootReducer = combineReducers({
   user,
@@ -26,6 +27,7 @@ const rootReducer = combineReducers({
   messagesCount,
   socketConnectionState,
   subscription,
+  notificationNavigation,
 });
 
 export default rootReducer;

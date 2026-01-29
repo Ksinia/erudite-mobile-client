@@ -10,6 +10,7 @@ import { fetchGame } from '@/thunkActions/game';
 import { addGameToSocket, removeGameFromSocket } from "@/reducer/outgoingMessages";
 import TranslationContainer from '@/components/Translation/TranslationContainer';
 import { useAppDispatch } from "@/hooks/redux";
+import { clearNotificationNavigation } from '@/reducer/notificationNavigation';
 
 export default function GameScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -17,10 +18,12 @@ export default function GameScreen() {
   const dispatch = useAppDispatch();
   const appState = useRef(AppState.currentState);
   const prevSocketConnected = useRef(false);
+  const scrollViewRef = useRef<ScrollView>(null);
 
   const games = useSelector((state: RootState) => state.games);
   const user = useSelector((state: RootState) => state.user);
   const socketConnected = useSelector((state: RootState) => state.socketConnectionState);
+  const notificationNav = useSelector((state: RootState) => state.notificationNavigation);
 
   // Handle screen focus/blur: join room on focus, leave on blur
   useFocusEffect(
@@ -70,6 +73,20 @@ export default function GameScreen() {
 
   const game = games[gameId]
 
+  // Scroll based on notification type: top for game updates, bottom for chat
+  useEffect(() => {
+    if (notificationNav && notificationNav.gameId === gameId && game) {
+      dispatch(clearNotificationNavigation());
+      setTimeout(() => {
+        if (notificationNav.scrollToChat) {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        } else {
+          scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+        }
+      }, 500);
+    }
+  }, [notificationNav, gameId, game, dispatch]);
+
   if (!game) {
     return (
       <SafeAreaView style={styles.container}>
@@ -87,13 +104,13 @@ export default function GameScreen() {
     game.phase === 'turn' ||
     game.phase === 'validation' ||
     game.phase === 'finished';
-  
+
   const isPlayerInGame = user && game.users.some(player => player.id === user.id);
   const shouldShowChat = game.phase === 'waiting' || game.phase === 'ready' || isPlayerInGame;
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.scrollView} contentContainerStyle={styles.content}>
+      <ScrollView ref={scrollViewRef} style={styles.scrollView} contentContainerStyle={styles.content}>
         <View style={styles.gameArea}>
           {shouldRenderGameContainer ? (
             <GameContainer game={game} />

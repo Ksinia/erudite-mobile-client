@@ -6,11 +6,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/reducer';
 import NotificationService from '@/services/NotificationService';
 import { subscriptionRegistered } from '@/reducer/subscription';
+import { setNotificationNavigation } from '@/reducer/notificationNavigation';
+import { useRouter } from 'expo-router';
 
 const TestNotifications: React.FC = () => {
   const dispatch = useDispatch();
+  const router = useRouter();
   const subscription = useSelector((state: RootState) => state.subscription);
   const user = useSelector((state: RootState) => state.user);
+  const games = useSelector((state: RootState) => state.games);
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [permissions, setPermissions] = useState<string>('Unknown');
 
@@ -145,11 +149,23 @@ const TestNotifications: React.FC = () => {
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={sendTestChatNotification}>
-        <Text style={styles.buttonText}>Send Test Chat Notification</Text>
+        <Text style={styles.buttonText}>Send Test Chat Notification (background)</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.button} onPress={sendTestNotification}>
-        <Text style={styles.buttonText}>Send Test Game Notification</Text>
+        <Text style={styles.buttonText}>Send Test Game Notification (background)</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={[styles.button, styles.warningButton]} onPress={() => {
+        const gameId = Number(Object.keys(games)[0]);
+        if (!gameId) {
+          Alert.alert('Error', 'No games in store');
+          return;
+        }
+        dispatch(setNotificationNavigation({ gameId, scrollToChat: true }));
+        router.push({ pathname: '/(tabs)/game/[id]', params: { id: String(gameId) } } as any);
+      }}>
+        <Text style={styles.buttonText}>Simulate Chat Notification Tap (game {Object.keys(games)[0] || '?'})</Text>
       </TouchableOpacity>
 
       {debugInfo.length > 0 && (
