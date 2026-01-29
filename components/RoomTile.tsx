@@ -90,9 +90,7 @@ class RoomTile extends Component<Props> {
                 '\uD83C\uDFC6 ' + getWinnerName(this.props.room)}
             </Text>
             <Text style={styles.language}>
-              {language.toUpperCase()}
-              {"\n"}
-              <Text>{maxPlayers}</Text>
+              {language.toUpperCase()} {maxPlayers}
             </Text>
           </View>
           <View style={styles.tileBody}>

@@ -8,86 +8,73 @@ const styles = StyleSheet.create({
     borderColor: 'lightgrey',
     borderRadius: 5,
     marginVertical: 10,
-    marginHorizontal: 0, // Changed from 'auto' for more reliable centering
-    alignSelf: 'center', // Center in parent container
-    width: width < 420 ? width * 0.9 : 250, // Responsive width
+    alignSelf: 'center',
+    width: width < 420 ? width * 0.9 : 250,
     height: 120,
-    display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#ffffff', // Added solid background color to fix shadow rendering
-    // Add shadow for better appearance
+    backgroundColor: '#ffffff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 2, // For Android shadow
+    elevation: 2,
   },
   tileHeader: {
     borderBottomWidth: 1,
     borderBottomColor: 'lightgrey',
     borderTopLeftRadius: 4,
     borderTopRightRadius: 4,
-    height: '40%', // Increased from 30%
-    display: 'flex',
+    height: '40%',
     flexDirection: 'row',
-    justifyContent: 'space-between', // Changed from space-evenly
-    alignItems: 'center', // Added to center items vertically
-    paddingHorizontal: 8, // Added horizontal padding
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
   tileBody: {
     height: '60%',
-    display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingVertical: 10, // Increased padding
+    paddingVertical: 10,
     paddingHorizontal: 15,
-    justifyContent: 'center', // Center content horizontally
-    alignItems: 'center', // Center content vertically
-  },
-  status: {
-    fontSize: 14, // Increased from 12
-    width: '60%',
-    fontWeight: 'bold',
-    textAlign: 'center', // Center text
-    textAlignVertical: 'center', // Center vertically for Android
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   number: {
-    width: '15%',
-    fontSize: 18,
+    fontSize: 14,
     fontWeight: 'bold',
-    paddingLeft: '2%',
-    textAlign: 'center', // Center text
-    textAlignVertical: 'center', // Center vertically for Android
+    textAlign: 'center',
+    minWidth: 30,
+    marginRight: 6,
+  },
+  status: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   language: {
-    width: '20%', // Increased from 15%
-    fontSize: 14, // Increased from 12
+    fontSize: 14,
     fontWeight: 'bold',
-    textAlign: 'center', // Center text
-    textAlignVertical: 'center', // Center vertically for Android
+    textAlign: 'center',
+    marginLeft: 6,
   },
   counter: {
     position: 'absolute',
     top: -10,
     right: -10,
     backgroundColor: 'tomato',
-    color: 'white',
     borderRadius: 20,
     minWidth: 20,
     height: 20,
-    fontSize: 12,
-    textAlign: 'center', // Center text
-    overflow: 'hidden',
     paddingHorizontal: 6,
     paddingVertical: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  counterText: { // Added for the Text inside counter
+  counterText: {
     color: 'white',
     fontSize: 12,
     textAlign: 'center',
-  }
+  },
 });
 
 export default styles;
