@@ -8,14 +8,15 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/reducer';
 import { clearMessages } from '@/reducer/chat';
-import { sendChatMessage } from '@/reducer/outgoingMessages';
 import { User, Message } from '@/reducer/types';
 import { useAppDispatch } from '@/hooks/redux';
 import { TRANSLATIONS } from '@/constants/translations';
+import { sendChatMessageWithAck } from '@/thunkActions/chat';
 
 interface ChatProps {
   players: User[];
@@ -26,11 +27,14 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState('');
+  const [isSending, setIsSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const chatScrollRef = useRef<ScrollView>(null);
-  
+
   const user = useSelector((state: RootState) => state.user);
   const chat = useSelector((state: RootState) => state.chat);
   const locale = useSelector((state: RootState) => state.translation?.locale ?? 'ru_RU');
+  const isConnected = useSelector((state: RootState) => state.socketConnectionState);
   
   const getTranslation = (key: string): string => {
     try {
@@ -52,10 +56,29 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
     }
   }, [resetScroll]);
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      dispatch(sendChatMessage(message));
-      setMessage('');
+  const handleSendMessage = async () => {
+    if (!message.trim() || isSending) return;
+
+    if (!isConnected) {
+      setSendError(getTranslation('no_connection'));
+      return;
+    }
+
+    const messageToSend = message;
+    setIsSending(true);
+    setSendError(null);
+
+    try {
+      const response = await sendChatMessageWithAck(messageToSend);
+      if (response.success) {
+        setMessage('');
+      } else {
+        setSendError(response.error || getTranslation('send_failed'));
+      }
+    } catch {
+      setSendError(getTranslation('send_failed'));
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -71,26 +94,37 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
     >
       <View style={styles.chatContainer}>
         {shouldShowInput && (
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={message}
-              onChangeText={setMessage}
-              placeholder={getTranslation('message')}
-              placeholderTextColor="#999"
-              onSubmitEditing={handleSendMessage}
-              returnKeyType="send"
-              multiline={false}
-            />
-            <TouchableOpacity 
-              style={styles.sendButton} 
-              onPress={handleSendMessage}
-              disabled={!message.trim()}
-            >
-              <Text style={styles.sendButtonText}>
-                ↑
-              </Text>
-            </TouchableOpacity>
+          <View>
+            {sendError && (
+              <Text style={styles.errorText}>{sendError}</Text>
+            )}
+            <View style={styles.inputContainer}>
+              <TextInput
+                style={[styles.input, isSending && styles.inputDisabled]}
+                value={message}
+                onChangeText={(text) => {
+                  setMessage(text);
+                  if (sendError) setSendError(null);
+                }}
+                placeholder={getTranslation('message')}
+                placeholderTextColor="#999"
+                onSubmitEditing={handleSendMessage}
+                returnKeyType="send"
+                multiline={false}
+                editable={!isSending}
+              />
+              <TouchableOpacity
+                style={[styles.sendButton, isSending && styles.sendButtonDisabled]}
+                onPress={handleSendMessage}
+                disabled={!message.trim() || isSending}
+              >
+                {isSending ? (
+                  <ActivityIndicator size="small" color="rgb(60, 60, 60)" />
+                ) : (
+                  <Text style={styles.sendButtonText}>↑</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         )}
         
@@ -168,6 +202,18 @@ const styles = StyleSheet.create({
   sendButtonText: {
     color: 'rgb(60, 60, 60)',
     fontSize: 20,
+  },
+  inputDisabled: {
+    backgroundColor: '#f0f0f0',
+  },
+  sendButtonDisabled: {
+    backgroundColor: '#f0f0f0',
+  },
+  errorText: {
+    color: '#d32f2f',
+    fontSize: 12,
+    paddingHorizontal: 20,
+    paddingTop: 8,
   },
 });
 

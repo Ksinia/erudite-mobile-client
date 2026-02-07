@@ -151,4 +151,5 @@ socket.on('reconnect_attempt', (attemptNumber: number) => {
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
+export { socket };
 export default store;
