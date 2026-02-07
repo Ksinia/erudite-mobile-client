@@ -28,7 +28,7 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const [sendError, setSendError] = useState<string | null>(null);
+  const [sendErrorKey, setSendErrorKey] = useState<string | null>(null);
   const chatScrollRef = useRef<ScrollView>(null);
 
   const user = useSelector((state: RootState) => state.user);
@@ -60,23 +60,23 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
     if (!message.trim() || isSending) return;
 
     if (!isConnected) {
-      setSendError(getTranslation('no_connection'));
+      setSendErrorKey('no_connection');
       return;
     }
 
     const messageToSend = message;
     setIsSending(true);
-    setSendError(null);
+    setSendErrorKey(null);
 
     try {
       const response = await sendChatMessageWithAck(messageToSend);
       if (response.success) {
         setMessage('');
       } else {
-        setSendError(response.error || getTranslation('send_failed'));
+        setSendErrorKey('send_failed');
       }
     } catch {
-      setSendError(getTranslation('send_failed'));
+      setSendErrorKey('send_failed');
     } finally {
       setIsSending(false);
     }
@@ -93,41 +93,42 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
     >
       <View style={styles.chatContainer}>
-        {shouldShowInput && (
-          <View>
-            {sendError && (
-              <Text style={styles.errorText}>{sendError}</Text>
-            )}
-            <View style={styles.inputContainer}>
-              <TextInput
-                style={[styles.input, isSending && styles.inputDisabled]}
-                value={message}
-                onChangeText={(text) => {
-                  setMessage(text);
-                  if (sendError) setSendError(null);
-                }}
-                placeholder={getTranslation('message')}
-                placeholderTextColor="#999"
-                onSubmitEditing={handleSendMessage}
-                returnKeyType="send"
-                multiline={false}
-                editable={!isSending}
-              />
-              <TouchableOpacity
-                style={[styles.sendButton, isSending && styles.sendButtonDisabled]}
-                onPress={handleSendMessage}
-                disabled={!message.trim() || isSending}
-              >
-                {isSending ? (
-                  <ActivityIndicator size="small" color="rgb(60, 60, 60)" />
-                ) : (
-                  <Text style={styles.sendButtonText}>↑</Text>
-                )}
-              </TouchableOpacity>
-            </View>
+        {sendErrorKey && (
+          <View style={styles.errorContainer}>
+            <Text style={styles.errorText}>{getTranslation(sendErrorKey)}</Text>
           </View>
         )}
-        
+
+        {shouldShowInput && (
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={[styles.input, isSending && styles.inputDisabled]}
+              value={message}
+              onChangeText={(text) => {
+                setMessage(text);
+                if (sendErrorKey) setSendErrorKey(null);
+              }}
+              placeholder={getTranslation('message')}
+              placeholderTextColor="#999"
+              onSubmitEditing={handleSendMessage}
+              returnKeyType="send"
+              multiline={false}
+              editable={!isSending}
+            />
+            <TouchableOpacity
+              style={[styles.sendButton, isSending && styles.sendButtonDisabled]}
+              onPress={handleSendMessage}
+              disabled={!message.trim() || isSending}
+            >
+              {isSending ? (
+                <ActivityIndicator size="small" color="rgb(60, 60, 60)" />
+              ) : (
+                <Text style={styles.sendButtonText}>↑</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
+
         <ScrollView
           ref={chatScrollRef}
           style={styles.messagesContainer}
@@ -209,11 +210,15 @@ const styles = StyleSheet.create({
   sendButtonDisabled: {
     backgroundColor: '#f0f0f0',
   },
+  errorContainer: {
+    backgroundColor: '#ffebee',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
   errorText: {
     color: '#d32f2f',
     fontSize: 12,
-    paddingHorizontal: 20,
-    paddingTop: 8,
+    textAlign: 'center',
   },
 });
 
