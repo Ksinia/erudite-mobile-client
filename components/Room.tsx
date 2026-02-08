@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 
 import { User, Game as GameType } from '@/reducer/types';
 import TranslationContainer from './Translation/TranslationContainer';
+import ShareButton from './ShareButton';
 import { Colors } from '@/constants/Colors';
 
 type Props = {
@@ -24,7 +25,7 @@ function Room(props: Props) {
             args={[String(props.room.id), String(props.room.maxPlayers)]}
           />
         </Text>
-        
+        <ShareButton gameId={props.room.id} />
         <View style={styles.languageBadge}>
           <Text style={styles.languageText}>{props.room.language.toUpperCase()}</Text>
         </View>

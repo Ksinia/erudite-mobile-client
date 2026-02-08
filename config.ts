@@ -11,10 +11,19 @@ const getBackendUrl = () => {
   }
 };
 
+const getWebUrl = () => {
+  switch (nodeEnvironment) {
+    case 'development':
+      return 'http://localhost:3000';
+    default:
+      return 'https://erudit.ksinia.net';
+  }
+};
 
 const config = {
   environment: nodeEnvironment,
   backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL ?? getBackendUrl(),
+  webUrl: process.env.EXPO_PUBLIC_WEB_URL ?? getWebUrl(),
 };
 
 console.log("backend url:", config.backendUrl);

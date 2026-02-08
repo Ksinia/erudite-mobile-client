@@ -5,6 +5,7 @@ import { letterValues } from '@/constants/letterValues';
 import { Game as GameType, User } from '@/reducer/types';
 import Board from './Board';
 import TranslationContainer from './Translation/TranslationContainer';
+import ShareButton from './ShareButton';
 import { WildCardOnBoard } from './GameContainer';
 import WildCardForm from './WildCardForm';
 import Results from './Results';
@@ -56,7 +57,10 @@ const Game: React.FC<Props> = (props) => {
     
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.titleText}>{props.game.id}</Text>
+      <View style={styles.titleRow}>
+        <Text style={styles.titleText}>{props.game.id}</Text>
+        <ShareButton gameId={props.game.id} started />
+      </View>
       <View style={styles.boardContainer}>
         <Board
           clickBoard={(x, y) => props.clickBoard(x, y)}
@@ -479,11 +483,16 @@ const styles = StyleSheet.create({
   turnText: {
     flexWrap: 'wrap',
   },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    gap: 4,
+  },
   titleText: {
     fontSize: 16,
     fontWeight: 'bold',
-    margin: 'auto',
-    marginTop: 10,
   }
 });
 
