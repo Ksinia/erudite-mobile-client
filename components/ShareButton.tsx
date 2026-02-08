@@ -1,5 +1,5 @@
 import React from 'react';
-import { Share, Pressable, StyleSheet, Platform } from 'react-native';
+import { Share, Pressable, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/reducer';
@@ -19,11 +19,7 @@ const ShareButton: React.FC<Props> = ({ gameId, started }) => {
   const handleShare = async () => {
     const url = `${config.webUrl}/game/${gameId}`;
     try {
-      if (Platform.OS === 'ios') {
-        await Share.share({ message, url });
-      } else {
-        await Share.share({ message: `${message} ${url}` });
-      }
+      await Share.share({ message: `${message} ${url}` });
     } catch (error) {
       console.error('Share failed:', error);
     }
