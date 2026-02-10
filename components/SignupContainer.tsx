@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { loginSignupFunction } from "@/thunkActions/authorization";
 import { RootState } from "@/reducer";
@@ -14,13 +15,20 @@ const SignupContainer: React.FC = () => {
     password: '',
     email: '',
   });
-  
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const error = useSelector((state: RootState) => state.error);
-  
+
+  useFocusEffect(
+    useCallback(() => {
+      setFormState({ name: '', password: '', email: '' });
+      dispatch(clearError());
+    }, [dispatch])
+  );
+
   const handleChange = (name: string, value: string): void => {
-    setFormState({ ...formState, [name]: value });
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (): void => {
@@ -33,21 +41,13 @@ const SignupContainer: React.FC = () => {
         formState.email
       )
     );
-    
-    // Reset form immediately after submission
+
     setFormState({
-      name: formState.name, // Keep the name for convenience
-      email: formState.email, // Keep the email for convenience
-      password: '',  // Clear password for security
+      name: formState.name,
+      email: formState.email,
+      password: '',
     });
   };
-
-  useEffect(() => {
-    // Cleanup when component unmounts
-    return () => {
-      dispatch(clearError());
-    };
-  }, [dispatch]);
 
   return (
     <LoginSignup

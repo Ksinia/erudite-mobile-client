@@ -16,7 +16,7 @@ type Props = {
 const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSignUp }) => {
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
         <Text style={styles.title}>
           <TranslationContainer
             translationKey={isSignUp ? 'sign_up' : 'log_in'}
@@ -25,7 +25,7 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         
         <View style={styles.formGroup}>
           <Text style={styles.label}>
-            <TranslationContainer translationKey="name" />
+            <TranslationContainer translationKey={isSignUp ? 'login' : 'login_or_email'} />
           </Text>
           <TextInput
             style={styles.input}
@@ -78,7 +78,7 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
         
         {error && (
           <Text style={styles.errorMessage}>
-            {typeof error === 'string' ? error : 'Authentication failed. Please try again.'}
+            <TranslationContainer translationKey={error} />
           </Text>
         )}
         

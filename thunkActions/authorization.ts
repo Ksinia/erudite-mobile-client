@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Alert } from 'react-native';
 import { MyThunkAction } from '../reducer/types';
 import { LoginSuccessAction } from '../reducer/auth';
 import { errorFromServer, loginSignupFunctionErrorCtx } from './errorHandling';
+import { TRANSLATIONS } from '@/constants/translations';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -14,7 +16,7 @@ export const loginSignupFunction =
     navigation: any,
     email?: string
   ): MyThunkAction<LoginSuccessAction> =>
-  async (dispatch) => {
+  async (dispatch, getState) => {
     const url = `${backendUrl}/${type}`;
     try {
       const body = type === 'login'
@@ -29,26 +31,27 @@ export const loginSignupFunction =
         body,
       });
 
-      // Parse the JSON response regardless of success or failure
       const data = await response.json();
-      
+
       if (!response.ok) {
-        // If server returns error with message field, use that
         if (data && data.message) {
           throw new Error(data.message);
         }
-        // Otherwise use status text
         throw new Error(`${response.status}: ${response.statusText}`);
       }
 
       const action = data;
 
-      // Store JWT token in AsyncStorage
       await AsyncStorage.setItem('jwt', action.payload.jwt);
-      
+
       dispatch(action);
-      
-      // Navigate to home screen
+
+      if (type === 'signup') {
+        const locale = getState().translation?.locale ?? 'en_US';
+        const message = TRANSLATIONS[locale]?.signup_success ?? 'You have signed up successfully!';
+        Alert.alert('', message);
+      }
+
       navigation.replace('/');
     } catch (error) {
       dispatch(errorFromServer(error, loginSignupFunctionErrorCtx));

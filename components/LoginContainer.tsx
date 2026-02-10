@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import { useFocusEffect } from '@react-navigation/native';
 
 import { loginSignupFunction } from '../thunkActions/authorization';
 import { RootState } from '../reducer';
@@ -13,13 +14,20 @@ const LoginContainer: React.FC = () => {
     name: '',
     password: '',
   });
-  
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   const error = useSelector((state: RootState) => state.error);
-  
+
+  useFocusEffect(
+    useCallback(() => {
+      setFormState({ name: '', password: '' });
+      dispatch(clearError());
+    }, [dispatch])
+  );
+
   const handleChange = (name: string, value: string): void => {
-    setFormState({ ...formState, [name]: value });
+    setFormState(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (): void => {
@@ -31,23 +39,12 @@ const LoginContainer: React.FC = () => {
         router
       )
     );
-    
-    // Reset form immediately after submission
+
     setFormState({
-      name: formState.name, // Keep the name for convenience
-      password: '',  // Clear password for security
+      name: formState.name,
+      password: '',
     });
   };
-
-  useEffect(() => {
-    // Set the screen title - this would be done differently in React Native
-    // We can use this for any initialization
-    
-    // Cleanup when component unmounts
-    return () => {
-      dispatch(clearError());
-    };
-  }, [dispatch]);
 
   return (
     <LoginSignup
