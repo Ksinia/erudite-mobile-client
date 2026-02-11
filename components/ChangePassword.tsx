@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import config from '@/config';
 import { RootState } from '@/reducer';
 import TranslationContainer from './Translation/TranslationContainer';
+import { TRANSLATIONS } from '@/constants/translations';
 
 const backendUrl = config.backendUrl;
 
@@ -14,15 +15,15 @@ interface OwnProps {
 export default function ChangePassword({ jwtFromUrl }: OwnProps) {
   const [password, setPassword] = useState('');
   const [changed, setChanged] = useState(false);
-  const [localError, setLocalError] = useState<string | null>(null);
+  const [errorKey, setErrorKey] = useState('');
 
   const user = useSelector((state: RootState) => state.user);
+  const locale = useSelector((state: RootState) => state.translation?.locale ?? 'en_US');
 
   const onSubmit = async () => {
-    setLocalError(null);
+    setErrorKey('');
 
     if (!user && !jwtFromUrl) {
-      setLocalError('Only logged in user can change password');
       return;
     }
 
@@ -44,28 +45,24 @@ export default function ChangePassword({ jwtFromUrl }: OwnProps) {
       if (response.ok) {
         setPassword('');
         setChanged(true);
-        setLocalError(null);
+        setErrorKey('');
       } else {
-        // Only try to parse JSON for error responses
         try {
           const data = await response.json();
-          setLocalError(data.message || 'Failed to change password');
+          setErrorKey(data.message || 'send_failed');
         } catch {
-          // If JSON parsing fails, use status text
-          setLocalError(`Failed to change password: ${response.statusText}`);
+          setErrorKey('send_failed');
         }
       }
-    } catch (error) {
-      setLocalError(error instanceof Error ? error.message : 'An error occurred');
+    } catch {
+      setErrorKey('send_failed');
     }
   };
 
+  const errorMessage = errorKey ? (TRANSLATIONS[locale]?.[errorKey] ?? errorKey) : '';
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        <TranslationContainer translationKey="change_password" />
-      </Text>
-
       <View style={styles.form}>
         <Text style={styles.label}>
           <TranslationContainer translationKey="enter_new_password" />
@@ -75,7 +72,6 @@ export default function ChangePassword({ jwtFromUrl }: OwnProps) {
           secureTextEntry
           value={password}
           onChangeText={setPassword}
-          placeholder="Enter new password"
         />
 
         <Pressable style={styles.button} onPress={onSubmit}>
@@ -91,20 +87,14 @@ export default function ChangePassword({ jwtFromUrl }: OwnProps) {
         </Text>
       )}
 
-      {localError && <Text style={styles.errorText}>{localError}</Text>}
+      {errorMessage !== '' && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#333',
+    marginVertical: 10,
   },
   form: {
     gap: 10,

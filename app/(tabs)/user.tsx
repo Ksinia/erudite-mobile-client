@@ -10,7 +10,7 @@ import { useAppDispatch } from "@/hooks/redux";
 import Collapsible from '../../components/Collapsible';
 import FinishedGamesContainer from '../../components/FinishedGamesContainer';
 import ArchivedGamesContainer from '../../components/ArchivedGamesContainer';
-import ChangePassword from '../../components/ChangePassword';
+import ChangePassword from '@/components/ChangePassword';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -48,7 +48,11 @@ export default function UserScreen() {
             translationKeyCollapse="collapse_archived"
             component={<ArchivedGamesContainer jwt={jwt} />}
           />
-          <ChangePassword />
+          <Collapsible
+            translationKeyExpand="expand_change_password"
+            translationKeyCollapse="collapse_change_password"
+            component={<ChangePassword />}
+          />
         </>
       )}
 
