@@ -28,7 +28,7 @@ export default function UserScreen() {
     return null;
   }
 
-  const jwt = user.jwt || '';
+  const jwt = user.jwt;
 
   return (
     <ScrollView style={styles.container}>
@@ -36,25 +36,21 @@ export default function UserScreen() {
         <TranslationContainer translationKey="welcome" /> {user.name}!
       </Text>
 
-      {jwt && (
-        <>
-          <Collapsible
-            translationKeyExpand="expand_finished"
-            translationKeyCollapse="collapse_finished"
-            component={<FinishedGamesContainer jwt={jwt} />}
-          />
-          <Collapsible
-            translationKeyExpand="expand_archived"
-            translationKeyCollapse="collapse_archived"
-            component={<ArchivedGamesContainer jwt={jwt} />}
-          />
-          <Collapsible
-            translationKeyExpand="expand_change_password"
-            translationKeyCollapse="collapse_change_password"
-            component={<ChangePassword />}
-          />
-        </>
-      )}
+      <Collapsible
+        translationKeyExpand="expand_finished"
+        translationKeyCollapse="collapse_finished"
+        component={<FinishedGamesContainer jwt={jwt} />}
+      />
+      <Collapsible
+        translationKeyExpand="expand_archived"
+        translationKeyCollapse="collapse_archived"
+        component={<ArchivedGamesContainer jwt={jwt} />}
+      />
+      <Collapsible
+        translationKeyExpand="expand_change_password"
+        translationKeyCollapse="collapse_change_password"
+        component={<ChangePassword />}
+      />
 
       <Pressable style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.buttonText}>
@@ -106,7 +102,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: 'white',
