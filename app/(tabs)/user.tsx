@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { Href, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
@@ -11,6 +11,7 @@ import Collapsible from '../../components/Collapsible';
 import FinishedGamesContainer from '../../components/FinishedGamesContainer';
 import ArchivedGamesContainer from '../../components/ArchivedGamesContainer';
 import ChangePassword from '@/components/ChangePassword';
+import ChangeEmail from '@/components/ChangeEmail';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -47,6 +48,11 @@ export default function UserScreen() {
         component={<ArchivedGamesContainer jwt={jwt} />}
       />
       <Collapsible
+        translationKeyExpand="expand_change_email"
+        translationKeyCollapse="collapse_change_email"
+        component={<ChangeEmail />}
+      />
+      <Collapsible
         translationKeyExpand="expand_change_password"
         translationKeyCollapse="collapse_change_password"
         component={<ChangePassword />}
@@ -58,11 +64,11 @@ export default function UserScreen() {
         </Text>
       </Pressable>
 
-      {user.id === 1 && (
-        <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>
-          <Text style={styles.debugText}>Debug</Text>
-        </Pressable>
-      )}
+      {/*{user.id === 1 && (*/}
+      {/*  <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>*/}
+      {/*    <Text style={styles.debugText}>Debug</Text>*/}
+      {/*  </Pressable>*/}
+      {/*)}*/}
     </ScrollView>
   );
 }

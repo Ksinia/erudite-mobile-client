@@ -23,6 +23,12 @@ export const logOut = createAction<void, InternalMessageTypes.LOGOUT>(
 
 export type LogOutAction = ReturnType<typeof logOut>;
 
+export const updateEmail = createAction<string, InternalMessageTypes.UPDATE_EMAIL>(
+  InternalMessageTypes.UPDATE_EMAIL
+);
+
+export type UpdateEmailAction = ReturnType<typeof updateEmail>;
+
 // Thunk action that handles logout and AsyncStorage
 export const logOutAndClearStorage = (): MyThunkAction<LogOutAction> => 
   async (dispatch) => {
@@ -43,4 +49,9 @@ export default createReducer<User | null>(null, (builder) =>
     .addCase(loginSuccess, (_, action) => action.payload)
     .addCase(logOut, () => null)
     .addCase(errorLoaded, () => null)
+    .addCase(updateEmail, (state, action) => {
+      if (state) {
+        state.email = action.payload;
+      }
+    })
 );
