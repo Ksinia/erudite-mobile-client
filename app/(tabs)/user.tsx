@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useRouter } from 'expo-router';
+import { Href, useRouter } from 'expo-router';
 
 import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
@@ -57,6 +57,12 @@ export default function UserScreen() {
           <TranslationContainer translationKey="log_out" />
         </Text>
       </Pressable>
+
+      {user.id === 1 && (
+        <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>
+          <Text style={styles.debugText}>Debug</Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }
@@ -102,5 +108,16 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  debugButton: {
+    padding: 15,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+    backgroundColor: '#f0f0f0',
+  },
+  debugText: {
+    fontSize: 14,
+    color: '#999',
   },
 });
