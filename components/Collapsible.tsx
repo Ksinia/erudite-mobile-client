@@ -22,6 +22,7 @@ export function Collapsible({ component, translationKeyExpand, translationKeyCol
           <TranslationContainer
             translationKey={isOpen ? translationKeyCollapse : translationKeyExpand}
           />
+          {' '}{isOpen ? '\u25B2' : '\u25BC'}
         </Text>
       </Pressable>
       {isOpen && <View style={styles.content}>{component}</View>}
@@ -34,13 +35,13 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    backgroundColor: '#3f51b5',
+    backgroundColor: '#e0e0e0',
     padding: 15,
     borderRadius: 5,
     alignItems: 'center',
   },
   buttonText: {
-    color: 'white',
+    color: '#333',
     fontSize: 16,
     fontWeight: 'bold',
   },
