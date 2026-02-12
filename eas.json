@@ -22,7 +22,10 @@
     "production": {
       "autoIncrement": true,
       "channel": "production",
-      "environment": "production"
+      "environment": "production",
+      "ios": {
+        "image": "latest"
+      }
     },
     "development-simulator": {
       "developmentClient": true,

@@ -64,11 +64,11 @@ export default function UserScreen() {
         </Text>
       </Pressable>
 
-      {/*{user.id === 1 && (*/}
-      {/*  <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>*/}
-      {/*    <Text style={styles.debugText}>Debug</Text>*/}
-      {/*  </Pressable>*/}
-      {/*)}*/}
+      {user.id === 1 && (
+        <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>
+          <Text style={styles.debugText}>Debug</Text>
+        </Pressable>
+      )}
     </ScrollView>
   );
 }

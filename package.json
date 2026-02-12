@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
-    "start-on-ios-simulator": "expo start --dev-client --ios",
+    "start-on-ios-simulator": "xcrun simctl shutdown all 2>/dev/null; xcrun simctl boot \"iPhone 16 Pro Max\"; expo start --dev-client --ios",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "expo start --android",
     "ios": "eas build --platform ios --profile development && expo start --dev-client",
