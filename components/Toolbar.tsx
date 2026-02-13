@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native';
-import { Href, useRouter } from "expo-router";
+import type { Href } from "expo-router";
+import { useRouter } from "expo-router";
 import { useSelector } from 'react-redux';
 
 import { logOutAndClearStorage } from "@/reducer/auth";
@@ -20,7 +21,7 @@ const Toolbar: React.FC = () => {
     router.replace('/');
   };
 
-  const navigateTo = (path: Href<string>) => {
+  const navigateTo = (path: Href) => {
     router.push(path);
   };
 

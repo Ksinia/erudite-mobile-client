@@ -80,7 +80,7 @@ const TestNotifications: React.FC = () => {
           },
           categoryIdentifier: 'game_update',
         },
-        trigger: { seconds: 2 },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2 },
       });
 
       Alert.alert('Success', 'Test game notification scheduled for 2 seconds. Put app in background to see it!');
@@ -102,7 +102,7 @@ const TestNotifications: React.FC = () => {
           },
           categoryIdentifier: 'chat_message',
         },
-        trigger: { seconds: 2 },
+        trigger: { type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL, seconds: 2 },
       });
 
       Alert.alert('Success', 'Test chat notification scheduled for 2 seconds. Put app in background to see it!');

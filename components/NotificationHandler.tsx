@@ -31,7 +31,7 @@ const NotificationHandler: React.FC = () => {
 
       router.push({
         pathname: `/(tabs)/game/[id]`,
-        params: { id: data.gameId },
+        params: { id: String(data.gameId) },
       } as Href);
     };
 
