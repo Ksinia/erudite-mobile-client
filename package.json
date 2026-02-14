@@ -2,6 +2,11 @@
   "name": "client-react-native",
   "main": "expo-router/entry",
   "version": "1.0.0",
+  "expo": {
+    "install": {
+      "exclude": ["expo-localization"]
+    }
+  },
   "scripts": {
     "start": "expo start",
     "start-on-ios-simulator": "xcrun simctl shutdown all 2>/dev/null; xcrun simctl boot \"iPhone 16 Pro Max\"; expo start --dev-client --ios",
@@ -33,7 +38,7 @@
     "expo-device": "~7.0.3",
     "expo-font": "~13.0.4",
     "expo-linking": "~7.0.5",
-    "expo-localization": "~16.0.1",
+    "expo-localization": "^16.1.6",
     "expo-notifications": "~0.29.14",
     "expo-router": "~4.0.22",
     "expo-splash-screen": "~0.29.24",
