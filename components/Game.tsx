@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native';
 
 import { letterValues } from '@/constants/letterValues';
 import { Game as GameType, User } from '@/reducer/types';
@@ -348,6 +348,9 @@ const Game: React.FC<Props> = (props) => {
   );
 };
 
+const screenWidth = Dimensions.get('window').width;
+const s = screenWidth > 600 ? 1.4 : 1;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -360,14 +363,13 @@ const styles = StyleSheet.create({
   },
   lettersContainer: {
     flexDirection: 'row',
-    justifyContent: "center",
+    justifyContent: 'center',
     marginVertical: 10,
-    gap: 4,
+    gap: 4 * s,
   },
   letterTile: {
-    width: 45,
-    height: 45,
-
+    width: 45 * s,
+    height: 45 * s,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -380,17 +382,17 @@ const styles = StyleSheet.create({
     borderColor: '#aaa',
   },
   letterText: {
-    fontSize: 34,
-    lineHeight: 34,
+    fontSize: 34 * s,
+    lineHeight: 34 * s,
   },
   letterValue: {
     position: 'absolute',
     top: 1,
     right: 1,
-    fontSize: 10,
+    fontSize: 10 * s,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 16 * s,
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
@@ -400,7 +402,7 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#3f51b5',
-    padding: 12,
+    padding: 12 * s,
     borderRadius: 4,
     marginVertical: 5,
     display: 'flex',
@@ -410,6 +412,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+    fontSize: 14 * s,
   },
   validationButtons: {
     flexDirection: 'row',
@@ -421,19 +424,21 @@ const styles = StyleSheet.create({
     color: '#f44336',
     textAlign: 'center',
     marginVertical: 5,
+    fontSize: 14 * s,
   },
   infoText: {
     textAlign: 'center',
     marginVertical: 5,
+    fontSize: 14 * s,
   },
   statusContainer: {
     marginVertical: 10,
-    padding: 8,
+    padding: 8 * s,
     backgroundColor: '#f5f5f5',
     borderRadius: 4,
   },
   statusText: {
-    fontSize: 16,
+    fontSize: 16 * s,
     textAlign: 'center',
   },
   scoreContainer: {
@@ -447,21 +452,24 @@ const styles = StyleSheet.create({
   scoreRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    padding: 8,
+    padding: 8 * s,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
   playerName: {
     flex: 2,
+    fontSize: 14 * s,
   },
   playerScore: {
     flex: 1,
     textAlign: 'right',
     fontWeight: 'bold',
+    fontSize: 14 * s,
   },
   lettersRemaining: {
     textAlign: 'center',
     marginVertical: 10,
+    fontSize: 14 * s,
   },
   turnsContainer: {
     marginVertical: 10,
@@ -473,7 +481,7 @@ const styles = StyleSheet.create({
   },
   turnRow: {
     flexDirection: 'row',
-    padding: 8,
+    padding: 8 * s,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
   },
@@ -482,6 +490,7 @@ const styles = StyleSheet.create({
   },
   turnText: {
     flexWrap: 'wrap',
+    fontSize: 14 * s,
   },
   titleRow: {
     flexDirection: 'row',
@@ -491,9 +500,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   titleText: {
-    fontSize: 16,
+    fontSize: 16 * s,
     fontWeight: 'bold',
-  }
+  },
 });
 
 export default Game;

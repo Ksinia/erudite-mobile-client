@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Dimensions } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 
 type OwnProps = {
@@ -101,6 +101,9 @@ function WildCardForm(props: OwnProps) {
   );
 }
 
+const sw = Dimensions.get('window').width;
+const s = sw > 600 ? 1.4 : 1;
+
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
@@ -170,8 +173,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
   },
   letterButton: {
-    width: 30,
-    height: 30,
+    width: 30 * s,
+    height: 30 * s,
     margin: 3,
     backgroundColor: 'white',
     justifyContent: 'center',
@@ -184,7 +187,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#3f51b5',
   },
   letterText: {
-    fontSize: 16,
+    fontSize: 16 * s,
     fontWeight: 'bold',
     color: '#333',
   },

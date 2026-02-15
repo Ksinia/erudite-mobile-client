@@ -60,7 +60,8 @@ const Board: React.FC<Props> = ({
   wildCardOnBoard 
 }) => {
   const screenWidth = Dimensions.get('window').width;
-  const boardWidth = Math.min(screenWidth * 0.9, 504); // 90% width, max 31.5em
+  const maxBoardWidth = screenWidth > 600 ? 700 : 504;
+  const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
   const cellSize = boardWidth / 15;
 
   const dynamicStyles = {
@@ -68,20 +69,22 @@ const Board: React.FC<Props> = ({
       width: cellSize,
       height: cellSize,
     },
-    // Adjust font sizes based on cell size if needed
-    cell: {
-      fontSize: cellSize * 0.5,
-    },
     multiply: {
-      fontSize: cellSize * 0.5,
+      fontSize: cellSize * (screenWidth > 600 ? 0.45 : 0.35),
     },
     unit: {
-      fontSize: cellSize * 0.22,
+      fontSize: cellSize * (screenWidth > 600 ? 0.3 : 0.25),
     },
     valueOnBoard: {
       top: -cellSize * 0.3,
       right: -cellSize * 0.02,
-    }
+    },
+    letter: {
+      fontSize: cellSize * 0.6,
+    },
+    letterValue: {
+      fontSize: cellSize * 0.24,
+    },
   };
 
   // Create an empty 15x15 board
@@ -150,13 +153,14 @@ const Board: React.FC<Props> = ({
                   { width: cellSize, height: cellSize },
                   getBonusStyle(cell.cellClass),
                   isCenter && styles.centerCell,
+                  isNewLetter && styles.newLetterBg,
                 ]}
                 onPress={() => clickBoard(x, y)}
               >
                 {!letter && !userBoard[y][x] ? (
                   <>
-                    <Text style={styles.multiply}>{cell.multiply}</Text>
-                    <Text style={styles.unit}>
+                    <Text style={[styles.multiply, dynamicStyles.multiply]}>{cell.multiply}</Text>
+                    <Text style={[styles.unit, dynamicStyles.unit]}>
                       <TranslationContainer translationKey={cell.unit} />
                     </Text>
                   </>
@@ -164,7 +168,7 @@ const Board: React.FC<Props> = ({
 
                 {/* Show letter value */}
                 {(letter || userBoard[y][x]) ? (
-                  <Text style={styles.letterValue}>
+                  <Text style={[styles.letterValue, dynamicStyles.letterValue]}>
                     {letter && values[letter[0]]}
                     {userBoard[y][x] && values[userBoard[y][x][0]]}
                   </Text>
@@ -172,12 +176,12 @@ const Board: React.FC<Props> = ({
 
                 {/* Show letter */}
                 {letter ? (
-                  <Text style={[styles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
+                  <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
                 ) : null}
 
                 {/* Show user letter */}
                 {userBoard[y][x] ? (
-                  <Text style={[styles.letter, styles.userLetter]}>{userBoard[y][x]}</Text>
+                  <Text style={[styles.letter, dynamicStyles.letter, styles.userLetter]}>{userBoard[y][x]}</Text>
                 ): null}
               </Pressable>
             );
@@ -267,8 +271,6 @@ const styles = StyleSheet.create({
   letter: {
     fontSize: 16,
     fontWeight: 'bold',
-    width: "100%",
-    height: "100%",
     textAlign: 'center',
   },
   userLetter: {
@@ -276,8 +278,9 @@ const styles = StyleSheet.create({
   },
   newLetter: {
     color: 'rgb(43, 160, 43)',
+  },
+  newLetterBg: {
     backgroundColor: 'lightgoldenrodyellow',
-    zIndex: -10,
   }
 });
 

@@ -1,8 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
-import { useRouter } from 'expo-router';
-import type { Href } from 'expo-router';
+import { Href, useRouter } from "expo-router";
 
 import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";

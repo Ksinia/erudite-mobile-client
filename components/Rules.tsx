@@ -1,6 +1,9 @@
 import React from 'react';
-import { Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import { Text, StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import TranslationContainer from "@/components/Translation/TranslationContainer";
+
+const sw = Dimensions.get('window').width;
+const s = sw > 600 ? 1.4 : 1;
 
 const Rules = () => {
   return (
@@ -20,11 +23,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   scrollContainer: {
-    padding: 16,
+    padding: 16 * s,
   },
   rulesText: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 16 * s,
+    lineHeight: 24 * s,
     color: '#333',
   }
 });

@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignSelf: 'center',
     width: width * 0.9,
-    maxWidth: 500,
+    maxWidth: 460,
     height: 120,
     flexDirection: 'column',
     backgroundColor: '#ffffff',

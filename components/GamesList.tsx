@@ -59,7 +59,11 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   gamesList: {
-    gap: 10,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+    width: '100%',
   },
   emptyText: {
     fontSize: 16,
