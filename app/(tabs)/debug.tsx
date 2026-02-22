@@ -5,6 +5,7 @@ import Constants from 'expo-constants';
 import config from "@/config";
 import * as Application from 'expo-application';
 import TestNotifications from "@/components/TestNotifications";
+import BotManager from "@/components/BotManager";
 
 export default function DebugScreen() {
 
@@ -33,6 +34,7 @@ export default function DebugScreen() {
       <Text>process.env.EXPO_PUBLIC_BACKEND_URL: {process.env.EXPO_PUBLIC_BACKEND_URL}</Text>
       <Text>config.backendUrl: {config.backendUrl}</Text>
       <TestNotifications />
+      <BotManager />
     </ScrollView>
   );
 }
