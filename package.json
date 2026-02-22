@@ -4,7 +4,9 @@
   "version": "1.0.0",
   "expo": {
     "install": {
-      "exclude": ["expo-localization"]
+      "exclude": [
+        "expo-localization"
+      ]
     }
   },
   "scripts": {

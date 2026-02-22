@@ -8,28 +8,20 @@ type Props = {
 };
 
 const LangSwitch: React.FC<Props> = ({ locale, setLanguage }) => {
+  const nextLang = LANG_NAMES.find((l) => l.locale !== locale);
+
   return (
     <View style={styles.langContainer}>
-      {LANG_NAMES.map((language, i) => (
-        <Pressable
-          key={i}
-          style={styles.langButton}
-          onPress={() => {
-            setLanguage({ locale: language.locale });
-            // In React Native, use AsyncStorage instead of localStorage
-            // But we'll handle this in the container component
-          }}
-        >
-          <Text
-            style={[
-              styles.langText,
-              locale === language.locale && styles.activeLang,
-            ]}
-          >
-            {language.name}
-          </Text>
-        </Pressable>
-      ))}
+      <Pressable
+        style={styles.langButton}
+        onPress={() => {
+          if (nextLang) {
+            setLanguage({ locale: nextLang.locale });
+          }
+        }}
+      >
+        <Text style={styles.langText}>{nextLang?.name}</Text>
+      </Pressable>
     </View>
   );
 };
@@ -41,16 +33,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   langButton: {
-    paddingHorizontal: 2, // Reduced from 5 to 2
+    paddingHorizontal: 2,
     height: '100%',
     justifyContent: 'center',
   },
   langText: {
     fontSize: 12,
     color: '#333',
-  },
-  activeLang: {
-    fontWeight: 'bold',
   },
 });
 
