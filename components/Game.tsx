@@ -31,6 +31,7 @@ type Props = {
   wildCardLetters: { letter: string; x: number; y: number }[];
   wildCardOnBoard: WildCardOnBoard;
   duplicatedWords: string[];
+  shuffleLetters: () => void;
 };
 
 const Game: React.FC<Props> = (props) => {
@@ -97,6 +98,13 @@ const Game: React.FC<Props> = (props) => {
               </Pressable>
             ))}
           </View>
+        )}
+        {props.user && props.userLetters.length > 1 && (
+          <Pressable style={styles.shuffleButton} onPress={props.shuffleLetters}>
+            <Text style={styles.shuffleButtonText}>
+              <TranslationContainer translationKey="shuffle" />
+            </Text>
+          </Pressable>
         )}
         
         <View style={styles.buttonContainer}>
@@ -396,6 +404,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+  },
+  shuffleButton: {
+    alignSelf: 'center',
+    paddingVertical: 6 * s,
+    paddingHorizontal: 16 * s,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    backgroundColor: '#f5f5f5',
+    marginBottom: 4,
+  },
+  shuffleButtonText: {
+    fontSize: 14 * s,
+    color: '#444',
   },
   buttonContainer: {
     marginVertical: 10,

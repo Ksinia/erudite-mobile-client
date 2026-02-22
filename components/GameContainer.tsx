@@ -341,6 +341,18 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     setUserBoard(updatedUserBoard);
   }, [wildCardLetters, userBoard]);
 
+  const shuffleLetters = useCallback(() => {
+    setUserLetters((prev) => {
+      const letters = [...prev];
+      for (let i = letters.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [letters[i], letters[j]] = [letters[j], letters[i]];
+      }
+      return letters;
+    });
+    setChosenLetterIndex(null);
+  }, []);
+
   // Play again with same players
   const playAgainWithSamePlayers = useCallback(async () => {
     if (!user) return;
@@ -495,6 +507,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
         onChangeWildCard={onChangeWildCard}
         wildCardLetters={wildCardLetters}
         wildCardOnBoard={wildCardOnBoard}
+        shuffleLetters={shuffleLetters}
         duplicatedWords={duplicatedWords}
         userBoardEmpty={userBoardEmpty}
       />
