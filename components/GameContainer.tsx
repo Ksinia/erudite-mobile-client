@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Alert, View, StyleSheet } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useFocusEffect, useRouter } from "expo-router";
 
@@ -11,6 +11,7 @@ import { sendTurn } from '@/thunkActions/turn';
 import { fetchGame } from '@/thunkActions/game';
 import Game from './Game';
 import { useAppDispatch } from "@/hooks/redux";
+import { TRANSLATIONS } from '@/constants/translations';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -83,6 +84,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   const user = useSelector((state: RootState) => state.user);
   const duplicatedWords = useSelector((state: RootState) => state.duplicatedWords);
+  const locale = useSelector((state: RootState) => state.translation.locale);
 
   // State management
   const [chosenLetterIndex, setChosenLetterIndex] = useState<number | null>(null);
@@ -202,16 +204,14 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     setWildCardOnBoard({});
   }, [userBoard, wildCardOnBoard, userLetters]);
 
-  // Confirm turn handler
-  const confirmTurn = async () => {
-    console.log("confirming turn")
+  const doConfirmTurn = () => {
     if (!user) return;
-    
+
     // Convert empty strings to null for API
     const userBoardToSend = userBoard.map((row) =>
       row.map((cell) => cell === '' ? null : cell)
     );
-    
+
     // Use the thunk action which handles the API call and dispatching to Redux
     dispatch(sendTurn(
       game.id,
@@ -219,7 +219,20 @@ const GameContainer: React.FC<Props> = ({ game }) => {
       userBoardToSend,
       wildCardOnBoard
     ));
-    
+  };
+
+  // Confirm turn handler
+  const confirmTurn = async () => {
+    console.log("confirming turn")
+    const userBoardEmpty = !userBoard.some((row: string[]) => !!row.join(''));
+    if (userBoardEmpty) {
+      Alert.alert('', TRANSLATIONS[locale].confirm_pass, [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'OK', onPress: doConfirmTurn },
+      ]);
+      return;
+    }
+    doConfirmTurn();
   };
 
   // Validate turn handler
@@ -275,8 +288,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     }
   }, [user, game.id, dispatch]);
 
-  // Change letters handler
-  const change = useCallback(async () => {
+  const doChange = useCallback(async () => {
     if (!user) return;
 
     try {
@@ -300,6 +312,14 @@ const GameContainer: React.FC<Props> = ({ game }) => {
       dispatch(errorFromServer(error, 'change'));
     }
   }, [user, game.id, game.letters, dispatch]);
+
+  // Change letters handler
+  const change = useCallback(() => {
+    Alert.alert('', TRANSLATIONS[locale].confirm_change, [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'OK', onPress: doChange },
+    ]);
+  }, [locale, doChange]);
 
   // Find turn user
   const findTurnUser = useCallback((game: GameType, id: number): User => {

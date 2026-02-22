@@ -25,7 +25,7 @@ type Props = {
   returnLetters: () => void;
   playAgainWithSamePlayers: () => Promise<void>;
   undo: () => Promise<void>;
-  change: () => Promise<void>;
+  change: () => void;
   findTurnUser: (game: GameType, id: number) => User;
   onChangeWildCard: (index: number, letter: string, x: number, y: number) => void;
   wildCardLetters: { letter: string; x: number; y: number }[];
