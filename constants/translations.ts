@@ -142,7 +142,7 @@ The rules of the game can be changed by mutual agreement between the participant
     welcome: 'Привет,',
     log_in: 'Войти',
     log_out: 'Выйти',
-    sign_up: 'Зарегистрироваться',
+    sign_up: 'Регистрация',
     qty: 'Количество игроков: ',
     submit: 'Создать',
     your_turn_games: 'Ваш ход',
