@@ -36,17 +36,12 @@ type Props = {
 
 const Game: React.FC<Props> = (props) => {
   const showPlayAgain = props.game.phase === 'finished' && props.user;
-  const showConfirmButton = props.user &&
+  const isUserTurn = props.user &&
     props.game.turnOrder[props.game.turn] === props.user.id &&
     props.game.phase === 'turn';
-  const showReturnButton = props.user &&
+  const isPlayerInGame = props.user &&
     props.game.turnOrder.includes(props.user.id) &&
-    props.game.phase !== 'finished' &&
-    !props.userBoardEmpty;
-  const showChangeButton = props.user &&
-    props.game.turnOrder[props.game.turn] === props.user.id &&
-    props.game.phase === 'turn' &&
-    props.game.letters.pot.length > 0;
+    props.game.phase !== 'finished';
   const showValidationButtons = props.user &&
     props.game.turnOrder.includes(props.user.id) &&
     props.user.id === props.game.turnOrder[props.getNextTurn(props.game)] &&
@@ -58,6 +53,7 @@ const Game: React.FC<Props> = (props) => {
     
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.contentContainer}>
       <View style={styles.titleRow}>
         <Text style={styles.titleText}>{props.game.id}</Text>
         <ShareButton gameId={props.game.id} started />
@@ -99,14 +95,118 @@ const Game: React.FC<Props> = (props) => {
             ))}
           </View>
         )}
-        {props.user && props.userLetters.length > 1 && (
-          <Pressable style={styles.shuffleButton} onPress={props.shuffleLetters}>
-            <Text style={styles.shuffleButtonText}>
-              <TranslationContainer translationKey="shuffle" />
-            </Text>
-          </Pressable>
+        {props.duplicatedWords.length > 0 && (
+          <Text style={styles.errorText}>
+            <TranslationContainer
+              translationKey="duplicated"
+              args={[props.duplicatedWords.join(', ')]}
+            />
+          </Text>
         )}
-        
+
+        {props.game.phase === 'validation' &&
+          props.game.wordsForValidation.length > 0 && (
+          <Text style={styles.infoText}>
+            <TranslationContainer
+              translationKey="to_validate"
+              args={[props.game.wordsForValidation.join(', ')]}
+            />
+          </Text>
+        )}
+
+        {showValidationButtons && (
+          <View style={styles.buttonRow}>
+            <Pressable
+              style={styles.gridButton}
+              onPress={() => props.validateTurn('yes')}
+            >
+              <Text style={styles.buttonText}>
+                <TranslationContainer
+                  translationKey="i_confirm"
+                  args={[
+                    props.findTurnUser(
+                      props.game,
+                      props.game.turnOrder[props.game.turn]
+                    ).name,
+                  ]}
+                />
+              </Text>
+            </Pressable>
+            <Pressable
+              style={styles.gridButton}
+              onPress={() => props.validateTurn('no')}
+            >
+              <Text style={styles.buttonText}>
+                <TranslationContainer
+                  translationKey="no"
+                  args={[
+                    props.findTurnUser(
+                      props.game,
+                      props.game.turnOrder[props.game.turn]
+                    ).name,
+                  ]}
+                />
+              </Text>
+            </Pressable>
+          </View>
+        )}
+
+        {isPlayerInGame && (
+          <View style={styles.buttonGrid}>
+            <View style={styles.buttonRow}>
+              <Pressable style={styles.gridButton} onPress={props.shuffleLetters}>
+                <Text style={styles.buttonText}>
+                  <TranslationContainer translationKey="shuffle" />
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[styles.gridButton, props.userBoardEmpty && styles.disabledButton]}
+                onPress={props.returnLetters}
+                disabled={props.userBoardEmpty}
+              >
+                <Text style={[styles.buttonText, props.userBoardEmpty && styles.disabledButtonText]}>
+                  <TranslationContainer translationKey="return" />
+                </Text>
+              </Pressable>
+            </View>
+            <View style={styles.buttonRow}>
+              <Pressable
+                style={[styles.gridButton, !isUserTurn && styles.disabledButton]}
+                onPress={props.confirmTurn}
+                disabled={
+                  !isUserTurn ||
+                  props.wildCardLetters.some(
+                    (letterObject) => letterObject.letter === ''
+                  )
+                }
+              >
+                <Text style={[styles.buttonText, !isUserTurn && styles.disabledButtonText]}>
+                  {props.userBoardEmpty ? (
+                    <TranslationContainer translationKey="pass" />
+                  ) : (
+                    <TranslationContainer translationKey="confirm" />
+                  )}
+                </Text>
+              </Pressable>
+              <Pressable
+                style={[
+                  styles.gridButton,
+                  (!isUserTurn || props.game.letters.pot.length === 0) && styles.disabledButton,
+                ]}
+                onPress={props.change}
+                disabled={!isUserTurn || props.game.letters.pot.length === 0}
+              >
+                <Text style={[
+                  styles.buttonText,
+                  (!isUserTurn || props.game.letters.pot.length === 0) && styles.disabledButtonText,
+                ]}>
+                  <TranslationContainer translationKey="change" />
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        )}
+
         <View style={styles.buttonContainer}>
           {showPlayAgain && (
             <Pressable
@@ -117,103 +217,6 @@ const Game: React.FC<Props> = (props) => {
                 <TranslationContainer translationKey="play_again" />
               </Text>
             </Pressable>
-          )}
-          
-          {props.duplicatedWords.length > 0 && (
-            <Text style={styles.errorText}>
-              <TranslationContainer
-                translationKey="duplicated"
-                args={[props.duplicatedWords.join(', ')]}
-              />
-            </Text>
-          )}
-          
-          {showConfirmButton && (
-            <Pressable
-              style={styles.button}
-              onPress={props.confirmTurn}
-              disabled={props.wildCardLetters.some(
-                (letterObject) => letterObject.letter === ''
-              )}
-            >
-              <Text style={styles.buttonText}>
-                {props.userBoardEmpty ? (
-                  <TranslationContainer translationKey="pass" />
-                ) : (
-                  <TranslationContainer translationKey="confirm" />
-                )}
-              </Text>
-            </Pressable>
-          )}
-          
-          {showReturnButton && (
-            <Pressable
-              style={styles.button}
-              onPress={props.returnLetters}
-            >
-              <Text style={styles.buttonText}>
-                <TranslationContainer translationKey="return" />
-              </Text>
-            </Pressable>
-          )}
-          
-          {showChangeButton && (
-            <Pressable
-              style={styles.button}
-              onPress={props.change}
-            >
-              <Text style={styles.buttonText}>
-                <TranslationContainer translationKey="change" />
-              </Text>
-            </Pressable>
-          )}
-          
-          {props.game.phase === 'validation' &&
-            props.game.wordsForValidation.length > 0 && (
-            <Text style={styles.infoText}>
-              <TranslationContainer
-                translationKey="to_validate"
-                args={[props.game.wordsForValidation.join(', ')]}
-              />
-            </Text>
-          )}
-          
-          {showValidationButtons && (
-            <View style={styles.validationButtons}>
-              <Pressable
-                style={styles.button}
-                onPress={() => props.validateTurn('yes')}
-              >
-                <Text style={styles.buttonText}>
-                  <TranslationContainer
-                    translationKey="i_confirm"
-                    args={[
-                      props.findTurnUser(
-                        props.game,
-                        props.game.turnOrder[props.game.turn]
-                      ).name,
-                    ]}
-                  />
-                </Text>
-              </Pressable>
-              
-              <Pressable
-                style={styles.button}
-                onPress={() => props.validateTurn('no')}
-              >
-                <Text style={styles.buttonText}>
-                  <TranslationContainer
-                    translationKey="no"
-                    args={[
-                      props.findTurnUser(
-                        props.game,
-                        props.game.turnOrder[props.game.turn]
-                      ).name,
-                    ]}
-                  />
-                </Text>
-              </Pressable>
-            </View>
           )}
           
           {props.game.phase === 'validation' &&
@@ -352,18 +355,24 @@ const Game: React.FC<Props> = (props) => {
           </View>
         )}
       </View>
+      </View>
     </ScrollView>
   );
 };
 
 const screenWidth = Dimensions.get('window').width;
 const s = screenWidth > 600 ? 1.4 : 1;
+const maxBoardWidth = screenWidth > 600 ? 700 : 504;
+const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 10,
+  },
+  contentContainer: {
+    width: boardWidth,
+    alignSelf: 'center',
   },
   boardContainer: {
     marginVertical: 10,
@@ -376,8 +385,9 @@ const styles = StyleSheet.create({
     gap: 4 * s,
   },
   letterTile: {
-    width: 45 * s,
-    height: 45 * s,
+    flex: 1,
+    maxWidth: 45 * s,
+    aspectRatio: 1,
     backgroundColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
@@ -405,19 +415,25 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     textAlign: 'center',
   },
-  shuffleButton: {
-    alignSelf: 'center',
-    paddingVertical: 6 * s,
-    paddingHorizontal: 16 * s,
-    borderRadius: 4,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    backgroundColor: '#f5f5f5',
-    marginBottom: 4,
+  buttonGrid: {
+    marginVertical: 10,
+    gap: 6,
   },
-  shuffleButtonText: {
-    fontSize: 14 * s,
-    color: '#444',
+  buttonRow: {
+    flexDirection: 'row',
+    gap: 6,
+  },
+  gridButton: {
+    flex: 1,
+    backgroundColor: '#3f51b5',
+    padding: 12 * s,
+    borderRadius: 4,
+  },
+  disabledButton: {
+    backgroundColor: '#ccc',
+  },
+  disabledButtonText: {
+    color: '#888',
   },
   buttonContainer: {
     marginVertical: 10,

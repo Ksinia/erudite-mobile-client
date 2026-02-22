@@ -156,7 +156,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: 'whitesmoke',
     borderRadius: 10,
-    marginHorizontal: 10,
     marginVertical: 10,
     overflow: 'hidden',
   },

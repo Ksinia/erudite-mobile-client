@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView, AppState, AppStateStatus } from 'react-native';
+import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView, AppState, AppStateStatus, Dimensions } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSelector } from 'react-redux';
 import RoomContainer from '@/components/RoomContainer';
@@ -150,6 +150,10 @@ export default function GameScreen() {
   );
 }
 
+const screenWidth = Dimensions.get('window').width;
+const maxBoardWidth = screenWidth > 600 ? 700 : 504;
+const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -170,5 +174,7 @@ const styles = StyleSheet.create({
   },
   chatArea: {
     height: 400,
+    width: boardWidth,
+    alignSelf: 'center',
   },
 });
