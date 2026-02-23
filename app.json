@@ -16,10 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.xsenia.erudite",
       "infoPlist": {
-        "ITSAppUsesNonExemptEncryption": false,
-        "NSAppTransportSecurity": {
-          "NSAllowsLocalNetworking": true
-        }
+        "ITSAppUsesNonExemptEncryption": false
       },
       "entitlements": {
         "aps-environment": "development"
