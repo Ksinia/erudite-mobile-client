@@ -484,7 +484,8 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     }, [dispatch])
   )
 
-  const userBoardEmpty = !userBoard.some((row: string[]) => !!row.join(''));
+  const userBoardEmpty = !userBoard.some((row: string[]) => !!row.join('')) &&
+    Object.keys(wildCardOnBoard).length === 0;
 
   return (
     <View style={styles.container}>
