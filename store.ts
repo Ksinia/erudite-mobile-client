@@ -90,10 +90,12 @@ socket.on('connect', () => {
     }
 
     // Re-subscribe to any active games
-    const gameIds = Object.keys(state.games);
+    const gameIds = Object.keys(state.games)
+      .map(id => parseInt(id, 10))
+      .filter(id => !isNaN(id));
     console.log('Reconnecting to games:', gameIds);
     gameIds.forEach(id => {
-      store.dispatch(addGameToSocket(parseInt(id, 10)));
+      store.dispatch(addGameToSocket(id));
     });
 
     // Refresh lobby data
