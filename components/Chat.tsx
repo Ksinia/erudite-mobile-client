@@ -9,6 +9,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/reducer';
@@ -17,14 +18,17 @@ import { User, Message } from '@/reducer/types';
 import { useAppDispatch } from '@/hooks/redux';
 import { TRANSLATIONS } from '@/constants/translations';
 import { sendChatMessageWithAck } from '@/thunkActions/chat';
+import { addGameToSocket } from '@/reducer/outgoingMessages';
+import config from '@/config';
 
 interface ChatProps {
   players: User[];
   gamePhase: string;
+  gameId: number;
   resetScroll?: number;
 }
 
-const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
+const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) => {
   const dispatch = useAppDispatch();
   const [message, setMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -82,6 +86,75 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
     }
   };
 
+  const [feedbackKey, setFeedbackKey] = useState<string | null>(null);
+
+  const handleMessageLongPress = (msg: Message) => {
+    if (!user || msg.userId === user.id) return;
+    Alert.alert(
+      msg.name,
+      msg.text,
+      [
+        {
+          text: getTranslation('report_message'),
+          onPress: () => handleReport(msg),
+        },
+        {
+          text: getTranslation('block_user'),
+          style: 'destructive',
+          onPress: () => handleBlock(msg.userId),
+        },
+        { text: getTranslation('pass'), style: 'cancel' },
+      ]
+    );
+  };
+
+  const handleReport = async (msg: Message) => {
+    try {
+      const res = await fetch(`${config.backendUrl}/report-message`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user!.jwt}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          messageText: msg.text,
+          messageSenderName: msg.name,
+          gameId,
+        }),
+      });
+      if (res.ok) {
+        setFeedbackKey('message_reported');
+        setTimeout(() => setFeedbackKey(null), 3000);
+      } else {
+        setSendErrorKey('send_failed');
+      }
+    } catch {
+      setSendErrorKey('send_failed');
+    }
+  };
+
+  const handleBlock = async (blockedUserId: number) => {
+    try {
+      const res = await fetch(`${config.backendUrl}/block-user`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user!.jwt}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: blockedUserId }),
+      });
+      if (res.ok) {
+        setFeedbackKey('user_blocked');
+        setTimeout(() => setFeedbackKey(null), 3000);
+        dispatch(addGameToSocket(gameId));
+      } else {
+        setSendErrorKey('send_failed');
+      }
+    } catch {
+      setSendErrorKey('send_failed');
+    }
+  };
+
   const isPlayerInGame = user && players && players.some(player => player.id === user.id);
   const shouldShowInput = ((gamePhase === 'waiting' || gamePhase === 'ready') && user) || isPlayerInGame;
   
@@ -96,6 +169,12 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
         {sendErrorKey && (
           <View style={styles.errorContainer}>
             <Text style={styles.errorText}>{getTranslation(sendErrorKey)}</Text>
+          </View>
+        )}
+
+        {feedbackKey && (
+          <View style={styles.feedbackContainer}>
+            <Text style={styles.feedbackText}>{getTranslation(feedbackKey)}</Text>
           </View>
         )}
 
@@ -136,11 +215,16 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, resetScroll }) => {
           showsVerticalScrollIndicator={true}
         >
           {chat.map((msg: Message, index: number) => (
-            <View key={msg.id || index} style={styles.messageWrapper}>
+            <TouchableOpacity
+              key={msg.id || index}
+              style={styles.messageWrapper}
+              onLongPress={() => handleMessageLongPress(msg)}
+              activeOpacity={0.7}
+            >
               <Text style={styles.messageText}>
                 {msg.name}: {msg.text}
               </Text>
-            </View>
+            </TouchableOpacity>
           ))}
         </ScrollView>
       </View>
@@ -216,6 +300,16 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#d32f2f',
+    fontSize: 12,
+    textAlign: 'center',
+  },
+  feedbackContainer: {
+    backgroundColor: '#e8f5e9',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+  },
+  feedbackText: {
+    color: '#2e7d32',
     fontSize: 12,
     textAlign: 'center',
   },

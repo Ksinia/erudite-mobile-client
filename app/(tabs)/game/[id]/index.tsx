@@ -141,6 +141,7 @@ export default function GameScreen() {
             <Chat
               players={game.users}
               gamePhase={game.phase}
+              gameId={game.id}
               resetScroll={chatResetScroll}
             />
           </View>
