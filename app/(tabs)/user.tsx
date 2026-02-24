@@ -12,6 +12,7 @@ import FinishedGamesContainer from '../../components/FinishedGamesContainer';
 import ArchivedGamesContainer from '../../components/ArchivedGamesContainer';
 import ChangePassword from '@/components/ChangePassword';
 import ChangeEmail from '@/components/ChangeEmail';
+import DeleteAccount from '@/components/DeleteAccount';
 
 export default function UserScreen() {
   const user = useSelector((state: RootState) => state.user);
@@ -63,6 +64,12 @@ export default function UserScreen() {
           <TranslationContainer translationKey="log_out" />
         </Text>
       </Pressable>
+
+      <Collapsible
+        translationKeyExpand="expand_delete_account"
+        translationKeyCollapse="collapse_delete_account"
+        component={<DeleteAccount />}
+      />
 
       {user.id === 1 && (
         <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>
