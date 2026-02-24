@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, ScrollView } from "react-native";
+import { Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import * as Updates from 'expo-updates';
 import Constants from 'expo-constants';
 import config from "@/config";
@@ -10,7 +10,8 @@ import BotManager from "@/components/BotManager";
 export default function DebugScreen() {
 
   return (
-    <ScrollView>
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+    <ScrollView keyboardShouldPersistTaps="handled">
       <Text>
         process.env.EXPO_PUBLIC_ENV: {process.env.EXPO_PUBLIC_ENV}
       </Text>
@@ -36,5 +37,6 @@ export default function DebugScreen() {
       <TestNotifications />
       <BotManager />
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }

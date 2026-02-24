@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -6,7 +6,11 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Animated,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const BOT_URL_KEY = 'bot_manager_base_url';
 
 interface Bot {
   name: string;
@@ -24,6 +28,31 @@ export default function BotManager() {
   const [gameId, setGameId] = useState('');
   const [selectedBot, setSelectedBot] = useState('');
   const [word, setWord] = useState('');
+  const [banner, setBanner] = useState<{ text: string; success: boolean } | null>(null);
+  const bannerOpacity = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    AsyncStorage.getItem(BOT_URL_KEY).then((saved) => {
+      if (saved) setBaseUrl(saved);
+    });
+  }, []);
+
+  const updateBaseUrl = useCallback((url: string) => {
+    setBaseUrl(url);
+    AsyncStorage.setItem(BOT_URL_KEY, url);
+  }, []);
+
+  const showBanner = useCallback(
+    (text: string, success: boolean) => {
+      setBanner({ text, success });
+      Animated.sequence([
+        Animated.timing(bannerOpacity, { toValue: 1, duration: 200, useNativeDriver: true }),
+        Animated.delay(2000),
+        Animated.timing(bannerOpacity, { toValue: 0, duration: 500, useNativeDriver: true }),
+      ]).start(() => setBanner(null));
+    },
+    [bannerOpacity],
+  );
 
   const api = useCallback(
     async (method: string, path: string, body?: object) => {
@@ -45,11 +74,12 @@ export default function BotManager() {
     try {
       const data = await api('GET', '/bots');
       setBots(data);
+      showBanner(`Connected — ${data.length} bot${data.length === 1 ? '' : 's'}`, true);
     } catch (err: any) {
-      Alert.alert('Error', err.message);
+      showBanner(err.message, false);
     }
     setLoading(false);
-  }, [api]);
+  }, [api, showBanner]);
 
   const addBot = async () => {
     if (!botName || !botPassword) {
@@ -136,19 +166,27 @@ export default function BotManager() {
     <View style={styles.container}>
       <Text style={styles.title}>Bot Manager</Text>
 
-      <Text style={styles.label}>Bot Service URL</Text>
-      <View style={styles.row}>
-        <TextInput
-          style={[styles.input, { flex: 1 }]}
-          value={baseUrl}
-          onChangeText={setBaseUrl}
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-        <TouchableOpacity style={styles.smallButton} onPress={refreshBots}>
-          <Text style={styles.buttonText}>{loading ? '...' : 'Refresh'}</Text>
-        </TouchableOpacity>
-      </View>
+        {banner && (
+          <Animated.View
+            style={[styles.banner, banner.success ? styles.bannerSuccess : styles.bannerError, { opacity: bannerOpacity }]}
+          >
+            <Text style={styles.bannerText}>{banner.text}</Text>
+          </Animated.View>
+        )}
+
+        <Text style={styles.label}>Bot Service URL</Text>
+        <View style={styles.row}>
+          <TextInput
+            style={[styles.input, { flex: 1 }]}
+            value={baseUrl}
+            onChangeText={updateBaseUrl}
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+          <TouchableOpacity style={styles.smallButton} onPress={refreshBots}>
+            <Text style={styles.buttonText}>{loading ? '...' : 'Refresh'}</Text>
+          </TouchableOpacity>
+        </View>
 
       {bots.length > 0 && (
         <View style={styles.section}>
@@ -252,6 +290,24 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f4f8',
     margin: 10,
     borderRadius: 8,
+    paddingBottom: 40,
+  },
+  banner: {
+    padding: 10,
+    borderRadius: 6,
+    marginBottom: 12,
+    alignItems: 'center' as const,
+  },
+  bannerSuccess: {
+    backgroundColor: '#d4edda',
+  },
+  bannerError: {
+    backgroundColor: '#f8d7da',
+  },
+  bannerText: {
+    fontSize: 14,
+    fontWeight: '600' as const,
+    color: '#333',
   },
   title: {
     fontSize: 18,
