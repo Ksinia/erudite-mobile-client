@@ -49,6 +49,10 @@ export default createReducer<User | null>(null, (builder) =>
     .addCase(loginSuccess, (_, action) => action.payload)
     .addCase(logOut, () => null)
     .addCase(errorLoaded, () => null)
+    .addCase(InternalMessageTypes.LOGIN_OR_SIGNUP_ERROR, () => {
+      AsyncStorage.removeItem('jwt');
+      return null;
+    })
     .addCase(updateEmail, (state, action) => {
       if (state) {
         state.email = action.payload;
