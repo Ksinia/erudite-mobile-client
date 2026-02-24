@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, TextInput, Pressable, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Linking } from 'react-native';
 import { Link, Href } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
 import { Colors } from "@/constants/Colors";
+import config from '@/config';
 
 type Props = {
   onChange: (name: string, value: string) => void;
@@ -122,6 +123,12 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
             </>
           )}
         </View>
+
+        <Pressable onPress={() => Linking.openURL(`${config.webUrl}/privacy`)}>
+          <Text style={styles.privacyLink}>
+            <TranslationContainer translationKey="privacy_policy" />
+          </Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -188,6 +195,13 @@ const styles = StyleSheet.create({
   linkText: {
     textDecorationLine: 'underline',
     color: Colors.buttonPrimary,
+  },
+  privacyLink: {
+    textAlign: 'center',
+    marginTop: 20,
+    color: '#999',
+    textDecorationLine: 'underline',
+    fontSize: 14,
   },
 });
 
