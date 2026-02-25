@@ -84,18 +84,19 @@ const SocketInitializer: React.FC = () => {
     };
   }, [user, socketConnectionState, dispatch]);
 
-  // Initialize push notifications
+  // Initialize push notifications (only if already granted — pre-permission modal handles the first request)
   useEffect(() => {
     const initializePushNotifications = async () => {
       try {
-        // Set up notification categories
         await NotificationService.setupNotificationCategories();
-        
-        // Get push token
-        const pushToken = await NotificationService.getExpoPushToken();
-        if (pushToken) {
-          console.log('Got Expo push token:', pushToken.data);
-          dispatch(subscriptionRegistered(pushToken));
+
+        const status = await NotificationService.checkPermissionStatus();
+        if (status === 'granted') {
+          const pushToken = await NotificationService.getExpoPushToken();
+          if (pushToken) {
+            console.log('Got Expo push token:', pushToken.data);
+            dispatch(subscriptionRegistered(pushToken));
+          }
         }
       } catch (error) {
         console.error('Error initializing push notifications:', error);

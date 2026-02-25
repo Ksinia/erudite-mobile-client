@@ -134,6 +134,10 @@ export const TRANSLATIONS: { [key: string]: { [key: string]: string } } = {
     block_user: 'Block user',
     message_reported: 'Message reported',
     user_blocked: 'User blocked',
+    notification_permission_title: 'Stay in the game',
+    notification_permission_body: 'Get notified when it\'s your turn or when you receive a chat message.',
+    enable_notifications: 'Enable notifications',
+    not_now: 'Not now',
     rules: `Rules of the Game
 
 Between 2 to 8 players can participate in the game.
@@ -287,6 +291,10 @@ The rules of the game can be changed by mutual agreement between the participant
     block_user: 'Заблокировать пользователя',
     message_reported: 'Жалоба отправлена',
     user_blocked: 'Пользователь заблокирован',
+    notification_permission_title: 'Будьте в курсе игры',
+    notification_permission_body: 'Узнавайте, когда наступает ваш ход или когда вам пишут в чате.',
+    enable_notifications: 'Включить уведомления',
+    not_now: 'Не сейчас',
     rules: `Правила игры
 
 В игре принимают участие от 2 до 8 человек.

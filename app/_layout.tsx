@@ -12,6 +12,7 @@ import store from "@/store";
 import { Provider } from "react-redux";
 import SocketInitializer from '@/components/SocketInitializer';
 import NotificationHandler from '@/components/NotificationHandler';
+import NotificationPermissionModal from '@/components/NotificationPermissionModal';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -50,6 +51,7 @@ export default function RootLayout() {
             {/* Initialize socket connections and notifications */}
             <SocketInitializer />
             <NotificationHandler />
+            <NotificationPermissionModal />
             <SafeAreaView style={styles.safeArea}>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

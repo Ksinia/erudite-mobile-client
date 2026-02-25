@@ -34,8 +34,12 @@ Notifications.setNotificationHandler({
 class NotificationService {
   private expoPushToken: string | null = null;
 
+  async checkPermissionStatus(): Promise<Notifications.PermissionStatus> {
+    const { status } = await Notifications.getPermissionsAsync();
+    return status;
+  }
+
   async requestPermissions(): Promise<boolean> {
-    // On simulator, we can still request permissions for local notifications
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
     let finalStatus = existingStatus;
 
