@@ -72,6 +72,12 @@ export default function UserScreen() {
         component={<DeleteAccount />}
       />
 
+      <Pressable onPress={() => Linking.openURL(`${config.webUrl}/terms`)}>
+        <Text style={styles.privacyLink}>
+          <TranslationContainer translationKey="terms_of_service" />
+        </Text>
+      </Pressable>
+
       <Pressable onPress={() => Linking.openURL(`${config.webUrl}/privacy`)}>
         <Text style={styles.privacyLink}>
           <TranslationContainer translationKey="privacy_policy" />
