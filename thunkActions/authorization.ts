@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert } from 'react-native';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import { MyThunkAction } from '../reducer/types';
 import { LoginSuccessAction } from '../reducer/auth';
 import { errorFromServer, loginSignupFunctionErrorCtx } from './errorHandling';
@@ -99,5 +100,52 @@ export const getProfileFetch =
         // Remove JWT from AsyncStorage if expired
         await AsyncStorage.removeItem('jwt');
       }
+    }
+  };
+
+export const appleSignIn =
+  (navigation: any): MyThunkAction<LoginSuccessAction> =>
+  async (dispatch) => {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [
+          AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+          AppleAuthentication.AppleAuthenticationScope.EMAIL,
+        ],
+      });
+
+      const { identityToken, fullName, email } = credential;
+
+      if (!identityToken) {
+        throw new Error('apple_signin_failed');
+      }
+
+      const response = await fetch(`${backendUrl}/auth/apple`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          identityToken,
+          fullName: fullName
+            ? { givenName: fullName.givenName, familyName: fullName.familyName }
+            : null,
+          email,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        if (data?.message) throw new Error(data.message);
+        throw new Error(`${response.status}: ${response.statusText}`);
+      }
+
+      await AsyncStorage.setItem('jwt', data.payload.jwt);
+      dispatch(data);
+      navigation.replace('/');
+    } catch (error) {
+      if ((error as { code?: string }).code === 'ERR_REQUEST_CANCELED') {
+        return;
+      }
+      dispatch(errorFromServer(error, loginSignupFunctionErrorCtx));
     }
   };

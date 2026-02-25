@@ -3,6 +3,7 @@ import { View, Text, TextInput, Pressable, StyleSheet, ScrollView, Linking } fro
 import { Link, Href } from 'expo-router';
 
 import TranslationContainer from './Translation/TranslationContainer';
+import AppleSignInButton from './AppleSignInButton';
 import { Colors } from "@/constants/Colors";
 import config from '@/config';
 
@@ -94,6 +95,15 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
           </Text>
         </Pressable>
         
+        <View style={styles.divider}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.dividerText}>
+            <TranslationContainer translationKey="or" />
+          </Text>
+          <View style={styles.dividerLine} />
+        </View>
+        <AppleSignInButton />
+
         <View style={styles.links}>
           {isSignUp ? (
             <Link href="/login" asChild>
@@ -186,6 +196,21 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  divider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 15,
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#ccc',
+  },
+  dividerText: {
+    paddingHorizontal: 10,
+    color: '#999',
+    fontSize: 14,
   },
   links: {
     flexDirection: 'row',

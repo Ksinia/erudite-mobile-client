@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'expo-router';
+import * as AppleAuthentication from 'expo-apple-authentication';
 import config from '@/config';
 import { RootState } from '@/reducer';
 import { logOutAndClearStorage } from '@/reducer/auth';
@@ -20,20 +21,60 @@ export default function DeleteAccount() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
+  const isAppleUser = user?.authMethod === 'apple';
+
   const onSubmit = () => {
     setErrorKey('');
 
     if (!user) return;
 
-    if (!password) {
+    if (!isAppleUser && !password) {
       setErrorKey('password_empty');
       return;
     }
 
     Alert.alert('', TRANSLATIONS[locale].confirm_delete_account, [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'OK', style: 'destructive', onPress: doDelete },
+      { text: 'OK', style: 'destructive', onPress: isAppleUser ? doAppleDelete : doDelete },
     ]);
+  };
+
+  const doAppleDelete = async () => {
+    if (!user) return;
+
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [],
+      });
+      if (!credential.identityToken) {
+        setErrorKey('apple_signin_failed');
+        return;
+      }
+
+      const response = await fetch(`${backendUrl}/delete-account`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${user.jwt}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ identityToken: credential.identityToken }),
+      });
+
+      if (response.ok) {
+        dispatch(logOutAndClearStorage());
+        router.replace('/');
+      } else {
+        try {
+          const data = await response.json();
+          setErrorKey(data.message || 'send_failed');
+        } catch {
+          setErrorKey('send_failed');
+        }
+      }
+    } catch (error) {
+      if ((error as { code?: string }).code === 'ERR_REQUEST_CANCELED') return;
+      setErrorKey('apple_signin_failed');
+    }
   };
 
   const doDelete = async () => {
@@ -70,15 +111,23 @@ export default function DeleteAccount() {
   return (
     <View style={styles.container}>
       <View style={styles.form}>
-        <Text style={styles.label}>
-          <TranslationContainer translationKey="enter_password_to_delete" />
-        </Text>
-        <TextInput
-          style={styles.input}
-          secureTextEntry
-          value={password}
-          onChangeText={setPassword}
-        />
+        {isAppleUser ? (
+          <Text style={styles.label}>
+            <TranslationContainer translationKey="confirm_delete_apple" />
+          </Text>
+        ) : (
+          <>
+            <Text style={styles.label}>
+              <TranslationContainer translationKey="enter_password_to_delete" />
+            </Text>
+            <TextInput
+              style={styles.input}
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+          </>
+        )}
 
         <Pressable style={styles.deleteButton} onPress={onSubmit}>
           <Text style={styles.buttonText}>
