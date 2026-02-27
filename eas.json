@@ -17,7 +17,6 @@
       "distribution": "internal",
       "developmentClient": false,
       "ios": {
-        "credentialsSource": "local",
         "image": "latest"
       },
       "channel": "preview",
