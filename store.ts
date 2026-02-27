@@ -79,27 +79,26 @@ socket.on('connect', () => {
   store.dispatch(socketConnected());
 
   if (hasConnectedBefore) {
-    // This is a reconnection - re-establish subscriptions
     console.log('Socket reconnected - re-establishing subscriptions');
 
-    // Re-authenticate user if logged in
     const state = store.getState();
     const user = state.user;
     if (user) {
       store.dispatch(addUserToSocket(user.jwt));
     }
 
-    // Re-subscribe to any active games
     const gameIds = Object.keys(state.games)
       .map(id => parseInt(id, 10))
       .filter(id => !isNaN(id));
-    console.log('Reconnecting to games:', gameIds);
-    gameIds.forEach(id => {
-      store.dispatch(addGameToSocket(id));
-    });
 
-    // Refresh lobby data
-    store.dispatch(enterLobby());
+    if (gameIds.length > 0) {
+      console.log('Reconnecting to games:', gameIds);
+      gameIds.forEach(id => {
+        store.dispatch(addGameToSocket(id));
+      });
+    } else {
+      store.dispatch(enterLobby());
+    }
   }
 
   hasConnectedBefore = true;
