@@ -9,11 +9,7 @@ import {
   socketConnected,
   socketDisconnected,
 } from './reducer/socketConnectionState';
-import {
-  addGameToSocket,
-  addUserToSocket,
-  enterLobby,
-} from './reducer/outgoingMessages';
+import { enterLobby } from './reducer/outgoingMessages';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -82,21 +78,7 @@ socket.on('connect', () => {
     console.log('Socket reconnected - re-establishing subscriptions');
 
     const state = store.getState();
-    const user = state.user;
-    if (user) {
-      store.dispatch(addUserToSocket(user.jwt));
-    }
-
-    const gameIds = Object.keys(state.games)
-      .map(id => parseInt(id, 10))
-      .filter(id => !isNaN(id));
-
-    if (gameIds.length > 0) {
-      console.log('Reconnecting to games:', gameIds);
-      gameIds.forEach(id => {
-        store.dispatch(addGameToSocket(id));
-      });
-    } else {
+    if (!state.activeGameScreen) {
       store.dispatch(enterLobby());
     }
   }
