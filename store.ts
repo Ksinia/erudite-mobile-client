@@ -9,7 +9,7 @@ import {
   socketConnected,
   socketDisconnected,
 } from './reducer/socketConnectionState';
-import { enterLobby } from './reducer/outgoingMessages';
+import { addUserToSocket, enterLobby } from './reducer/outgoingMessages';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -78,6 +78,9 @@ socket.on('connect', () => {
     console.log('Socket reconnected - re-establishing subscriptions');
 
     const state = store.getState();
+    if (state.user?.jwt) {
+      store.dispatch(addUserToSocket(state.user.jwt));
+    }
     if (!state.activeGameScreen) {
       store.dispatch(enterLobby());
     }

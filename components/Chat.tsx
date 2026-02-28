@@ -55,6 +55,12 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
   }, [dispatch]);
 
   useEffect(() => {
+    if (isConnected) {
+      setSendErrorKey((prev) => prev === 'no_connection' ? null : prev);
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
     if (resetScroll) {
       chatScrollRef.current?.scrollTo({ y: 0, animated: false });
     }
