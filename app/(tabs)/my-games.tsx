@@ -233,5 +233,6 @@ const styles = StyleSheet.create({
   collapsibleSection: {
     marginTop: 10,
     marginBottom: 30,
+    gap: 10,
   },
 });

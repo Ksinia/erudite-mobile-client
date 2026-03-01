@@ -32,7 +32,6 @@ export function Collapsible({ component, translationKeyExpand, translationKeyCol
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
   },
   button: {
     backgroundColor: '#e0e0e0',
