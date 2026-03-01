@@ -106,10 +106,9 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
         },
         {
           text: getTranslation('block_user'),
-          style: 'destructive',
           onPress: () => handleBlock(msg.userId),
         },
-        { text: getTranslation('pass'), style: 'cancel' },
+        { text: getTranslation('cancel'), style: 'cancel' },
       ]
     );
   };
