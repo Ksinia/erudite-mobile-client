@@ -134,11 +134,19 @@ const LoginSignup: React.FC<Props> = ({ onChange, onSubmit, values, error, isSig
           )}
         </View>
 
-        <Pressable onPress={() => Linking.openURL(`${config.webUrl}/privacy`)}>
-          <Text style={styles.privacyLink}>
-            <TranslationContainer translationKey="privacy_policy" />
-          </Text>
-        </Pressable>
+        <View style={styles.legalLinks}>
+          <Pressable onPress={() => Linking.openURL(`${config.webUrl}/terms`)}>
+            <Text style={styles.legalLink}>
+              <TranslationContainer translationKey="terms_of_service" />
+            </Text>
+          </Pressable>
+
+          <Pressable onPress={() => Linking.openURL(`${config.webUrl}/privacy`)}>
+            <Text style={styles.legalLink}>
+              <TranslationContainer translationKey="privacy_policy" />
+            </Text>
+          </Pressable>
+        </View>
       </ScrollView>
     </View>
   );
@@ -161,7 +169,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   label: {
     marginBottom: 8,
@@ -188,8 +196,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 4,
     backgroundColor: Colors.buttonPrimary,
   },
   buttonText: {
@@ -200,7 +207,7 @@ const styles = StyleSheet.create({
   divider: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginVertical: 15,
+    marginVertical: 20,
   },
   dividerLine: {
     flex: 1,
@@ -215,15 +222,18 @@ const styles = StyleSheet.create({
   links: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 10,
+    marginTop: 20,
   },
   linkText: {
     textDecorationLine: 'underline',
     color: Colors.buttonPrimary,
   },
-  privacyLink: {
-    textAlign: 'center',
-    marginTop: 20,
+  legalLinks: {
+    marginTop: 32,
+    alignItems: 'center',
+    gap: 8,
+  },
+  legalLink: {
     color: '#999',
     textDecorationLine: 'underline',
     fontSize: 14,

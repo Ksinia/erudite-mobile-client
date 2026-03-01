@@ -1,8 +1,7 @@
 import React from 'react';
-import { Text, StyleSheet, Pressable, ScrollView, Linking } from 'react-native';
+import { Text, StyleSheet, Pressable, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import { Href, useRouter } from "expo-router";
-import config from '@/config';
 
 import { RootState } from "@/reducer";
 import { logOutAndClearStorage } from "@/reducer/auth";
@@ -72,18 +71,6 @@ export default function UserScreen() {
         component={<DeleteAccount />}
       />
 
-      <Pressable onPress={() => Linking.openURL(`${config.webUrl}/terms`)}>
-        <Text style={styles.privacyLink}>
-          <TranslationContainer translationKey="terms_of_service" />
-        </Text>
-      </Pressable>
-
-      <Pressable onPress={() => Linking.openURL(`${config.webUrl}/privacy`)}>
-        <Text style={styles.privacyLink}>
-          <TranslationContainer translationKey="privacy_policy" />
-        </Text>
-      </Pressable>
-
       {user.id === 1 && (
         <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>
           <Text style={styles.debugText}>Debug</Text>
@@ -145,12 +132,5 @@ const styles = StyleSheet.create({
   debugText: {
     fontSize: 14,
     color: '#999',
-  },
-  privacyLink: {
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#999',
-    textDecorationLine: 'underline',
-    fontSize: 14,
   },
 });
