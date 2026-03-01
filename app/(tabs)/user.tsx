@@ -82,11 +82,6 @@ export default function UserScreen() {
         component={<DeleteAccount />}
       />
 
-      {/*{user.id === 1 && (*/}
-      {/*  <Pressable style={styles.debugButton} onPress={() => router.push('/debug' as Href)}>*/}
-      {/*    <Text style={styles.debugText}>Debug</Text>*/}
-      {/*  </Pressable>*/}
-      {/*)}*/}
     </ScrollView>
   );
 }

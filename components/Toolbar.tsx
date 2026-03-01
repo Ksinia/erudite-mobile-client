@@ -80,7 +80,11 @@ const Toolbar: React.FC = () => {
         </>
       ) : (
         <>
-          <Pressable style={styles.navItem} onPress={() => (onNavigate || navigateTo)('/user' as Href)}>
+          <Pressable
+            style={styles.navItem}
+            onPress={() => (onNavigate || navigateTo)('/user' as Href)}
+            onLongPress={user.id === 1 ? () => (onNavigate || navigateTo)('/debug' as Href) : undefined}
+          >
             <Text style={styles.navText}>
               <TranslationContainer translationKey="welcome" /> {user.name}!
             </Text>
@@ -120,7 +124,11 @@ const Toolbar: React.FC = () => {
         </>
       ) : (
         <>
-          <Pressable style={styles.menuItem} onPress={() => navigateTo('/user' as Href)}>
+          <Pressable
+            style={styles.menuItem}
+            onPress={() => navigateTo('/user' as Href)}
+            onLongPress={user.id === 1 ? () => navigateTo('/debug' as Href) : undefined}
+          >
             <Text style={styles.navText}>
               <TranslationContainer translationKey="welcome" /> {user.name}!
             </Text>
