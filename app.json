@@ -24,6 +24,7 @@
       }
     },
     "android": {
+      "package": "com.xsenia.erudite",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"

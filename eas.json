@@ -37,6 +37,9 @@
         "simulator": true,
         "image": "latest"
       },
+      "android": {
+        "image": "latest"
+      },
       "channel": "development-simulator",
       "environment": "development"
     }
