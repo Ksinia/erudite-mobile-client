@@ -137,7 +137,10 @@ export default function GameScreen() {
           )}
         </View>
         {shouldShowChat && (
-          <View style={styles.chatArea} onLayout={(e) => { chatYRef.current = e.nativeEvent.layout.y; }}>
+          <View
+            style={styles.chatArea}
+            onLayout={(e) => { chatYRef.current = e.nativeEvent.layout.y; }}
+          >
             <Chat
               players={game.users}
               gamePhase={game.phase}

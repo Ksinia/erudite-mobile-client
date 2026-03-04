@@ -165,7 +165,7 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
   
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
@@ -218,6 +218,7 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
           style={styles.messagesContainer}
           contentContainerStyle={styles.messagesContent}
           showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
         >
           {chat.map((msg: Message, index: number) => (
             <TouchableOpacity
