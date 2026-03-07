@@ -9,7 +9,7 @@ import {
   socketConnected,
   socketDisconnected,
 } from './reducer/socketConnectionState';
-import { addUserToSocket, enterLobby } from './reducer/outgoingMessages';
+import { addUserToSocket, addGameToSocket, enterLobby } from './reducer/outgoingMessages';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -81,7 +81,9 @@ socket.on('connect', () => {
     if (state.user?.jwt) {
       store.dispatch(addUserToSocket(state.user.jwt));
     }
-    if (!state.activeGameScreen) {
+    if (state.activeGameScreen) {
+      store.dispatch(addGameToSocket(state.activeGameScreen.gameId));
+    } else {
       store.dispatch(enterLobby());
     }
   }

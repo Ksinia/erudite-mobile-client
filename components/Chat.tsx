@@ -82,6 +82,14 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
       const response = await sendChatMessageWithAck(messageToSend);
       if (response.success) {
         setMessage('');
+      } else if (response.error === 'Not in a game') {
+        dispatch(addGameToSocket(gameId));
+        const retry = await sendChatMessageWithAck(messageToSend);
+        if (retry.success) {
+          setMessage('');
+        } else {
+          setSendErrorKey('send_failed');
+        }
       } else {
         setSendErrorKey('send_failed');
       }
@@ -196,7 +204,8 @@ const Chat: React.FC<ChatProps> = ({ players, gamePhase, gameId, resetScroll }) 
               placeholderTextColor="#999"
               onSubmitEditing={handleSendMessage}
               returnKeyType="send"
-              multiline={false}
+              multiline={Platform.OS === 'android'}
+              numberOfLines={1}
               editable={!isSending}
             />
             <TouchableOpacity
@@ -279,7 +288,7 @@ const styles = StyleSheet.create({
     color: 'rgb(60, 60, 60)',
     marginRight: 10,
     backgroundColor: 'white',
-    height: 30,
+    minHeight: 30,
   },
   sendButton: {
     width: 30,
