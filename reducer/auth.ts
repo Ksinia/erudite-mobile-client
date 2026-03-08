@@ -33,9 +33,7 @@ export type UpdateEmailAction = ReturnType<typeof updateEmail>;
 export const logOutAndClearStorage = (): MyThunkAction<LogOutAction> => 
   async (dispatch) => {
     try {
-      // Remove JWT from AsyncStorage
-      await AsyncStorage.removeItem('jwt');
-      // Dispatch the logout action
+      await AsyncStorage.multiRemove(['jwt', 'refreshToken']);
       dispatch(logOut());
     } catch (error) {
       console.error('Error clearing AsyncStorage:', error);
@@ -50,7 +48,7 @@ export default createReducer<User | null>(null, (builder) =>
     .addCase(logOut, () => null)
     .addCase(errorLoaded, () => null)
     .addCase(InternalMessageTypes.LOGIN_OR_SIGNUP_ERROR, () => {
-      AsyncStorage.removeItem('jwt');
+      AsyncStorage.multiRemove(['jwt', 'refreshToken']);
       return null;
     })
     .addCase(updateEmail, (state, action) => {

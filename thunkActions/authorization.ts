@@ -44,6 +44,9 @@ export const loginSignupFunction =
       const action = data;
 
       await AsyncStorage.setItem('jwt', action.payload.jwt);
+      if (action.payload.refreshToken) {
+        await AsyncStorage.setItem('refreshToken', action.payload.refreshToken);
+      }
 
       dispatch(action);
 
@@ -59,6 +62,25 @@ export const loginSignupFunction =
     }
   };
 
+export async function refreshTokens(): Promise<{ jwt: string; refreshToken: string } | null> {
+  const refreshToken = await AsyncStorage.getItem('refreshToken');
+  if (!refreshToken) return null;
+  try {
+    const response = await fetch(`${backendUrl}/refresh`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refreshToken }),
+    });
+    if (!response.ok) return null;
+    const data = await response.json();
+    await AsyncStorage.setItem('jwt', data.payload.jwt);
+    await AsyncStorage.setItem('refreshToken', data.payload.refreshToken);
+    return { jwt: data.payload.jwt, refreshToken: data.payload.refreshToken };
+  } catch {
+    return null;
+  }
+}
+
 export const getProfileFetch =
   (jwt: string): MyThunkAction<LoginSuccessAction> =>
   async (dispatch) => {
@@ -68,37 +90,50 @@ export const getProfileFetch =
         const response = await fetch(url, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${jwt}`,
+            Authorization: `Bearer ${jwt}`,
             'Content-Type': 'application/json',
           },
         });
 
-        // Parse the JSON response regardless of success or failure
         const data = await response.json();
-        
+
         if (!response.ok) {
-          // If server returns error with message field, use that
+          if (response.status === 401) {
+            const refreshed = await refreshTokens();
+            if (refreshed) {
+              const retryResponse = await fetch(url, {
+                method: 'GET',
+                headers: {
+                  Authorization: `Bearer ${refreshed.jwt}`,
+                  'Content-Type': 'application/json',
+                },
+              });
+              if (retryResponse.ok) {
+                const retryData = await retryResponse.json();
+                const action = {
+                  ...retryData,
+                  payload: { ...retryData.payload, jwt: refreshed.jwt },
+                };
+                dispatch(action);
+                return;
+              }
+            }
+          }
           if (data && data.message) {
             throw new Error(data.message);
           }
-          // Otherwise use status text
           throw new Error(`${response.status}: ${response.statusText}`);
         }
 
-        // Ensure the JWT is included in the user object for socket authentication
         const action = {
           ...data,
-          payload: {
-            ...data.payload,
-            jwt,
-          },
+          payload: { ...data.payload, jwt },
         };
-        
+
         dispatch(action);
       } catch (error) {
         dispatch(errorFromServer(error, 'getProfileFetch'));
-        // Remove JWT from AsyncStorage if expired
-        await AsyncStorage.removeItem('jwt');
+        await AsyncStorage.multiRemove(['jwt', 'refreshToken']);
       }
     }
   };
@@ -140,6 +175,9 @@ export const appleSignIn =
       }
 
       await AsyncStorage.setItem('jwt', data.payload.jwt);
+      if (data.payload.refreshToken) {
+        await AsyncStorage.setItem('refreshToken', data.payload.refreshToken);
+      }
       dispatch(data);
       navigation.replace('/');
     } catch (error) {

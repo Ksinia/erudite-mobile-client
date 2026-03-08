@@ -10,6 +10,7 @@ import {
   socketDisconnected,
 } from './reducer/socketConnectionState';
 import { addUserToSocket, addGameToSocket, enterLobby } from './reducer/outgoingMessages';
+import { refreshTokens } from './thunkActions/authorization';
 import config from "@/config"
 
 const backendUrl = config.backendUrl;
@@ -96,13 +97,24 @@ socket.on('disconnect', (reason) => {
   store.dispatch(socketDisconnected());
 });
 
-// Add comprehensive logging for incoming socket messages
+let isRefreshing = false;
+
 socket.on('message', (message: SocketMessage) => {
   console.log('🟢 INCOMING SOCKET MESSAGE:', {
     type: message?.type,
     payload: message?.payload,
     timestamp: new Date().toISOString()
   });
+
+  if (message?.type === 'TOKEN_EXPIRED' && !isRefreshing) {
+    isRefreshing = true;
+    refreshTokens().then((result) => {
+      isRefreshing = false;
+      if (result) {
+        store.dispatch(addUserToSocket(result.jwt));
+      }
+    });
+  }
 });
 
 // Log socket errors
