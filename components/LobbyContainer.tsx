@@ -50,6 +50,8 @@ const LobbyContainer: React.FC = () => {
   };
   
   const handleSubmit = async (): Promise<void> => {
+    const players = Number(formState.maxPlayers);
+    if (!players || players < 2 || players > 8) return;
     if (formState.sendingFormEnabled && user) {
       setFormState(prev => ({ ...prev, sendingFormEnabled: false }));
       

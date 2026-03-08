@@ -1,4 +1,5 @@
-import { Dimensions, StyleSheet, Text, TextInput, Pressable, View } from "react-native";
+import { Dimensions, Platform, StyleSheet, Text, Pressable, View } from "react-native";
+import { Picker } from "@react-native-picker/picker";
 import TranslationContainer from "@/components/Translation/TranslationContainer";
 import React from "react";
 import { Colors } from "@/constants/Colors";
@@ -10,6 +11,8 @@ interface Props {
   disabled: boolean;
 }
 
+const PLAYER_OPTIONS = [2, 3, 4, 5, 6, 7, 8];
+
 export function NewGameForm(props: Props) {
   return <View style={styles.formContainer}>
     <View style={styles.formCard}>
@@ -18,13 +21,18 @@ export function NewGameForm(props: Props) {
         <Text style={styles.label}>
           <TranslationContainer translationKey="qty" />
         </Text>
-        <TextInput
-          style={styles.input}
-          keyboardType="number-pad"
-          maxLength={1}
-          value={props.values.maxPlayers.toString()}
-          onChangeText={(maxPlayers) => props.onChange("maxPlayers", maxPlayers)}
-        />
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={Number(props.values.maxPlayers)}
+            onValueChange={(value) => props.onChange("maxPlayers", String(value))}
+            style={styles.picker}
+            itemStyle={styles.pickerItem}
+          >
+            {PLAYER_OPTIONS.map((n) => (
+              <Picker.Item key={n} label={String(n)} value={n} />
+            ))}
+          </Picker>
+        </View>
       </View>
 
       <View style={styles.formRow}>
@@ -121,15 +129,25 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     flex: 1,
   },
-  input: {
+  pickerContainer: {
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    padding: 8,
-    textAlign: 'center',
-    fontSize: 16,
     backgroundColor: '#fff',
-    minWidth: 40,
+    minWidth: 70,
+    height: 36,
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  picker: {
+    ...Platform.select({
+      ios: { marginTop: -8, marginBottom: -8 },
+      android: { height: 36 },
+    }),
+  },
+  pickerItem: {
+    fontSize: 16,
+    height: 80,
   },
   languageButtonGroup: {
     flexDirection: 'row',
