@@ -1,5 +1,4 @@
-import { Dimensions, Platform, StyleSheet, Text, Pressable, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { Dimensions, StyleSheet, Text, Pressable, View } from "react-native";
 import TranslationContainer from "@/components/Translation/TranslationContainer";
 import React from "react";
 import { Colors } from "@/constants/Colors";
@@ -21,17 +20,24 @@ export function NewGameForm(props: Props) {
         <Text style={styles.label}>
           <TranslationContainer translationKey="qty" />
         </Text>
-        <View style={styles.pickerContainer}>
-          <Picker
-            selectedValue={Number(props.values.maxPlayers)}
-            onValueChange={(value) => props.onChange("maxPlayers", String(value))}
-            style={styles.picker}
-            itemStyle={styles.pickerItem}
-          >
-            {PLAYER_OPTIONS.map((n) => (
-              <Picker.Item key={n} label={String(n)} value={n} />
-            ))}
-          </Picker>
+        <View style={styles.playerButtonGroup}>
+          {PLAYER_OPTIONS.map((n) => (
+            <Pressable
+              key={n}
+              style={[
+                styles.playerButton,
+                Number(props.values.maxPlayers) === n && styles.activePlayerButton
+              ]}
+              onPress={() => props.onChange("maxPlayers", String(n))}
+            >
+              <Text style={[
+                styles.playerButtonText,
+                Number(props.values.maxPlayers) === n && styles.activePlayerText
+              ]}>
+                {n}
+              </Text>
+            </Pressable>
+          ))}
         </View>
       </View>
 
@@ -129,25 +135,30 @@ const styles = StyleSheet.create({
     fontWeight: '400',
     flex: 1,
   },
-  pickerContainer: {
+  playerButtonGroup: {
+    flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    backgroundColor: '#fff',
-    minWidth: 70,
     height: 36,
-    justifyContent: 'center',
     overflow: 'hidden',
   },
-  picker: {
-    ...Platform.select({
-      ios: { marginTop: -8, marginBottom: -8 },
-      android: { height: 36 },
-    }),
+  playerButton: {
+    width: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
   },
-  pickerItem: {
-    fontSize: 16,
-    height: 80,
+  activePlayerButton: {
+    backgroundColor: Colors.buttonPrimary,
+  },
+  playerButtonText: {
+    fontSize: 14,
+    color: '#333',
+    fontWeight: '500',
+  },
+  activePlayerText: {
+    color: '#fff',
   },
   languageButtonGroup: {
     flexDirection: 'row',
