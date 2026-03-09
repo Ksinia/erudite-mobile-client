@@ -62,7 +62,13 @@ export default function BotManager() {
         body: body ? JSON.stringify(body) : undefined,
       });
       if (res.status === 204) return null;
-      const data = await res.json();
+      const text = await res.text();
+      let data: any;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error(`HTTP ${res.status}: ${text.substring(0, 100)}`);
+      }
       if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
       return data;
     },
