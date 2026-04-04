@@ -155,8 +155,10 @@ export default function GameScreen() {
 }
 
 const screenWidth = Dimensions.get('window').width;
-const maxBoardWidth = screenWidth > 600 ? 700 : 504;
-const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
+const isSmallScreen = screenWidth <= 400;
+const isTablet = screenWidth > 600;
+const maxBoardWidth = isTablet ? 700 : 504;
+const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
 
 const styles = StyleSheet.create({
   container: {

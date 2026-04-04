@@ -60,8 +60,10 @@ const Board: React.FC<Props> = ({
   wildCardOnBoard 
 }) => {
   const screenWidth = Dimensions.get('window').width;
-  const maxBoardWidth = screenWidth > 600 ? 700 : 504;
-  const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
+  const isSmallScreen = screenWidth <= 400;
+  const isTablet = screenWidth > 600;
+  const maxBoardWidth = isTablet ? 700 : 504;
+  const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
   const cellSize = boardWidth / 15;
 
   const dynamicStyles = {
@@ -70,20 +72,20 @@ const Board: React.FC<Props> = ({
       height: cellSize,
     },
     multiply: {
-      fontSize: cellSize * (screenWidth > 600 ? 0.45 : 0.35),
+      fontSize: cellSize * (isTablet ? 0.45 : 0.42),
     },
     unit: {
-      fontSize: cellSize * (screenWidth > 600 ? 0.3 : 0.25),
+      fontSize: cellSize * (isTablet ? 0.3 : 0.28),
     },
     valueOnBoard: {
       top: -cellSize * 0.3,
       right: -cellSize * 0.02,
     },
     letter: {
-      fontSize: cellSize * 0.6,
+      fontSize: cellSize * (isTablet ? 0.6 : 0.82),
     },
     letterValue: {
-      fontSize: cellSize * 0.24,
+      fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
   };
 
@@ -270,7 +272,7 @@ const styles = StyleSheet.create({
   },
   letter: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '600',
     textAlign: 'center',
   },
   userLetter: {
