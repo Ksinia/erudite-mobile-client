@@ -3,7 +3,7 @@ import { StyleSheet, Pressable, View, Text } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 
 type Props = {
-  component: JSX.Element;
+  component: React.JSX.Element;
   translationKeyExpand: string;
   translationKeyCollapse: string;
 };
