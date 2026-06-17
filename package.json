@@ -69,7 +69,10 @@
   },
   "overrides": {
     "react-server-dom-webpack": "19.0.0",
-    "react-test-renderer": "19.0.0"
+    "react-test-renderer": "19.0.0",
+    "engine.io-client": {
+      "ws": "8.21.0"
+    }
   },
   "private": true
 }
