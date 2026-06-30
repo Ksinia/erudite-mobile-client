@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
@@ -29,17 +29,34 @@ const styles = StyleSheet.create({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
+  const [loaded, error] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
+  const [fontTimedOut, setFontTimedOut] = useState(false);
+
+  // Never block startup on font loading: proceed once fonts load, error out, or a
+  // short grace period elapses. In standalone builds an embedded font that fails to
+  // resolve would otherwise leave the app stuck on the splash screen indefinitely.
+  useEffect(() => {
+    const timeout = setTimeout(() => setFontTimedOut(true), 2000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   useEffect(() => {
-    if (loaded) {
+    if (error) {
+      console.warn('Font loading failed, continuing without custom fonts:', error);
+    }
+  }, [error]);
+
+  const ready = loaded || !!error || fontTimedOut;
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [loaded]);
+  }, [ready]);
 
-  if (!loaded) {
+  if (!ready) {
     return null;
   }
 
