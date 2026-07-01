@@ -1,8 +1,7 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
@@ -14,7 +13,7 @@ import SocketInitializer from '@/components/SocketInitializer';
 import NotificationHandler from '@/components/NotificationHandler';
 import NotificationPermissionModal from '@/components/NotificationPermissionModal';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
+// Keep the splash screen visible until the app's first render.
 SplashScreen.preventAutoHideAsync();
 
 const styles = StyleSheet.create({
@@ -29,36 +28,10 @@ const styles = StyleSheet.create({
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const [loaded, error] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-  const [fontTimedOut, setFontTimedOut] = useState(false);
 
-  // Never block startup on font loading: proceed once fonts load, error out, or a
-  // short grace period elapses. In standalone builds an embedded font that fails to
-  // resolve would otherwise leave the app stuck on the splash screen indefinitely.
   useEffect(() => {
-    const timeout = setTimeout(() => setFontTimedOut(true), 2000);
-    return () => clearTimeout(timeout);
+    SplashScreen.hideAsync();
   }, []);
-
-  useEffect(() => {
-    if (error) {
-      console.warn('Font loading failed, continuing without custom fonts:', error);
-    }
-  }, [error]);
-
-  const ready = loaded || !!error || fontTimedOut;
-
-  useEffect(() => {
-    if (ready) {
-      SplashScreen.hideAsync();
-    }
-  }, [ready]);
-
-  if (!ready) {
-    return null;
-  }
 
   return (
     <Provider store={store}>
