@@ -46,7 +46,6 @@ export default createReducer<User | null>(null, (builder) =>
   builder
     .addCase(loginSuccess, (_, action) => action.payload)
     .addCase(logOut, () => null)
-    .addCase(errorLoaded, () => null)
     .addCase(InternalMessageTypes.LOGIN_OR_SIGNUP_ERROR, () => {
       AsyncStorage.multiRemove(['jwt', 'refreshToken']);
       return null;
