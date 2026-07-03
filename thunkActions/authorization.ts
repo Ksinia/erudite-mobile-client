@@ -9,6 +9,20 @@ import config from "@/config"
 
 const backendUrl = config.backendUrl;
 
+// Build an error message from a non-OK response without letting a missing or
+// non-JSON body throw (which would obscure the real HTTP status).
+async function errorMessageFromResponse(response: Response): Promise<string> {
+  try {
+    const body = await response.json();
+    if (body && body.message) {
+      return body.message;
+    }
+  } catch {
+    // body was empty or not JSON; fall back to the status line
+  }
+  return `${response.status}: ${response.statusText}`;
+}
+
 export const loginSignupFunction =
   (
     type: string,
@@ -95,8 +109,9 @@ export const getProfileFetch =
           },
         });
 
-        const data = await response.json();
-
+        // Check the status before reading the body: a 401 may come with an
+        // empty or non-JSON body, and parsing it first would throw straight
+        // into the catch below, which keeps the (now dead) tokens.
         if (!response.ok) {
           if (response.status === 401) {
             const refreshed = await refreshTokens();
@@ -117,14 +132,20 @@ export const getProfileFetch =
                 dispatch(action);
                 return;
               }
+              // Only a fresh token being rejected again proves the tokens are
+              // truly dead. Any other retry failure (5xx, network) is
+              // transient, so we keep the tokens for a later attempt.
+              if (retryResponse.status === 401) {
+                await AsyncStorage.multiRemove(['jwt', 'refreshToken']);
+              }
             }
+            // refreshed === null means the refresh could not be completed
+            // (no refresh token, or a transient failure); keep the tokens.
           }
-          if (data && data.message) {
-            throw new Error(data.message);
-          }
-          throw new Error(`${response.status}: ${response.statusText}`);
+          throw new Error(await errorMessageFromResponse(response));
         }
 
+        const data = await response.json();
         const action = {
           ...data,
           payload: { ...data.payload, jwt },
@@ -132,8 +153,9 @@ export const getProfileFetch =
 
         dispatch(action);
       } catch (error) {
+        // Network and server failures are transient: keep the stored tokens
+        // so the session survives an offline start or a backend outage.
         dispatch(errorFromServer(error, 'getProfileFetch'));
-        await AsyncStorage.multiRemove(['jwt', 'refreshToken']);
       }
     }
   };
