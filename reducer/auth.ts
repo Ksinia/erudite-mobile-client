@@ -29,6 +29,13 @@ export const updateEmail = createAction<string, InternalMessageTypes.UPDATE_EMAI
 
 export type UpdateEmailAction = ReturnType<typeof updateEmail>;
 
+export const jwtRefreshed = createAction<
+  { jwt: string; refreshToken?: string },
+  InternalMessageTypes.JWT_REFRESHED
+>(InternalMessageTypes.JWT_REFRESHED);
+
+export type JwtRefreshedAction = ReturnType<typeof jwtRefreshed>;
+
 // Thunk action that handles logout and AsyncStorage
 export const logOutAndClearStorage = (): MyThunkAction<LogOutAction> => 
   async (dispatch) => {
@@ -54,6 +61,14 @@ export default createReducer<User | null>(null, (builder) =>
     .addCase(updateEmail, (state, action) => {
       if (state) {
         state.email = action.payload;
+      }
+    })
+    .addCase(jwtRefreshed, (state, action) => {
+      if (state) {
+        state.jwt = action.payload.jwt;
+        if (action.payload.refreshToken) {
+          state.refreshToken = action.payload.refreshToken;
+        }
       }
     })
 );
