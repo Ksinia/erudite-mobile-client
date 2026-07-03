@@ -10,6 +10,7 @@ import {
   socketDisconnected,
 } from './reducer/socketConnectionState';
 import { addUserToSocket, addGameToSocket, enterLobby } from './reducer/outgoingMessages';
+import { jwtRefreshed } from './reducer/auth';
 import { refreshTokens } from './thunkActions/authorization';
 import config from "@/config"
 
@@ -108,10 +109,17 @@ socket.on('message', (message: SocketMessage) => {
 
   if (message?.type === 'TOKEN_EXPIRED' && !isRefreshing) {
     isRefreshing = true;
+    const userIdAtRefresh = store.getState().user?.id;
     refreshTokens().then((result) => {
       isRefreshing = false;
-      if (result) {
-        store.dispatch(addUserToSocket(result.jwt));
+      // Ignore the result if the user logged out or switched while the refresh
+      // was in flight, so we never apply a stale user's token.
+      if (result && store.getState().user?.id === userIdAtRefresh) {
+        // Update the jwt in the store so REST calls use the fresh token. The
+        // resulting change to the user object makes SocketInitializer
+        // re-authenticate the socket with the new jwt, so there is a single
+        // re-auth path and no duplicate ADD_USER_TO_SOCKET is emitted here.
+        store.dispatch(jwtRefreshed(result));
       }
     });
   }
