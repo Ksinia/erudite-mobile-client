@@ -404,18 +404,21 @@ const styles = StyleSheet.create({
   letterText: {
     fontSize: 34 * s,
     lineHeight: 34 * s,
+    color: '#1a1a1a',
   },
   letterValue: {
     position: 'absolute',
     top: 1,
     right: 1,
     fontSize: 10 * s,
+    color: '#444',
   },
   sectionTitle: {
     fontSize: 16 * s,
     fontWeight: 'bold',
     marginBottom: 8,
     textAlign: 'center',
+    color: '#333',
   },
   buttonGrid: {
     marginVertical: 10,
@@ -475,6 +478,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginVertical: 5,
     fontSize: 14 * s,
+    color: '#333',
   },
   statusContainer: {
     marginVertical: 10,
@@ -485,6 +489,7 @@ const styles = StyleSheet.create({
   statusText: {
     fontSize: 16 * s,
     textAlign: 'center',
+    color: '#333',
   },
   scoreContainer: {
     marginVertical: 10,
@@ -504,17 +509,20 @@ const styles = StyleSheet.create({
   playerName: {
     flex: 2,
     fontSize: 14 * s,
+    color: '#333',
   },
   playerScore: {
     flex: 1,
     textAlign: 'right',
     fontWeight: 'bold',
     fontSize: 14 * s,
+    color: '#333',
   },
   lettersRemaining: {
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 14 * s,
+    color: '#333',
   },
   turnsContainer: {
     marginVertical: 10,
@@ -536,6 +544,7 @@ const styles = StyleSheet.create({
   turnText: {
     flexWrap: 'wrap',
     fontSize: 14 * s,
+    color: '#333',
   },
   titleRow: {
     flexDirection: 'row',
@@ -547,6 +556,7 @@ const styles = StyleSheet.create({
   titleText: {
     fontSize: 16 * s,
     fontWeight: 'bold',
+    color: '#333',
   },
 });
 

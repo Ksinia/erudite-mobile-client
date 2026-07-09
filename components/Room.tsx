@@ -124,6 +124,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
+    color: '#333',
   },
   languageBadge: {
     backgroundColor: Colors.blue,
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
+    color: '#333',
   },
   playersContainer: {
     marginBottom: 20,
@@ -158,6 +160,7 @@ const styles = StyleSheet.create({
   playerName: {
     fontSize: 16,
     flex: 1,
+    color: '#333',
   },
   activeBadge: {
     backgroundColor: Colors.red,

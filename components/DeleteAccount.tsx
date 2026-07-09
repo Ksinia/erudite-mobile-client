@@ -160,6 +160,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     backgroundColor: '#fff',
+    color: '#333',
   },
   deleteButton: {
     backgroundColor: '#f44336',

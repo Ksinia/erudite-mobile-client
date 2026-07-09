@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 16,
     backgroundColor: '#fff',
+    color: '#333',
   },
   button: {
     backgroundColor: '#3f51b5',
@@ -128,6 +129,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginTop: 10,
     textAlign: 'center',
+    color: '#2e7d32',
   },
   errorText: {
     color: '#f44336',

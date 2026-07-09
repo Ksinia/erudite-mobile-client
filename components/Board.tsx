@@ -127,7 +127,7 @@ const Board: React.FC<Props> = ({
   if (!board || !previousBoard) {
     return (
       <View style={styles.loadingContainer}>
-        <Text><TranslationContainer translationKey="loading" /></Text>
+        <Text style={{ color: '#333' }}><TranslationContainer translationKey="loading" /></Text>
       </View>
     );
   }

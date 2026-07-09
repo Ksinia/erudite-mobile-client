@@ -155,7 +155,7 @@ const LobbyContainer: React.FC = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="#0a7ea4" />
-        <Text style={{ marginTop: 10 }}>
+        <Text style={{ marginTop: 10, color: '#333' }}>
           <TranslationContainer translationKey="loading" />
         </Text>
       </View>
