@@ -266,28 +266,33 @@ const styles = StyleSheet.create({
   multiply: {
     fontSize: 10,
     color: 'whitesmoke',
+    includeFontPadding: false,
   },
   unit: {
     fontSize: 7,
     textAlign: 'center',
     color: 'whitesmoke',
+    includeFontPadding: false,
   },
   letterValue: {
     fontSize: 8,
     position: 'absolute',
     top: 0.5,
     right: 0.5,
+    includeFontPadding: false,
   },
   wildCardMark: {
     fontSize: 8,
     position: 'absolute',
     top: 0.5,
     left: 2,
+    includeFontPadding: false,
   },
   letter: {
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+    includeFontPadding: false,
   },
   userLetter: {
     color: 'rgb(221, 43, 43)',

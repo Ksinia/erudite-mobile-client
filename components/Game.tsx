@@ -404,12 +404,15 @@ const styles = StyleSheet.create({
   letterText: {
     fontSize: 34 * s,
     lineHeight: 34 * s,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   letterValue: {
     position: 'absolute',
     top: 1,
     right: 1,
     fontSize: 10 * s,
+    includeFontPadding: false,
   },
   sectionTitle: {
     fontSize: 16 * s,
@@ -459,6 +462,7 @@ const styles = StyleSheet.create({
     color: 'rgb(60, 60, 60)',
     textAlign: 'center',
     fontSize: 14 * s,
+    includeFontPadding: false,
   },
   validationButtons: {
     flexDirection: 'row',

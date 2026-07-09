@@ -161,6 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     fontWeight: '500',
+    includeFontPadding: false,
   },
   activePlayerText: {
     color: '#fff',
@@ -188,6 +189,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     fontWeight: '500',
+    includeFontPadding: false,
   },
   activeLanguageText: {
     color: '#fff',
@@ -200,6 +202,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    includeFontPadding: false,
   },
   inlineButton: {
     backgroundColor: Colors.buttonPrimary,
