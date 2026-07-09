@@ -176,9 +176,16 @@ const Board: React.FC<Props> = ({
                   </Text>
                 ) : null}
 
-                {/* Show letter */}
+                {/* Show letter; a played wildcard arrives as "*X" — draw the letter alone with a small asterisk mark */}
                 {letter ? (
-                  <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
+                  <>
+                    {letter.length > 1 && letter.includes('*') ? (
+                      <Text style={[styles.wildCardMark, dynamicStyles.letterValue]}>*</Text>
+                    ) : null}
+                    <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>
+                      {letter.replace(/\*/g, '') || '*'}
+                    </Text>
+                  </>
                 ) : null}
 
                 {/* Show user letter */}
@@ -236,6 +243,7 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     height: '100%',
+    overflow: 'hidden',
   },
   centerCell: {
     backgroundColor: '#f0f0f0', // Light gray for center cell
@@ -269,6 +277,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0.5,
     right: 0.5,
+  },
+  wildCardMark: {
+    fontSize: 8,
+    position: 'absolute',
+    top: 0.5,
+    left: 2,
   },
   letter: {
     fontSize: 16,

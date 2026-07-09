@@ -428,7 +428,8 @@ const styles = StyleSheet.create({
   gridButton: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 12 * s,
+    paddingVertical: 12 * s,
+    paddingHorizontal: 6 * s,
     borderRadius: 3,
     borderWidth: 1,
     borderColor: 'lightgray',
