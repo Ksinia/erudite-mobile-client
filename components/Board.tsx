@@ -88,7 +88,10 @@ const Board: React.FC<Props> = ({
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
     wildCardMark: {
-      fontSize: cellSize * (isTablet ? 0.38 : 0.45),
+      // The asterisk glyph fills only the upper third of the em box, so the
+      // font size is close to the cell size to get a clearly visible mark.
+      fontSize: cellSize * (isTablet ? 0.8 : 0.95),
+      top: -cellSize * 0.08,
     },
   };
 
