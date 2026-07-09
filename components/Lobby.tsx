@@ -135,6 +135,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sectionTitle: {
+    color: '#333',
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 10,

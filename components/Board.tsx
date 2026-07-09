@@ -135,7 +135,7 @@ const Board: React.FC<Props> = ({
   if (!board || !previousBoard) {
     return (
       <View style={styles.loadingContainer}>
-        <Text><TranslationContainer translationKey="loading" /></Text>
+        <Text style={{ color: '#333' }}><TranslationContainer translationKey="loading" /></Text>
       </View>
     );
   }
@@ -283,6 +283,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   letterValue: {
+    color: '#000',
     fontSize: 8,
     position: 'absolute',
     top: 0.5,
@@ -290,6 +291,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   letter: {
+    color: '#000',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',

@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   number: {
+    color: '#333',
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -47,12 +48,14 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   status: {
+    color: '#333',
     flex: 1,
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
   },
   language: {
+    color: '#333',
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
@@ -70,6 +73,10 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  players: {
+    color: '#333',
+    textAlign: 'center',
   },
   counterText: {
     color: 'white',

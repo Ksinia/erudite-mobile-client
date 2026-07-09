@@ -402,12 +402,14 @@ const styles = StyleSheet.create({
     borderColor: '#aaa',
   },
   letterText: {
+    color: '#000',
     fontSize: 34 * s,
     lineHeight: 34 * s,
     includeFontPadding: false,
     textAlignVertical: 'center',
   },
   letterValue: {
+    color: '#000',
     position: 'absolute',
     top: 1,
     right: 1,
@@ -415,6 +417,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   sectionTitle: {
+    color: '#333',
     fontSize: 16 * s,
     fontWeight: 'bold',
     marginBottom: 8,
@@ -477,6 +480,7 @@ const styles = StyleSheet.create({
     fontSize: 14 * s,
   },
   infoText: {
+    color: '#333',
     textAlign: 'center',
     marginVertical: 5,
     fontSize: 14 * s,
@@ -488,6 +492,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
+    color: '#333',
     fontSize: 16 * s,
     textAlign: 'center',
   },
@@ -507,16 +512,19 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
   },
   playerName: {
+    color: '#333',
     flex: 2,
     fontSize: 14 * s,
   },
   playerScore: {
+    color: '#333',
     flex: 1,
     textAlign: 'right',
     fontWeight: 'bold',
     fontSize: 14 * s,
   },
   lettersRemaining: {
+    color: '#333',
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 14 * s,
@@ -539,6 +547,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   turnText: {
+    color: '#333',
     flexWrap: 'wrap',
     fontSize: 14 * s,
   },
@@ -550,6 +559,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   titleText: {
+    color: '#333',
     fontSize: 16 * s,
     fontWeight: 'bold',
   },

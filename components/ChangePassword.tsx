@@ -105,6 +105,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   input: {
+    color: '#000',
     borderWidth: 1,
     borderColor: '#ddd',
     borderRadius: 5,
@@ -125,6 +126,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   successText: {
+    color: '#333',
     fontSize: 16,
     marginTop: 10,
     textAlign: 'center',

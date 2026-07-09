@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   heading: {
+    color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
     flex: 1,
@@ -141,6 +142,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   subheading: {
+    color: '#333',
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -156,6 +158,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f0f0f0',
   },
   playerName: {
+    color: '#333',
     fontSize: 16,
     flex: 1,
   },
