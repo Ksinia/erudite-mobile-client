@@ -87,6 +87,9 @@ const Board: React.FC<Props> = ({
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
+    wildCardMark: {
+      fontSize: cellSize * (isTablet ? 0.38 : 0.45),
+    },
   };
 
   // Create an empty 15x15 board
@@ -180,7 +183,7 @@ const Board: React.FC<Props> = ({
                 {letter ? (
                   <>
                     {letter.length > 1 && letter.includes('*') ? (
-                      <Text style={[styles.wildCardMark, dynamicStyles.letterValue]}>*</Text>
+                      <Text style={[styles.wildCardMark, dynamicStyles.wildCardMark]}>*</Text>
                     ) : null}
                     <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>
                       {letter.replace(/\*/g, '') || '*'}
