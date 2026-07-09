@@ -45,18 +45,21 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     minWidth: 30,
     marginRight: 6,
+    color: '#333',
   },
   status: {
     flex: 1,
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#333',
   },
   language: {
     fontSize: 14,
     fontWeight: 'bold',
     textAlign: 'center',
     marginLeft: 6,
+    color: '#333',
   },
   counter: {
     position: 'absolute',
@@ -74,6 +77,10 @@ const styles = StyleSheet.create({
   counterText: {
     color: 'white',
     fontSize: 12,
+    textAlign: 'center',
+  },
+  bodyText: {
+    color: '#333',
     textAlign: 'center',
   },
 });

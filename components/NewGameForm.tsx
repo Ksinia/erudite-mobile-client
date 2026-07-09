@@ -16,7 +16,7 @@ export function NewGameForm(props: Props) {
   return <View style={styles.formContainer}>
     <View style={styles.formCard}>
 
-      <View style={styles.formRow}>
+      <View style={styles.section}>
         <Text style={styles.label}>
           <TranslationContainer translationKey="qty" />
         </Text>
@@ -41,12 +41,11 @@ export function NewGameForm(props: Props) {
         </View>
       </View>
 
-      <View style={styles.formRow}>
-
-        <View style={styles.halfRow}>
-          <Text style={styles.label}>
-            <TranslationContainer translationKey="language" />
-          </Text>
+      <View style={styles.section}>
+        <Text style={styles.label}>
+          <TranslationContainer translationKey="language" />
+        </Text>
+        <View style={styles.controlRow}>
           <View style={styles.languageButtonGroup}>
             <Pressable
               style={[
@@ -78,17 +77,17 @@ export function NewGameForm(props: Props) {
               </Text>
             </Pressable>
           </View>
-        </View>
 
-        <Pressable
-          style={[styles.inlineButton, props.disabled && styles.buttonDisabled]}
-          onPress={props.onSubmit}
-          disabled={props.disabled}
-        >
-          <Text style={styles.buttonText}>
-            <TranslationContainer translationKey="submit" />
-          </Text>
-        </Pressable>
+          <Pressable
+            style={[styles.inlineButton, props.disabled && styles.buttonDisabled]}
+            onPress={props.onSubmit}
+            disabled={props.disabled}
+          >
+            <Text style={styles.buttonText}>
+              <TranslationContainer translationKey="submit" />
+            </Text>
+          </Pressable>
+        </View>
       </View>
     </View>
   </View>
@@ -112,42 +111,39 @@ const styles = StyleSheet.create({
     elevation: 1,
     width: width * 0.9,
     maxWidth: 500,
-    height: 120,
     borderWidth: 1,
     borderColor: 'lightgrey',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    rowGap: 14,
   },
-  formRow: {
+  section: {
+    rowGap: 6,
+  },
+  controlRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    columnGap: 20
-  },
-  halfRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
+    columnGap: 12,
   },
   label: {
     fontSize: 16,
     color: '#333',
     fontWeight: '400',
-    flex: 1,
   },
   playerButtonGroup: {
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    height: 36,
+    height: 40,
     overflow: 'hidden',
   },
   playerButton: {
-    width: 32,
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+    borderLeftWidth: StyleSheet.hairlineWidth,
+    borderLeftColor: '#ccc',
   },
   activePlayerButton: {
     backgroundColor: Colors.buttonPrimary,
@@ -165,8 +161,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    width: 80,
-    height: 36,
+    width: 88,
+    height: 40,
     overflow: 'hidden',
   },
   languageButton: {
@@ -198,9 +194,9 @@ const styles = StyleSheet.create({
   },
   inlineButton: {
     backgroundColor: Colors.buttonPrimary,
-    padding: 8,
     borderRadius: 5,
-    flex: 1/2,
-    height: 36,
+    flex: 1,
+    height: 40,
+    justifyContent: 'center',
   },
 });

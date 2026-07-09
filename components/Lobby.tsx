@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginBottom: 10,
+    color: '#333',
   },
   rooms: {
     flexDirection: 'row',
