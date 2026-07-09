@@ -77,7 +77,7 @@ const RoomTile: React.FC<Props> = ({ room, user, onPress }) => {
           </Text>
         </View>
         <View style={styles.tileBody}>
-          <Text numberOfLines={2} ellipsizeMode="tail">
+          <Text style={styles.bodyText} numberOfLines={2} ellipsizeMode="tail">
             {turnOrder
               ? turnOrder
                   .map((userId) =>

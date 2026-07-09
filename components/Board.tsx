@@ -269,11 +269,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0.5,
     right: 0.5,
+    color: '#444',
   },
   letter: {
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+    color: '#1a1a1a',
   },
   userLetter: {
     color: 'rgb(221, 43, 43)',

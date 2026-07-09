@@ -76,6 +76,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  bodyText: {
+    color: '#333',
+    textAlign: 'center',
+  },
 });
 
 export default styles;
