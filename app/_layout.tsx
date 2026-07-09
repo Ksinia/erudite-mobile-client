@@ -1,4 +1,4 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
@@ -6,7 +6,6 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { View, StyleSheet } from 'react-native';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
 import store from "@/store";
 import { Provider } from "react-redux";
 import SocketInitializer from '@/components/SocketInitializer';
@@ -27,8 +26,6 @@ const styles = StyleSheet.create({
 });
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
@@ -37,7 +34,8 @@ export default function RootLayout() {
     <Provider store={store}>
       <SafeAreaProvider>
         <View style={styles.container}>
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+          {/* The app is designed light-only: backgrounds are hardcoded light, so always use the light theme */}
+          <ThemeProvider value={DefaultTheme}>
             {/* Initialize socket connections and notifications */}
             <SocketInitializer />
             <NotificationHandler />
