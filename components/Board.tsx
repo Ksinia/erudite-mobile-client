@@ -87,11 +87,13 @@ const Board: React.FC<Props> = ({
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
+    // A wildcard cell holds two glyphs ("*" + letter), so the letter is drawn
+    // slightly smaller and the inline asterisk smaller still to fit the cell.
+    wildCardLetter: {
+      fontSize: cellSize * (isTablet ? 0.52 : 0.68),
+    },
     wildCardMark: {
-      // The asterisk glyph fills only the upper third of the em box, so the
-      // font size is close to the cell size to get a clearly visible mark.
-      fontSize: cellSize * (isTablet ? 0.8 : 0.95),
-      top: -cellSize * 0.08,
+      fontSize: cellSize * (isTablet ? 0.4 : 0.5),
     },
   };
 
@@ -182,16 +184,16 @@ const Board: React.FC<Props> = ({
                   </Text>
                 ) : null}
 
-                {/* Show letter; a played wildcard arrives as "*X" — draw the letter alone with a small asterisk mark */}
+                {/* Show letter; a played wildcard arrives as "*X" — draw an inline asterisk before the letter, as on iOS */}
                 {letter ? (
-                  <>
-                    {letter.length > 1 && letter.includes('*') ? (
-                      <Text style={[styles.wildCardMark, dynamicStyles.wildCardMark]}>*</Text>
-                    ) : null}
-                    <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>
-                      {letter.replace(/\*/g, '') || '*'}
+                  letter.length > 1 && letter.includes('*') ? (
+                    <Text style={[styles.letter, dynamicStyles.wildCardLetter, isNewLetter && styles.newLetter]}>
+                      <Text style={dynamicStyles.wildCardMark}>*</Text>
+                      {letter.replace(/\*/g, '')}
                     </Text>
-                  </>
+                  ) : (
+                    <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
+                  )
                 ) : null}
 
                 {/* Show user letter */}
@@ -285,13 +287,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0.5,
     right: 0.5,
-    includeFontPadding: false,
-  },
-  wildCardMark: {
-    fontSize: 8,
-    position: 'absolute',
-    top: 0.5,
-    left: 2,
     includeFontPadding: false,
   },
   letter: {
