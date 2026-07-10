@@ -87,13 +87,14 @@ const Board: React.FC<Props> = ({
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
-    // A wildcard cell holds two glyphs ("*" + letter), so the letter is drawn
-    // slightly smaller and the inline asterisk smaller still to fit the cell.
+    // The wildcard letter keeps the regular letter size; only the inline
+    // asterisk is smaller, with tightened spacing so both fit the cell.
     wildCardLetter: {
-      fontSize: cellSize * (isTablet ? 0.52 : 0.68),
+      fontSize: cellSize * (isTablet ? 0.6 : 0.82),
+      letterSpacing: -cellSize * 0.05,
     },
     wildCardMark: {
-      fontSize: cellSize * (isTablet ? 0.4 : 0.5),
+      fontSize: cellSize * (isTablet ? 0.32 : 0.4),
     },
   };
 
