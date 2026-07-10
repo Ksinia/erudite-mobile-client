@@ -94,7 +94,7 @@ const Board: React.FC<Props> = ({
       letterSpacing: -cellSize * 0.05,
     },
     wildCardMark: {
-      fontSize: cellSize * (isTablet ? 0.32 : 0.4),
+      fontSize: cellSize * (isTablet ? 0.5 : 0.62),
     },
   };
 
