@@ -60,10 +60,11 @@ const Board: React.FC<Props> = ({
   wildCardOnBoard 
 }) => {
   const screenWidth = Dimensions.get('window').width;
-  const isSmallScreen = screenWidth <= 400;
   const isTablet = screenWidth > 600;
   const maxBoardWidth = isTablet ? 700 : 504;
-  const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
+  // Match the web client: the board takes 90% of the screen width (90vmin),
+  // leaving a small margin on each side.
+  const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
   const cellSize = boardWidth / 15;
 
   const dynamicStyles = {
@@ -72,17 +73,17 @@ const Board: React.FC<Props> = ({
       height: cellSize,
     },
     multiply: {
-      fontSize: cellSize * (isTablet ? 0.45 : 0.42),
+      fontSize: cellSize * (isTablet ? 0.45 : 0.46),
     },
     unit: {
-      fontSize: cellSize * (isTablet ? 0.3 : 0.28),
+      fontSize: cellSize * (isTablet ? 0.3 : 0.31),
     },
     valueOnBoard: {
       top: -cellSize * 0.3,
       right: -cellSize * 0.02,
     },
     letter: {
-      fontSize: cellSize * (isTablet ? 0.6 : 0.82),
+      fontSize: cellSize * (isTablet ? 0.6 : 0.81),
     },
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
@@ -90,11 +91,11 @@ const Board: React.FC<Props> = ({
     // The wildcard letter keeps the regular letter size; only the inline
     // asterisk is smaller, with tightened spacing so both fit the cell.
     wildCardLetter: {
-      fontSize: cellSize * (isTablet ? 0.6 : 0.82),
+      fontSize: cellSize * (isTablet ? 0.6 : 0.81),
       letterSpacing: -cellSize * 0.05,
     },
     wildCardMark: {
-      fontSize: cellSize * (isTablet ? 0.5 : 0.62),
+      fontSize: cellSize * (isTablet ? 0.5 : 0.64),
     },
   };
 
@@ -286,6 +287,7 @@ const styles = StyleSheet.create({
   letterValue: {
     color: '#000',
     fontSize: 8,
+    fontWeight: '300',
     position: 'absolute',
     top: 0.5,
     right: 0.5,
