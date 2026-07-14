@@ -1,6 +1,8 @@
 import { DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from 'expo-font';
+import { Ionicons } from '@expo/vector-icons';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
@@ -26,6 +28,10 @@ const styles = StyleSheet.create({
 });
 
 export default function RootLayout() {
+  // Preload the icon font; rendering is deliberately not blocked on it
+  // (icons appear once loaded), so startup can never hang on fonts.
+  useFonts(Ionicons.font);
+
   useEffect(() => {
     SplashScreen.hideAsync();
   }, []);
