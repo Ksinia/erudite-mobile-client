@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions, Platform } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
 import { Colors } from '@/constants/Colors';
@@ -87,18 +87,6 @@ const Board: React.FC<Props> = ({
     },
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
-    },
-    // The wildcard letter keeps the regular letter size. On Android the wide
-    // Roboto glyphs overflow the cell, so the inline asterisk is drawn smaller
-    // with tightened spacing; the narrower iOS system font fits at full size.
-    wildCardLetter: {
-      fontSize: cellSize * (isTablet ? 0.6 : 0.81),
-      letterSpacing: Platform.OS === 'android' ? -cellSize * 0.05 : undefined,
-    },
-    wildCardMark: {
-      fontSize: Platform.OS === 'android'
-        ? cellSize * (isTablet ? 0.5 : 0.64)
-        : cellSize * (isTablet ? 0.6 : 0.81),
     },
   };
 
@@ -189,16 +177,15 @@ const Board: React.FC<Props> = ({
                   </Text>
                 ) : null}
 
-                {/* Show letter; a played wildcard arrives as "*X" — draw an inline asterisk before the letter, as on iOS */}
+                {/* Show letter; a played wildcard arrives as "*X" — auto-fit shrinks it just enough for the cell on any font */}
                 {letter ? (
-                  letter.length > 1 && letter.includes('*') ? (
-                    <Text style={[styles.letter, dynamicStyles.wildCardLetter, isNewLetter && styles.newLetter]}>
-                      <Text style={dynamicStyles.wildCardMark}>*</Text>
-                      {letter.replace(/\*/g, '')}
-                    </Text>
-                  ) : (
-                    <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
-                  )
+                  <Text
+                    style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    {letter}
+                  </Text>
                 ) : null}
 
                 {/* Show user letter */}
@@ -302,6 +289,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     includeFontPadding: false,
+    maxWidth: '100%',
   },
   userLetter: {
     color: 'rgb(221, 43, 43)',
