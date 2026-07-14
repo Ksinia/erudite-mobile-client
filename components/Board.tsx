@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Dimensions, Platform } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
 import { Colors } from '@/constants/Colors';
@@ -88,14 +88,17 @@ const Board: React.FC<Props> = ({
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
     },
-    // The wildcard letter keeps the regular letter size; only the inline
-    // asterisk is smaller, with tightened spacing so both fit the cell.
+    // The wildcard letter keeps the regular letter size. On Android the wide
+    // Roboto glyphs overflow the cell, so the inline asterisk is drawn smaller
+    // with tightened spacing; the narrower iOS system font fits at full size.
     wildCardLetter: {
       fontSize: cellSize * (isTablet ? 0.6 : 0.81),
-      letterSpacing: -cellSize * 0.05,
+      letterSpacing: Platform.OS === 'android' ? -cellSize * 0.05 : undefined,
     },
     wildCardMark: {
-      fontSize: cellSize * (isTablet ? 0.5 : 0.64),
+      fontSize: Platform.OS === 'android'
+        ? cellSize * (isTablet ? 0.5 : 0.64)
+        : cellSize * (isTablet ? 0.6 : 0.81),
     },
   };
 
