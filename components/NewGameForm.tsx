@@ -41,7 +41,7 @@ export function NewGameForm(props: Props) {
         </View>
       </View>
 
-      <View style={styles.formRow}>
+      <View style={[styles.formRow, styles.formRowBottom]}>
 
         <View style={styles.halfRow}>
           <Text style={styles.label}>
@@ -125,6 +125,9 @@ const styles = StyleSheet.create({
     columnGap: 20,
     flexWrap: 'wrap',
     rowGap: 8,
+  },
+  formRowBottom: {
+    alignItems: 'flex-end',
   },
   halfRow: {
     flexDirection: 'row',
