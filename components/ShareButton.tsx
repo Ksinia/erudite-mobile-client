@@ -1,6 +1,6 @@
 import React from 'react';
 import { Share, Pressable, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import ShareIcon from './ShareIcon';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/reducer';
 import { TRANSLATIONS } from '@/constants/translations';
@@ -27,7 +27,7 @@ const ShareButton: React.FC<Props> = ({ gameId, started }) => {
 
   return (
     <Pressable onPress={handleShare} style={styles.button} hitSlop={8}>
-      <Ionicons name="share-outline" size={18} color="rgba(0,0,0,0.5)" />
+      <ShareIcon size={18} color="rgba(0,0,0,0.5)" />
     </Pressable>
   );
 };
