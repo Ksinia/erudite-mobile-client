@@ -25,7 +25,10 @@
     "production": {
       "autoIncrement": true,
       "channel": "production",
-      "environment": "production"
+      "environment": "production",
+      "ios": {
+        "image": "sdk-53"
+      }
     },
     "development-simulator": {
       "developmentClient": true,
