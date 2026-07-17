@@ -362,10 +362,9 @@ const Game: React.FC<Props> = (props) => {
 
 const screenWidth = Dimensions.get('window').width;
 const s = screenWidth > 600 ? 1.4 : 1;
-const isSmallScreen = screenWidth <= 400;
 const isTablet = screenWidth > 600;
 const maxBoardWidth = isTablet ? 700 : 504;
-const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
+const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
 
 const styles = StyleSheet.create({
   container: {
@@ -402,16 +401,22 @@ const styles = StyleSheet.create({
     borderColor: '#aaa',
   },
   letterText: {
+    color: '#000',
     fontSize: 34 * s,
     lineHeight: 34 * s,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   letterValue: {
+    color: '#000',
     position: 'absolute',
     top: 1,
     right: 1,
     fontSize: 10 * s,
+    includeFontPadding: false,
   },
   sectionTitle: {
+    color: '#333',
     fontSize: 16 * s,
     fontWeight: 'bold',
     marginBottom: 8,
@@ -428,7 +433,8 @@ const styles = StyleSheet.create({
   gridButton: {
     flex: 1,
     backgroundColor: 'white',
-    padding: 12 * s,
+    paddingVertical: 12 * s,
+    paddingHorizontal: 6 * s,
     borderRadius: 3,
     borderWidth: 1,
     borderColor: 'lightgray',
@@ -458,6 +464,7 @@ const styles = StyleSheet.create({
     color: 'rgb(60, 60, 60)',
     textAlign: 'center',
     fontSize: 14 * s,
+    includeFontPadding: false,
   },
   validationButtons: {
     flexDirection: 'row',
@@ -472,6 +479,7 @@ const styles = StyleSheet.create({
     fontSize: 14 * s,
   },
   infoText: {
+    color: '#333',
     textAlign: 'center',
     marginVertical: 5,
     fontSize: 14 * s,
@@ -483,6 +491,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   statusText: {
+    color: '#333',
     fontSize: 16 * s,
     textAlign: 'center',
   },
@@ -502,16 +511,19 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
   },
   playerName: {
+    color: '#333',
     flex: 2,
     fontSize: 14 * s,
   },
   playerScore: {
+    color: '#333',
     flex: 1,
     textAlign: 'right',
     fontWeight: 'bold',
     fontSize: 14 * s,
   },
   lettersRemaining: {
+    color: '#333',
     textAlign: 'center',
     marginVertical: 10,
     fontSize: 14 * s,
@@ -534,6 +546,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   turnText: {
+    color: '#333',
     flexWrap: 'wrap',
     fontSize: 14 * s,
   },
@@ -545,6 +558,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   titleText: {
+    color: '#333',
     fontSize: 16 * s,
     fontWeight: 'bold',
   },

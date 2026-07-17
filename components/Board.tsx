@@ -60,10 +60,11 @@ const Board: React.FC<Props> = ({
   wildCardOnBoard 
 }) => {
   const screenWidth = Dimensions.get('window').width;
-  const isSmallScreen = screenWidth <= 400;
   const isTablet = screenWidth > 600;
   const maxBoardWidth = isTablet ? 700 : 504;
-  const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
+  // Match the web client: the board takes 90% of the screen width (90vmin),
+  // leaving a small margin on each side.
+  const boardWidth = Math.min(screenWidth * 0.9, maxBoardWidth);
   const cellSize = boardWidth / 15;
 
   const dynamicStyles = {
@@ -72,17 +73,17 @@ const Board: React.FC<Props> = ({
       height: cellSize,
     },
     multiply: {
-      fontSize: cellSize * (isTablet ? 0.45 : 0.42),
+      fontSize: cellSize * (isTablet ? 0.45 : 0.46),
     },
     unit: {
-      fontSize: cellSize * (isTablet ? 0.3 : 0.28),
+      fontSize: cellSize * (isTablet ? 0.3 : 0.31),
     },
     valueOnBoard: {
       top: -cellSize * 0.3,
       right: -cellSize * 0.02,
     },
     letter: {
-      fontSize: cellSize * (isTablet ? 0.6 : 0.82),
+      fontSize: cellSize * (isTablet ? 0.6 : 0.81),
     },
     letterValue: {
       fontSize: cellSize * (isTablet ? 0.24 : 0.3),
@@ -127,7 +128,7 @@ const Board: React.FC<Props> = ({
   if (!board || !previousBoard) {
     return (
       <View style={styles.loadingContainer}>
-        <Text><TranslationContainer translationKey="loading" /></Text>
+        <Text style={{ color: '#333' }}><TranslationContainer translationKey="loading" /></Text>
       </View>
     );
   }
@@ -176,9 +177,15 @@ const Board: React.FC<Props> = ({
                   </Text>
                 ) : null}
 
-                {/* Show letter */}
+                {/* Show letter; a played wildcard arrives as "*X" — auto-fit shrinks it just enough for the cell on any font */}
                 {letter ? (
-                  <Text style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}>{letter}</Text>
+                  <Text
+                    style={[styles.letter, dynamicStyles.letter, isNewLetter && styles.newLetter]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                  >
+                    {letter}
+                  </Text>
                 ) : null}
 
                 {/* Show user letter */}
@@ -236,6 +243,7 @@ const styles = StyleSheet.create({
     padding: 0,
     width: '100%',
     height: '100%',
+    overflow: 'hidden',
   },
   centerCell: {
     backgroundColor: '#f0f0f0', // Light gray for center cell
@@ -258,22 +266,30 @@ const styles = StyleSheet.create({
   multiply: {
     fontSize: 10,
     color: 'whitesmoke',
+    includeFontPadding: false,
   },
   unit: {
     fontSize: 7,
     textAlign: 'center',
     color: 'whitesmoke',
+    includeFontPadding: false,
   },
   letterValue: {
+    color: '#000',
     fontSize: 8,
+    fontWeight: '300',
     position: 'absolute',
     top: 0.5,
     right: 0.5,
+    includeFontPadding: false,
   },
   letter: {
+    color: '#000',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
+    includeFontPadding: false,
+    maxWidth: '100%',
   },
   userLetter: {
     color: 'rgb(221, 43, 43)',

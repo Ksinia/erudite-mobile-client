@@ -81,7 +81,7 @@ const RoomContainer: React.FC<Props> = ({ game }) => {
   if (!game) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>
+        <Text style={{ color: '#333' }}>
           <TranslationContainer translationKey="game_not_found" />
         </Text>
       </View>

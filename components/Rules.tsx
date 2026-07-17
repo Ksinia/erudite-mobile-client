@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, ScrollView, SafeAreaView, Dimensions } from 'react-native';
 import TranslationContainer from "@/components/Translation/TranslationContainer";
+import VersionInfo from "@/components/VersionInfo";
 
 const sw = Dimensions.get('window').width;
 const s = sw > 600 ? 1.4 : 1;
@@ -12,6 +13,7 @@ const Rules = () => {
         <Text style={styles.rulesText}>
           <TranslationContainer translationKey="rules" />
         </Text>
+        <VersionInfo />
       </ScrollView>
     </SafeAreaView>
   );

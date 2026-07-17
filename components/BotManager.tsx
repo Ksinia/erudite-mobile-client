@@ -316,6 +316,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   title: {
+    color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 12,
@@ -336,6 +337,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input: {
+    color: '#000',
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ccc',

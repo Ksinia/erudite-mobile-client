@@ -41,7 +41,7 @@ export function NewGameForm(props: Props) {
         </View>
       </View>
 
-      <View style={styles.formRow}>
+      <View style={[styles.formRow, styles.formRowBottom]}>
 
         <View style={styles.halfRow}>
           <Text style={styles.label}>
@@ -112,39 +112,47 @@ const styles = StyleSheet.create({
     elevation: 1,
     width: width * 0.9,
     maxWidth: 500,
-    height: 120,
     borderWidth: 1,
     borderColor: 'lightgrey',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    rowGap: 10,
   },
   formRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    columnGap: 20
+    columnGap: 20,
+    flexWrap: 'wrap',
+    rowGap: 8,
+  },
+  formRowBottom: {
+    alignItems: 'flex-end',
   },
   halfRow: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
+    flexWrap: 'wrap',
+    rowGap: 8,
   },
   label: {
     fontSize: 16,
     color: '#333',
     fontWeight: '400',
-    flex: 1,
+    flexShrink: 1,
+    marginRight: 8,
   },
   playerButtonGroup: {
     flexDirection: 'row',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    height: 36,
+    minHeight: 36,
     overflow: 'hidden',
   },
   playerButton: {
-    width: 32,
+    minWidth: 32,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
@@ -156,6 +164,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     fontWeight: '500',
+    includeFontPadding: false,
   },
   activePlayerText: {
     color: '#fff',
@@ -165,8 +174,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    width: 80,
-    height: 36,
+    minWidth: 80,
+    minHeight: 36,
     overflow: 'hidden',
   },
   languageButton: {
@@ -183,6 +192,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#333',
     fontWeight: '500',
+    includeFontPadding: false,
   },
   activeLanguageText: {
     color: '#fff',
@@ -195,12 +205,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     textAlign: 'center',
+    includeFontPadding: false,
   },
   inlineButton: {
     backgroundColor: Colors.buttonPrimary,
     padding: 8,
     borderRadius: 5,
     flex: 1/2,
-    height: 36,
+    minWidth: 100,
+    minHeight: 36,
+    justifyContent: 'center',
   },
 });

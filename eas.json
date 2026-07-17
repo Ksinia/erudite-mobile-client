@@ -27,7 +27,7 @@
       "channel": "production",
       "environment": "production",
       "ios": {
-        "image": "latest"
+        "image": "sdk-53"
       }
     },
     "development-simulator": {
@@ -45,6 +45,10 @@
     }
   },
   "submit": {
-    "production": {}
+    "production": {
+      "ios": {
+        "ascAppId": "6758921253"
+      }
+    }
   }
 }

@@ -188,6 +188,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   title: {
+    color: '#333',
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
