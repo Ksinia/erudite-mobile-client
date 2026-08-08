@@ -4,10 +4,11 @@ import React from "react";
 import { Colors } from "@/constants/Colors";
 
 interface Props {
-  values: { maxPlayers: number; language: string };
+  values: { maxPlayers: number; language: string; boardType: string };
   onChange: (name: string, value: string) => void;
   onSubmit: () => Promise<void>;
   disabled: boolean;
+  showBoardType: boolean;
 }
 
 const PLAYER_OPTIONS = [2, 3, 4, 5, 6, 7, 8];
@@ -40,6 +41,45 @@ export function NewGameForm(props: Props) {
           ))}
         </View>
       </View>
+
+      {props.showBoardType && (
+      <View style={styles.formRow}>
+        <Text style={styles.label}>
+          <TranslationContainer translationKey="board_type" />
+        </Text>
+        <View style={styles.languageButtonGroup}>
+          <Pressable
+            style={[
+              styles.languageButton,
+              props.values.boardType === 'classic' && styles.activeLanguageButton
+            ]}
+            onPress={() => props.onChange('boardType', 'classic')}
+          >
+            <Text style={[
+              styles.languageButtonText,
+              props.values.boardType === 'classic' && styles.activeLanguageText
+            ]}>
+              <TranslationContainer translationKey="board_classic" />
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={[
+              styles.languageButton,
+              props.values.boardType === 'infinite' && styles.activeLanguageButton
+            ]}
+            onPress={() => props.onChange('boardType', 'infinite')}
+          >
+            <Text style={[
+              styles.languageButtonText,
+              props.values.boardType === 'infinite' && styles.activeLanguageText
+            ]}>
+              <TranslationContainer translationKey="board_infinite" />
+            </Text>
+          </Pressable>
+        </View>
+      </View>
+      )}
 
       <View style={styles.formRow}>
 
@@ -112,11 +152,11 @@ const styles = StyleSheet.create({
     elevation: 1,
     width: width * 0.9,
     maxWidth: 500,
-    height: 120,
     borderWidth: 1,
     borderColor: 'lightgrey',
     flexDirection: 'column',
     justifyContent: 'space-between',
+    rowGap: 12,
   },
   formRow: {
     flexDirection: 'row',
@@ -165,7 +205,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
-    width: 80,
+    minWidth: 80,
     height: 36,
     overflow: 'hidden',
   },

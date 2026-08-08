@@ -10,7 +10,7 @@ import { NewGameForm } from "@/components/NewGameForm";
 type OwnProps = {
   onChange: (name: string, value: string) => void;
   onSubmit: () => Promise<void>;
-  values: { maxPlayers: number; language: string };
+  values: { maxPlayers: number; language: string; boardType: string };
   userTurnGames: Game[];
   otherTurnGames: Game[];
   userWaitingGames: Game[];
@@ -32,7 +32,8 @@ function Lobby(props: OwnProps) {
 
       {props.user && (
         <NewGameForm values={props.values} onChange={props.onChange}
-                     onSubmit={props.onSubmit} disabled={!props.sendingFormEnabled} />
+                     onSubmit={props.onSubmit} disabled={!props.sendingFormEnabled}
+                     showBoardType={!!props.user.infiniteBoardEnabled} />
       )}
 
       {props.userTurnGames.length > 0 && (

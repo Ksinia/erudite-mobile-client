@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Dimensions } from 'react-native';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView, Dimensions } from 'react-native';
 import TranslationContainer from './Translation/TranslationContainer';
 import { WildCardOnBoard } from './GameContainer';
 import { Colors } from '@/constants/Colors';
@@ -11,9 +11,18 @@ type Props = {
   userBoard: string[][];
   values: { [key: string]: number };
   wildCardOnBoard: WildCardOnBoard;
+  boardType?: 'classic' | 'infinite';
+  boardOrigin?: { x: number; y: number };
 };
 
-// Board bonuses definition
+const PATTERN_SIZE = 15;
+// the pattern repeats every 14 cells: the outer x3 rows/columns are
+// identical, so adjacent tiles share one border row instead of doubling it
+const PATTERN_PERIOD = PATTERN_SIZE - 1;
+
+const mod = (n: number): number => ((n % PATTERN_PERIOD) + PATTERN_PERIOD) % PATTERN_PERIOD;
+
+// Board bonuses definition (top-left quadrant of the 15x15 pattern, mirrored)
 const boardBonuses: {
   [key: number]: { [key: number]: [string, string, string] };
 } = {
@@ -51,20 +60,68 @@ const boardBonuses: {
   },
 };
 
-const Board: React.FC<Props> = ({ 
-  clickBoard, 
-  board, 
-  previousBoard, 
-  userBoard, 
-  values, 
-  wildCardOnBoard 
+const getBonus = (py: number, px: number): [string, string, string] => {
+  const row = py in boardBonuses ? boardBonuses[py] : boardBonuses[PATTERN_SIZE - 1 - py];
+  if (row) {
+    const bonus = px in row ? row[px] : row[PATTERN_SIZE - 1 - px];
+    if (bonus) return bonus;
+  }
+  return ['ordinary', '', ''];
+};
+
+const Board: React.FC<Props> = ({
+  clickBoard,
+  board,
+  previousBoard,
+  userBoard,
+  values,
+  wildCardOnBoard,
+  boardType,
+  boardOrigin,
 }) => {
+  const infinite = boardType === 'infinite';
+  const originX = boardOrigin ? boardOrigin.x : 0;
+  const originY = boardOrigin ? boardOrigin.y : 0;
+  const origin = useMemo(() => ({ x: originX, y: originY }), [originX, originY]);
+  const rows = board ? board.length : PATTERN_SIZE;
+  const cols = board && board[0] ? board[0].length : PATTERN_SIZE;
+
   const screenWidth = Dimensions.get('window').width;
   const isSmallScreen = screenWidth <= 400;
   const isTablet = screenWidth > 600;
   const maxBoardWidth = isTablet ? 700 : 504;
   const boardWidth = Math.min(isSmallScreen ? screenWidth - 4 : screenWidth * 0.9, maxBoardWidth);
-  const cellSize = boardWidth / 15;
+  const cellSize = boardWidth / PATTERN_SIZE;
+
+  const hScrollRef = useRef<ScrollView>(null);
+  const vScrollRef = useRef<ScrollView>(null);
+  const scrollOffset = useRef({ x: 0, y: 0 });
+  const prevOriginRef = useRef(origin);
+  const centeredRef = useRef(false);
+
+  // keep the viewport stable: centre it once, then compensate the scroll
+  // position whenever the board grows on the top/left (origin shift)
+  useEffect(() => {
+    if (!infinite || !board) return;
+    if (!centeredRef.current) {
+      centeredRef.current = true;
+      prevOriginRef.current = origin;
+      const x = Math.max(0, (cols * cellSize - boardWidth) / 2);
+      const y = Math.max(0, (rows * cellSize - boardWidth) / 2);
+      setTimeout(() => {
+        hScrollRef.current?.scrollTo({ x, animated: false });
+        vScrollRef.current?.scrollTo({ y, animated: false });
+      }, 0);
+      return;
+    }
+    const dx = origin.x - prevOriginRef.current.x;
+    const dy = origin.y - prevOriginRef.current.y;
+    prevOriginRef.current = origin;
+    if (dx || dy) {
+      hScrollRef.current?.scrollTo({ x: scrollOffset.current.x + dx * cellSize, animated: false });
+      vScrollRef.current?.scrollTo({ y: scrollOffset.current.y + dy * cellSize, animated: false });
+    }
+  }, [infinite, board, origin, rows, cols, cellSize, boardWidth]);
 
   const dynamicStyles = {
     boardTableCell: {
@@ -89,40 +146,6 @@ const Board: React.FC<Props> = ({
     },
   };
 
-  // Create an empty 15x15 board
-  const boardWithBonuses = Array(15).fill(null).map((_, y) => {
-    return Array(15).fill(null).map((_, x) => {
-      let cellClass = 'ordinary';
-      let multiply = '';
-      let unit = '';
-      
-      // Handle regular positions
-      if (y in boardBonuses && x in boardBonuses[y]) {
-        [cellClass, multiply, unit] = boardBonuses[y][x];
-      } 
-      // Handle symmetric positions (right side)
-      else if (y in boardBonuses && (14 - x) in boardBonuses[y]) {
-        [cellClass, multiply, unit] = boardBonuses[y][14 - x];
-      }
-      // Handle symmetric positions (bottom side)
-      else if ((14 - y) in boardBonuses && x in boardBonuses[14 - y]) {
-        [cellClass, multiply, unit] = boardBonuses[14 - y][x];
-      }
-      // Handle symmetric positions (bottom-right)
-      else if ((14 - y) in boardBonuses && (14 - x) in boardBonuses[14 - y]) {
-        [cellClass, multiply, unit] = boardBonuses[14 - y][14 - x];
-      }
-
-      return {
-        x,
-        y,
-        cellClass,
-        multiply,
-        unit,
-      };
-    });
-  });
-
   // Check if both board and previousBoard are available
   if (!board || !previousBoard) {
     return (
@@ -132,19 +155,37 @@ const Board: React.FC<Props> = ({
     );
   }
 
-  return (
-    <View style={styles.boardContainer}>
-      {boardWithBonuses.map((row, y) => (
+  const grid = (
+    <View
+      style={[
+        styles.boardContainer,
+        infinite && {
+          aspectRatio: undefined,
+          width: cols * cellSize,
+          height: rows * cellSize,
+        },
+      ]}
+    >
+      {board.map((boardRow, y) => (
         <View key={`row-${y}`} style={styles.row}>
-          {row.map((cell, x) => {
+          {boardRow.map((serverLetter, x) => {
+            // position within the repeating bonus pattern
+            const py = infinite ? mod(y - origin.y) : y;
+            const px = infinite ? mod(x - origin.x) : x;
+            const [cellClass, multiply, unit] = getBonus(py, px);
+
             // Get letter from board or wildcard
             const letter = wildCardOnBoard[y] && wildCardOnBoard[y][x]
               ? wildCardOnBoard[y][x]
-              : board[y][x];
+              : serverLetter;
+            const userLetter = (userBoard[y] && userBoard[y][x]) || '';
 
-            // Determine cell style based on various conditions
-            const isCenter = y === 7 && x === 7;
-            const isNewLetter = !!board[y][x] && !previousBoard[y][x];
+            // the start star marks only the centre of the original board,
+            // it is not repeated on the tiled neighbours
+            const isCenter = infinite
+              ? y - origin.y === 7 && x - origin.x === 7
+              : y === 7 && x === 7;
+            const isNewLetter = !!serverLetter && !previousBoard[y][x];
 
             return (
               <Pressable
@@ -153,26 +194,26 @@ const Board: React.FC<Props> = ({
                   styles.cell,
                   dynamicStyles.boardTableCell,
                   { width: cellSize, height: cellSize },
-                  getBonusStyle(cell.cellClass),
+                  getBonusStyle(cellClass),
                   isCenter && styles.centerCell,
                   isNewLetter && styles.newLetterBg,
                 ]}
                 onPress={() => clickBoard(x, y)}
               >
-                {!letter && !userBoard[y][x] ? (
+                {!letter && !userLetter ? (
                   <>
-                    <Text style={[styles.multiply, dynamicStyles.multiply]}>{cell.multiply}</Text>
+                    <Text style={[styles.multiply, dynamicStyles.multiply]}>{multiply}</Text>
                     <Text style={[styles.unit, dynamicStyles.unit]}>
-                      <TranslationContainer translationKey={cell.unit} />
+                      {unit ? <TranslationContainer translationKey={unit} /> : null}
                     </Text>
                   </>
                 ) : null}
 
                 {/* Show letter value */}
-                {(letter || userBoard[y][x]) ? (
+                {(letter || userLetter) ? (
                   <Text style={[styles.letterValue, dynamicStyles.letterValue]}>
                     {letter && values[letter[0]]}
-                    {userBoard[y][x] && values[userBoard[y][x][0]]}
+                    {userLetter && values[userLetter[0]]}
                   </Text>
                 ) : null}
 
@@ -182,14 +223,43 @@ const Board: React.FC<Props> = ({
                 ) : null}
 
                 {/* Show user letter */}
-                {userBoard[y][x] ? (
-                  <Text style={[styles.letter, dynamicStyles.letter, styles.userLetter]}>{userBoard[y][x]}</Text>
+                {userLetter ? (
+                  <Text style={[styles.letter, dynamicStyles.letter, styles.userLetter]}>{userLetter}</Text>
                 ): null}
               </Pressable>
             );
           })}
         </View>
       ))}
+    </View>
+  );
+
+  if (!infinite) {
+    return grid;
+  }
+
+  return (
+    <View style={[styles.viewport, { width: boardWidth, height: boardWidth }]}>
+      <ScrollView
+        ref={vScrollRef}
+        nestedScrollEnabled
+        onScroll={(event) => {
+          scrollOffset.current.y = event.nativeEvent.contentOffset.y;
+        }}
+        scrollEventThrottle={16}
+      >
+        <ScrollView
+          ref={hScrollRef}
+          horizontal
+          nestedScrollEnabled
+          onScroll={(event) => {
+            scrollOffset.current.x = event.nativeEvent.contentOffset.x;
+          }}
+          scrollEventThrottle={16}
+        >
+          {grid}
+        </ScrollView>
+      </ScrollView>
     </View>
   );
 };
@@ -216,6 +286,11 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     borderRightWidth: 1,
     borderBottomWidth: 1,
+    borderColor: '#ddd',
+  },
+  viewport: {
+    alignSelf: 'center',
+    borderWidth: 1,
     borderColor: '#ddd',
   },
   loadingContainer: {

@@ -73,7 +73,8 @@ const RoomTile: React.FC<Props> = ({ room, user, onPress }) => {
               '\uD83C\uDFC6 ' + getWinnerName(room)}
           </Text>
           <Text style={styles.language}>
-            {language.toUpperCase()} {maxPlayers}
+            {language.toUpperCase()}
+            {room.boardType === 'infinite' && ' ∞'} {maxPlayers}
           </Text>
         </View>
         <View style={styles.tileBody}>

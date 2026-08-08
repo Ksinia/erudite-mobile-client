@@ -35,10 +35,12 @@ const LobbyContainer: React.FC = () => {
   const [formState, setFormState] = useState<{
     maxPlayers: number;
     language: string;
+    boardType: string;
     sendingFormEnabled: boolean;
   }>({
     maxPlayers: 2,
     language: defaultGameLanguage,
+    boardType: 'classic',
     sendingFormEnabled: true,
   });
   
@@ -65,6 +67,7 @@ const LobbyContainer: React.FC = () => {
           body: JSON.stringify({
             maxPlayers: formState.maxPlayers,
             language: formState.language,
+            boardType: formState.boardType,
           }),
         });
         
@@ -169,6 +172,7 @@ const LobbyContainer: React.FC = () => {
       values={{
         maxPlayers: formState.maxPlayers,
         language: formState.language,
+        boardType: formState.boardType,
       }}
       userTurnGames={games.userTurn}
       otherTurnGames={games.otherTurn}

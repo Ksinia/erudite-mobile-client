@@ -73,10 +73,15 @@ interface Props {
   game: GameType;
 }
 
-// Empty board constant - defined outside component to avoid recreating on each render
-const EMPTY_USER_BOARD: string[][] = Array(15)
-  .fill(null)
-  .map(() => Array(15).fill(''));
+// The empty overlay must match the server board dimensions,
+// which can change between turns on an infinite board
+const makeEmptyUserBoard = (board?: (string | null)[][]): string[][] => {
+  const height = (board && board.length) || 15;
+  const width = (board && board[0] && board[0].length) || 15;
+  return Array(height)
+    .fill(null)
+    .map(() => Array(width).fill(''));
+};
 
 const GameContainer: React.FC<Props> = ({ game }) => {
   const dispatch = useAppDispatch();
@@ -89,7 +94,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
   // State management
   const [chosenLetterIndex, setChosenLetterIndex] = useState<number | null>(null);
   const [userLetters, setUserLetters] = useState<string[]>([]);
-  const [userBoard, setUserBoard] = useState<string[][]>(EMPTY_USER_BOARD.map((row) => row.slice()));
+  const [userBoard, setUserBoard] = useState<string[][]>(makeEmptyUserBoard(game.board));
   const [wildCardLetters, setWildCardLetters] = useState<{ letter: string; x: number; y: number }[]>([]);
   const [wildCardOnBoard, setWildCardOnBoard] = useState<WildCardOnBoard>({});
 
@@ -194,7 +199,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
 
   // Return letters handler
   const returnLetters = useCallback(() => {
-    setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
+    setUserBoard(makeEmptyUserBoard(game.board));
     setUserLetters(getPreviousLetters(
       userBoard,
       wildCardOnBoard,
@@ -202,7 +207,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     ));
     setWildCardLetters([]);
     setWildCardOnBoard({});
-  }, [userBoard, wildCardOnBoard, userLetters]);
+  }, [userBoard, wildCardOnBoard, userLetters, game.board]);
 
   const doConfirmTurn = () => {
     if (!user) return;
@@ -368,6 +373,7 @@ const GameContainer: React.FC<Props> = ({ game }) => {
           maxPlayers: game.maxPlayers,
           language: game.language,
           players: game.turnOrder,
+          boardType: game.boardType,
         }),
       });
       
@@ -400,11 +406,58 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     };
   });
 
+  // Track the last seen board origin to shift local placements when
+  // an infinite board grows on the top/left
+  const prevOriginRef = useRef(game.boardOrigin || { x: 0, y: 0 });
+
   // Sync local state with game state when game changes from server
   useEffect(() => {
+    const originNow = game.boardOrigin || { x: 0, y: 0 };
+    const previousOrigin = prevOriginRef.current;
+    prevOriginRef.current = originNow;
+
     if (!user || !game.turnOrder.includes(user.id)) return;
 
-    const { userBoard: currentUserBoard, userLetters: currentUserLetters, wildCardLetters: currentWildCardLetters, wildCardOnBoard: currentWildCardOnBoard } = localStateRef.current;
+    let { userBoard: currentUserBoard, wildCardLetters: currentWildCardLetters, wildCardOnBoard: currentWildCardOnBoard } = localStateRef.current;
+    const { userLetters: currentUserLetters } = localStateRef.current;
+
+    // When the board dimensions change, resize the local overlay and shift
+    // in-progress letters by the origin delta so they stay on their cells
+    if (
+      game.board &&
+      (currentUserBoard.length !== game.board.length ||
+        (currentUserBoard[0] || []).length !== game.board[0].length)
+    ) {
+      const dy = originNow.y - previousOrigin.y;
+      const dx = originNow.x - previousOrigin.x;
+      const resized = makeEmptyUserBoard(game.board);
+      currentUserBoard.forEach((row, y) =>
+        row.forEach((cell, x) => {
+          if (cell !== '' && resized[y + dy] && resized[y + dy][x + dx] !== undefined) {
+            resized[y + dy][x + dx] = cell;
+          }
+        })
+      );
+      const movedWildCards: WildCardOnBoard = {};
+      Object.keys(currentWildCardOnBoard).forEach((yKey) => {
+        const y = parseInt(yKey);
+        Object.keys(currentWildCardOnBoard[y]).forEach((xKey) => {
+          const x = parseInt(xKey);
+          movedWildCards[y + dy] = movedWildCards[y + dy] || {};
+          movedWildCards[y + dy][x + dx] = currentWildCardOnBoard[y][x];
+        });
+      });
+      currentUserBoard = resized;
+      currentWildCardOnBoard = movedWildCards;
+      currentWildCardLetters = currentWildCardLetters.map((letterObject) => ({
+        ...letterObject,
+        y: letterObject.y + dy,
+        x: letterObject.x + dx,
+      }));
+      setUserBoard(currentUserBoard);
+      setWildCardOnBoard(currentWildCardOnBoard);
+      setWildCardLetters(currentWildCardLetters);
+    }
 
     // Get user's letters from server
     const serverLetters = game.letters[user.id];
@@ -469,11 +522,11 @@ const GameContainer: React.FC<Props> = ({ game }) => {
     else {
       // Complete reset of everything
       setUserLetters([...serverLetters]);
-      setUserBoard(EMPTY_USER_BOARD.map((row) => row.slice()));
+      setUserBoard(makeEmptyUserBoard(game.board));
       setWildCardLetters([]);
       setWildCardOnBoard({});
     }
-  }, [game.board, game.letters, game.turnOrder, game.phase, game.turn, user]);
+  }, [game.board, game.boardOrigin, game.letters, game.turnOrder, game.phase, game.turn, user]);
 
   // Cleanup duplicated words when screen loses focus
   useFocusEffect(
