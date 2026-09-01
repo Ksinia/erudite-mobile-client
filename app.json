@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "erudit",
     "userInterfaceStyle": "light",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
@@ -48,7 +48,8 @@
         }
       ],
       "expo-apple-authentication",
-      "expo-asset"
+      "expo-asset",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true

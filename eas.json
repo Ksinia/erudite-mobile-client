@@ -27,7 +27,7 @@
       "channel": "production",
       "environment": "production",
       "ios": {
-        "image": "sdk-53"
+        "image": "sdk-54"
       }
     },
     "development-simulator": {
