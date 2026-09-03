@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useLayoutEffect, useState } from 'react';
 import { StyleSheet, SafeAreaView, View, ActivityIndicator, Text, ScrollView, AppState, AppStateStatus, Dimensions } from 'react-native';
 import { useLocalSearchParams, useFocusEffect } from 'expo-router';
 import { useSelector } from 'react-redux';
@@ -29,11 +29,20 @@ export default function GameScreen() {
   const socketConnected = useSelector((state: RootState) => state.socketConnectionState);
   const notificationNav = useSelector((state: RootState) => state.notificationNavigation);
 
+  // the callbacks below deliberately leave socketConnected out of their
+  // dependencies, so they would otherwise read whatever it was when they were
+  // created: a screen opened before the socket connected would keep leaving
+  // the room on blur and never rejoin. This is the ref those comments mean
+  const socketConnectedRef = useRef(socketConnected);
+  useLayoutEffect(() => {
+    socketConnectedRef.current = socketConnected;
+  }, [socketConnected]);
+
   // Handle screen focus/blur: join room on focus, leave on blur
   useFocusEffect(
     React.useCallback(() => {
       dispatch(fetchGame(gameId, user?.jwt ?? null));
-      if (socketConnected && user) {
+      if (socketConnectedRef.current && user) {
         dispatch(addGameToSocket(gameId));
       }
       dispatch(setActiveGameScreen({ gameId, chatVisible: false }));
@@ -60,7 +69,7 @@ export default function GameScreen() {
       if (appState.current.match(/inactive|background/) && nextAppState === 'active') {
         // App has come to the foreground - refetch game and reconnect
         dispatch(fetchGame(gameId, user?.jwt ?? null));
-        if (socketConnected) {
+        if (socketConnectedRef.current) {
           dispatch(addGameToSocket(gameId));
         }
       } else if (appState.current === 'active' && nextAppState.match(/inactive|background/)) {
